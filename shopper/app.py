@@ -8,7 +8,6 @@ product_categories = ["Videogames", "Phones", "Books"]
 def get_the_rain():
   metrics_string = ""
   for city in cities:
-    request_string = 'http://api.openweathermap.org/data/2.5/weather?q='+ city +'&appid=cea13709bbae3a00ae819819e4363ea8'
     weather_response =requests.get(request_string)
     try:
       city_rain_ml = weather_response.json()['rain']['1h']

@@ -1,0 +1,41 @@
+server:
+  log_level: debug
+
+logs:
+  configs:
+  - name: loki
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+        external_labels:
+          job: agent
+  positions_directory: /tmp/positions
+
+traces:
+  configs:
+  - name: latencyEndpoint
+    receivers:
+      jaeger:
+        protocols:
+          thrift_binary:
+            endpoint: "0.0.0.0:6832"
+    remote_write:
+      - endpoint: tempo:55680
+        insecure: true
+    spanmetrics:
+      dimensions:
+        - name: http.method
+        - name: http.target
+      handler_endpoint: 0.0.0.0:1234
+    automatic_logging:
+      backend: logs_instance
+      logs_instance_name: loki
+      roots: true
+      processes: false
+      spans: false
+      span_attributes:
+        - http.method
+        - http.target
+        - http.status_code
+      overrides:
+        trace_id_key: "traceId"
+
