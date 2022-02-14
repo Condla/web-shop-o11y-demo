@@ -1,0 +1,41 @@
+version: '3'
+services:
+        #  grafana:
+        #    image: grafana/grafana:latest
+        #    ports:
+        #      - "3000:3000"
+        #    environment:
+        #      GF_STRAVA_DS_DATA_PATH: /var/lib/grafana/strava
+        #    volumes:
+        #      - type: bind
+        #        source: ./data
+        #        target: /var/lib/grafana
+        #  prometheus:
+        #    image: prom/prometheus:main
+        #    ports:
+        #      - "9090:9090" 
+        #    volumes:
+        #      - type: bind
+        #        source: ./prometheus/prometheus.yml
+        #        target: /etc/prometheus/prometheus.yml
+        #  loki:
+        #    image: grafana/loki:latest
+        #    ports:
+        #      - "3100:3100"
+        #    volumes:
+        #      - type: bind
+        #        source: ./loki/loki-local-config.yaml
+        #        target: /etc/loki/local-config.yml
+  shopping-cart:
+    build: "shopping-cart/."
+    ports:
+      - "5555:5555"
+    depends_on:
+      - "mariadb"
+
+  mariadb:
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: myrootpassword
