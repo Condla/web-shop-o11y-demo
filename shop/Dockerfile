@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-LABEL Stefan Dunkler "stefan.dun@gmail.com"
+LABEL Stefan Dunkler
 RUN apt-get update -y
 RUN apt-get install -y python3-pip python3-dev build-essential
 COPY ./requirements.txt /app/requirements.txt

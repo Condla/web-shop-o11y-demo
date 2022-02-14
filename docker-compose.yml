@@ -14,12 +14,15 @@ services:
       - "5555:5555"
     depends_on:
       - "mariadb"
-    logging:
-      driver: "loki"
-      options:
-        loki-url: "http://loki:3100/loki/api/v1/push"
-        loki-retries: "5"
-        loki-batch-size: "400"
+      - "loki"
+  
+  shop:
+    build: "shop/."
+    ports:
+      - "6666:6666"
+    depends_on:
+      - "mariadb"
+      - "loki"
 
   mariadb:
     image: mariadb:latest
