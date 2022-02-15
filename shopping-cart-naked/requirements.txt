@@ -1,4 +1,0 @@
-Flask==2.0.0
-requests==2.25.1
-mariadb==1.0.9
-prometheus-flask-exporter==0.18.7
