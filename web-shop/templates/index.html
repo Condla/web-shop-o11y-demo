@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>Grafana Webshop</title>
+</head>
+<body>
+<h1>This is the Grafana Webshop</h1>
+<p>Hello, {{person}}! Please have a good time shopping!</p>
+<a href="/show_shopping_cart?name={{person}}">Show shopping cart</a><br>
+
+<h2> Products </h2>
+<ul>
+{% for product in products %}
+<li><a href="/add_to_shopping_cart?product={{product}}&name={{person}}">Add {{ product }} to Shopping Cart</a></li>
+{% endfor %}
+</ul>
+</body>
+</html> 

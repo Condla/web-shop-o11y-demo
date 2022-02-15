@@ -11,20 +11,18 @@ async def simulate_online_shopper(name):
     action = random.choice(actions)
     product = random.choice(products)
     if action == "show":
-        requests.get("http://web-shop:6666/show_shopping_cart?name={}".format(name))
+        requests.get("http://web-shop:6666/show_shopping_cart?name={}".format(name),headers={'Connection':'close'})
 
     elif action == "add":
-        requests.get("http://web-shop:6666/add_to_shopping_cart?name={}&product={}".format(name, product))
+        requests.get("http://web-shop:6666/add_to_shopping_cart?name={}&product={}".format(name, product), headers={'Connection':'close'})
     
     elif action == "remove":
-        requests.get("http://web-shop:6666/empty_shopping_cart?name={}".format(name))
+        requests.get("http://web-shop:6666/empty_shopping_cart?name={}".format(name), headers={'Connection':'close'})
 
     else:
         requests.get("http://web-shop:6666/doesnt_exist".format(name))
 
     await asyncio.sleep(random.randint(1,5))
-    print("loop {}".format(name))
-    await simulate_online_shopper(name)
 
 
 if __name__ == "__main__":

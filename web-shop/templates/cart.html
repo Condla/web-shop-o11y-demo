@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>Grafana Webshop</title>
+</head>
+<body>
+<h1>Shopping Cart</h1>
+This is your shopping cart:
+<ul>
+
+{% for item in items %}
+
+	<li>{{ item }}</li>
+
+{% endfor %}
+
+</ul><br>
+<a href=/?name={{person}}>back</a>
+</body>
+</html> 

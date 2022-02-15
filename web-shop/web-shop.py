@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 import random
 import requests
 import logging
@@ -36,9 +36,15 @@ PrometheusMetrics(app)
 
 shopping_cart_url = "shopping-cart:5555"
 
-@app.route('/start')
-def start():
-    return 200
+products = ['iPhone', 'Nintendo Switch', 'Mountain Bike', 'Running Shoes', 'Grafana Enterprise', 'Grafana Cloud Logs Subscription']
+
+@app.route('/')
+def home():
+  with tracer.start_as_current_span("home") as sp:
+    trace_id = sp.get_span_context().trace_id
+    person = request.args.get("name")
+    app.logger.info("Showing products: traceID={}".format(format(trace_id, 'x')))
+  return render_template('index.html', person=person, products=products)
 
 @app.route('/show_shopping_cart')
 def show_shopping_cart():
@@ -47,12 +53,13 @@ def show_shopping_cart():
     person = request.args.get("name")
     request_string = "http://{}/cart/{}".format(shopping_cart_url, person)
     response = requests.get(request_string)
-    items = response.json()
-    item = ''
-    if items:
-        item = items[0]
-    app.logger.info("item={} traceID={}".format(item, format(trace_id, 'x')))
-  return item
+
+    if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+      app.logger.error("Got a real bad response from shopping cart. Something is wrong. traceID={}".format(format(trace_id, 'x')))
+    else:
+      items = response.json()
+      app.logger.info("Successfully obtained items from shopping cart. traceID={}".format(format(trace_id, 'x')))
+  return render_template('cart.html', items=items, person=person)
 
 @app.route('/add_to_shopping_cart')
 def add_to_shopping_cart():
@@ -64,9 +71,25 @@ def add_to_shopping_cart():
     request_string = "http://{}/cart/{}".format(shopping_cart_url, person)
     headers = {'Content-type': 'application/json'}
     response = requests.post(request_string, json=payload,headers=headers)
+    
+    if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+      app.logger.error("Got a real bad response from shopping cart. Something is wrong. traceID={}".format(format(trace_id, 'x')))
+    else:
+      app.logger.info("Successfully added item to shopping cart. traceID={}".format(format(trace_id, 'x')))
+  return render_template('index.html', products=products, person=person)
+
+@app.route('/delete_shopping_cart')
+def delete_shopping_cart():
+  with tracer.start_as_current_span("add_to_shopping_cart") as sp:
+    trace_id = sp.get_span_context().trace_id
+    person = request.args.get("name")
+    product_name = request.args.get("product")
+    payload = {"product": product_name}
+    request_string = "http://{}/cart/{}".format(shopping_cart_url, person)
+    headers = {'Content-type': 'application/json'}
+    response = requests.post(request_string, json=payload,headers=headers)
     app.logger.info("Successfully added {} to shopping cart traceID={}".format(product_name, format(trace_id, 'x')))
   return "201"
-
 
 
 if __name__ == '__main__':

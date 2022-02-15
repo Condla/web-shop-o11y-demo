@@ -10,4 +10,4 @@ RUN pip install -r /app/requirements.txt
 COPY . /app
 WORKDIR /app
 ENTRYPOINT [ "python3" ]
-CMD [ "app.py" ]
+CMD [ "cart.py" ]

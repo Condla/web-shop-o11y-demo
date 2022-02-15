@@ -40,13 +40,6 @@ config = {
         'password': 'myrootpassword',
 }
 
-config = {
-        'host': 'mariadb',
-        'port': 3306,
-        'user': 'root',
-        'password': 'myrootpassword',
-}
-
 def initiate_db():
   conn = mariadb.connect(**config)
   cur = conn.cursor()
@@ -58,8 +51,6 @@ def initiate_db():
 
 @app.route('/cart/<customer_name>', methods=["GET", "POST", "DELETE"])
 def handle_shopping_cart_items(customer_name):
-  #with tracer.start_as_current_span("handle_shopping_cart_items") as sp:
-    #trace_id = sp.get_span_context().trace_id
     status_code = 500
     res = {"success": "false"}
     conn = mariadb.connect(**config)
@@ -71,20 +62,23 @@ def handle_shopping_cart_items(customer_name):
         cur.execute("SELECT product FROM shopping_cart WHERE customer='{}'".format(customer_name))
         res = [item[0] for item in cur.fetchall()]
         status_code = 200
-        message = "Successfully retrieved items from shopping cart"
+        logging.debug("Successfully retrieved items from database")
       except:
-        message = "Couldn't get resource. Something went wrong"
+        logging.exception("Couldn't access database for reading. Something went wrong.")
   
     elif request.method == "POST":
       try:
         res = request.get_json()
         product_name = res['product']
+      except:
+        logging.exception("There was an issue with the submitted payload.")
+      try:
         cur.execute("INSERT INTO shopping_cart(customer, product) VALUES ('{}', '{}');".format(customer_name, product_name))
         conn.commit()
         status_code = 201
-        message = "Successfully added item to shopping cart for customer"
+        logging.debug("Successfully persisted items in database")
       except:
-        message = "Couldn't add resource. Something went wrong"
+        logging.exception("Couldn't access database for writing. Something went wrong.")
     
     elif request.method == "DELETE":
       try: 
@@ -92,14 +86,11 @@ def handle_shopping_cart_items(customer_name):
         conn.commit()
         status_code = 202
         res = {"success": "true"}
-        message = "Successfully removed entired shopping cart for customer"
+        logging.debug("Successfully removed items in database table")
       except:
-        message = "Couldn't delete resource. Something went wrong"
+        logging.exception("Couldn't access database for deleting. Something went wrong.")
   
     conn.close()
-#    app.logger.info("{} traceID={}".format(message, format(trace_id,'x')))
-    app.logger.info("{}".format(message))
-
     return Response(json.dumps(res), status=status_code, mimetype='application/json')
 
 if __name__ == '__main__':

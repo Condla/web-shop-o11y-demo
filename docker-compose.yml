@@ -17,9 +17,9 @@ services:
       - "loki"
   
   web-shop:
-    build: "shop/."
+    build: "web-shop/."
     ports:
-      - "6666:6666"
+      - "80:6666"
     depends_on:
       - "shopping-cart"
   
