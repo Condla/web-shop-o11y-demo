@@ -8,7 +8,6 @@ from opentelemetry import trace
 from opentelemetry.instrumentation.dbapi import trace_integration
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -59,8 +58,8 @@ def initiate_db():
 
 @app.route('/cart/<customer_name>', methods=["GET", "POST", "DELETE"])
 def handle_shopping_cart_items(customer_name):
-  with tracer.start_as_current_span("handle_shopping_cart_items") as sp:
-    trace_id = sp.get_span_context().trace_id
+  #with tracer.start_as_current_span("handle_shopping_cart_items") as sp:
+    #trace_id = sp.get_span_context().trace_id
     status_code = 500
     res = {"success": "false"}
     conn = mariadb.connect(**config)
@@ -77,7 +76,7 @@ def handle_shopping_cart_items(customer_name):
         message = "Couldn't get resource. Something went wrong"
   
     elif request.method == "POST":
-      try: 
+      try:
         res = request.get_json()
         product_name = res['product']
         cur.execute("INSERT INTO shopping_cart(customer, product) VALUES ('{}', '{}');".format(customer_name, product_name))
@@ -98,8 +97,10 @@ def handle_shopping_cart_items(customer_name):
         message = "Couldn't delete resource. Something went wrong"
   
     conn.close()
-    app.logger.info("{} traceID={}".format(message, format(trace_id,'x')))
-  return Response(json.dumps(res), status=status_code, mimetype='application/json')
+#    app.logger.info("{} traceID={}".format(message, format(trace_id,'x')))
+    app.logger.info("{}".format(message))
+
+    return Response(json.dumps(res), status=status_code, mimetype='application/json')
 
 if __name__ == '__main__':
     initiate_db()

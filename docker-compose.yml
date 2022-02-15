@@ -1,7 +1,7 @@
 version: '3'
 services:
   prometheus:
-    image: prom/prometheus:main
+    build: ./prometheus
     ports:
       - "9090:9090" 
   loki:
@@ -16,13 +16,17 @@ services:
       - "mariadb"
       - "loki"
   
-  shop:
+  web-shop:
     build: "shop/."
     ports:
       - "6666:6666"
     depends_on:
-      - "mariadb"
-      - "loki"
+      - "shopping-cart"
+  
+  shop-simulator:
+    build: "shop-simulator/."
+    depends_on:
+      - "web-shop"
 
   mariadb:
     image: mariadb:latest
