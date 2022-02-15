@@ -4,6 +4,15 @@
 </head>
 <body>
 <h1>Shopping Cart</h1>
+<a href=/shop?name={{person}}>back</a>
+
+<p>
+<form method="post" action="/cart?name={{person}}">
+  <button type="submit" name="name" value="{{person}}">
+    Empty Shopping Cart
+  </button>
+</form>
+</p>
 This is your shopping cart:
 <ul>
 
@@ -13,7 +22,7 @@ This is your shopping cart:
 
 {% endfor %}
 
-</ul><br>
-<a href=/?name={{person}}>back</a>
+</ul>
+<br>
 </body>
 </html> 

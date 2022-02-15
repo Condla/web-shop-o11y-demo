@@ -3,7 +3,7 @@ import asyncio
 import time
 import random
 
-products = ["Nintendo Switch", "iPhone"]
+products = ["A brand new Ferrari", "Something else expensive", "Dog food"]
 actions = ["show", "show", "show", "show", "show", "add", "show", "add", "show", "add"]
 
 async def simulate_online_shopper(name):
@@ -11,23 +11,21 @@ async def simulate_online_shopper(name):
     action = random.choice(actions)
     product = random.choice(products)
     if action == "show":
-        requests.get("http://web-shop:6666/show_shopping_cart?name={}".format(name),headers={'Connection':'close'})
+        requests.get("http://web-shop:6666/cart?name={}".format(name),headers={'Connection':'close'})
 
     elif action == "add":
-        requests.get("http://web-shop:6666/add_to_shopping_cart?name={}&product={}".format(name, product), headers={'Connection':'close'})
+        requests.post("http://web-shop:6666/shop?name={}&product={}".format(name, product), headers={'Connection':'close'})
     
-    elif action == "remove":
-        requests.get("http://web-shop:6666/empty_shopping_cart?name={}".format(name), headers={'Connection':'close'})
-
     else:
-        requests.get("http://web-shop:6666/doesnt_exist".format(name))
+        requests.get("http://web-shop:6666/nothing".format(name))
 
     await asyncio.sleep(random.randint(1,5))
 
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    loop.create_task(simulate_online_shopper('stefan'))
-    loop.create_task(simulate_online_shopper('kris'))
-    loop.create_task(simulate_online_shopper('konrad'))
+    loop.create_task(simulate_online_shopper('Stefan'))
+    loop.create_task(simulate_online_shopper('Willie'))
+    loop.create_task(simulate_online_shopper('Aengus'))
+    loop.create_task(simulate_online_shopper('Raul'))
     loop.run_forever()
