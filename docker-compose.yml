@@ -1,5 +1,16 @@
 version: '3'
 services:
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - "./grafana/definitions:/var/lib/grafana/dashboards"
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=tempoSearch
+
   prometheus:
     build: ./prometheus
     ports:
