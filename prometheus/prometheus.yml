@@ -26,6 +26,7 @@ scrape_configs:
       - targets: ['web-shop:6666']
         labels:
           group: 'shop'
+          instance: 'web-shop'
 
   - job_name: 'shopping-cart'
     scrape_interval: 5s
@@ -34,6 +35,7 @@ scrape_configs:
       - targets: ['shopping-cart:5555']
         labels:
           group: 'shop'
+          instance: 'shopping-cart'
 
   - job_name: 'span-metrics'
     scrape_interval: 5s
