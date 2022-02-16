@@ -21,8 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
-  "iteration": 1645028498095,
+  "iteration": 1645043972013,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -105,13 +104,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(process_cpu_seconds_total{instance=\"$instance\"}[1m])",
+          "expr": "rate(process_cpu_seconds_total{job=\"$job\"}[1m])",
           "interval": "",
           "legendFormat": "Seconds",
           "refId": "A"
         }
       ],
-      "title": "CPU Usage of $instance",
+      "title": "CPU Usage of $job",
       "type": "timeseries"
     },
     {
@@ -193,25 +192,52 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{instance=\"$instance\"}[1m]))",
+          "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{job=\"$job\"}[1m]))",
           "interval": "",
           "legendFormat": "Return Status {{status}}",
           "refId": "A"
         }
       ],
-      "title": "Request Rate and Error Count of $instance",
+      "title": "Request Rate and Error Count of $job",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "type": "tempo",
-        "uid": "tempo"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
-            "align": "auto",
-            "displayMode": "auto"
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -228,76 +254,40 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "duration"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "basic"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "continuous-purples"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 9
       },
-      "id": 8,
+      "id": 13,
       "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        "showHeader": true,
-        "sortBy": []
+        "tooltip": {
+          "mode": "single"
+        }
       },
-      "pluginVersion": "8.3.6",
       "targets": [
         {
           "datasource": {
-            "type": "tempo",
-            "uid": "tempo"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "minDuration": "48ms",
-          "queryType": "nativeSearch",
-          "refId": "A",
-          "search": "",
-          "serviceName": "web-shop",
-          "spanName": "/cart"
+          "exemplar": true,
+          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=\"$job\"}[$__interval])/rate(traces_spanmetrics_latency_count{service_name=\"$job\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "{{service_name}} {{ operation }}",
+          "refId": "A"
         }
       ],
-      "title": "Span Latencies above 25ms",
-      "transformations": [
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {},
-            "sort": [
-              {
-                "desc": true,
-                "field": "Duration"
-              }
-            ]
-          }
-        }
-      ],
-      "type": "table"
+      "title": "Latency of $job by Endpoint",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -378,13 +368,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(rate(flask_http_request_duration_seconds_sum{instance=~\"$instance\"}[10m])) * 1 / sum(rate(flask_http_request_duration_seconds_count{instance=~\"$instance\"}[10m]))",
+          "expr": "sum(rate(flask_http_request_duration_seconds_sum{job=~\"$job\"}[10m])) * 1 / sum(rate(flask_http_request_duration_seconds_count{job=~\"$job\"}[10m]))",
           "interval": "",
           "legendFormat": "Average [10m]",
           "refId": "A"
         }
       ],
-      "title": "Average Latency of $instance",
+      "title": "Average Latency of $job",
       "type": "timeseries"
     },
     {
@@ -548,23 +538,23 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "web-shop:6666",
-          "value": "web-shop:6666"
+          "selected": true,
+          "text": "shopping-cart",
+          "value": "shopping-cart"
         },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(instance)",
+        "definition": "label_values(flask_http_request_duration_seconds_sum, job)",
         "hide": 0,
         "includeAll": false,
-        "label": "instance",
+        "label": "job",
         "multi": false,
-        "name": "instance",
+        "name": "job",
         "options": [],
         "query": {
-          "query": "label_values(instance)",
+          "query": "label_values(flask_http_request_duration_seconds_sum, job)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -576,13 +566,13 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Holistic Webshop Monitoring",
   "uid": "U7qtLZB7k",
-  "version": 24,
+  "version": 2,
   "weekStart": ""
 }
