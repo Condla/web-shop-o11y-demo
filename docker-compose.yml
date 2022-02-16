@@ -18,7 +18,7 @@ services:
   loki:
     image: grafana/loki:latest
     ports:
-      - "3100"
+      - "3100:3100"
   shopping-cart:
     build: "shopping-cart/."
     ports:
