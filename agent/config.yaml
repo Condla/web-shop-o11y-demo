@@ -19,7 +19,7 @@ traces:
           grpc:
           http:
     remote_write:
-      - endpoint: tempo:55680
+      - endpoint: tempo:4317
         insecure: true
     spanmetrics:
       dimensions:
