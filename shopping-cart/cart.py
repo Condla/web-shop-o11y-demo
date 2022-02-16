@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.DEBUG,format=f'%(asctime)s %(levelname)s %(nam
 ### if resource doesn't set service.name it shows as "unknown_service"
 resource = Resource(attributes={"service.name": "shopping-cart"})
 trace.set_tracer_provider(TracerProvider(resource=resource))
-otlp_exporter = OTLPSpanExporter(endpoint="http://tempo:4317", insecure=True)
+otlp_exporter = OTLPSpanExporter(endpoint="http://agent:4317", insecure=True)
 span_processor = BatchSpanProcessor(otlp_exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
 
