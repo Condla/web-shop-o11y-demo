@@ -14,10 +14,10 @@ traces:
   configs:
   - name: latencyEndpoint
     receivers:
-      jaeger:
+      otlp:
         protocols:
-          thrift_binary:
-            endpoint: "0.0.0.0:6832"
+          grpc:
+          http:
     remote_write:
       - endpoint: tempo:55680
         insecure: true

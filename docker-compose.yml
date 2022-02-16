@@ -14,15 +14,15 @@ services:
   prometheus:
     build: ./prometheus
     ports:
-      - "9090:9090" 
+      - "9090" 
   loki:
     image: grafana/loki:latest
     ports:
-      - "3100:3100"
+      - "3100"
   shopping-cart:
     build: "shopping-cart/."
     ports:
-      - "5555:5555"
+      - "5555"
     depends_on:
       - "mariadb"
       - "loki"
@@ -42,27 +42,28 @@ services:
   mariadb:
     image: mariadb:latest
     ports:
-      - "3306:3306"
+      - "3306"
     environment:
       MARIADB_ROOT_PASSWORD: myrootpassword
 
   agent:
     image: grafana/agent:latest
     ports:
-      - "12345:80"
-      - "6832:6832"
-      - "55679:55679"
+      - "80"
+      - "6832"
+      - "55679"
+      - "4317"
     volumes:
       - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
 
   tempo:
     image: grafana/tempo:latest
     ports:
-      - "3200:3200"
-      - "4317:4317"
-      - "55680:55680"
-      - "55681:55681"
-      - "14250:14250"
+      - "3200"
+      - "4317"
+      - "55680"
+      - "55681"
+      - "14250"
     command: [ "-config.file=/etc/tempo.yaml"]
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
