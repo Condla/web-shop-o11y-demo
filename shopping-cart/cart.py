@@ -15,7 +15,7 @@ from opentelemetry.instrumentation.logging import LoggingInstrumentor
 
 # Configure Tracing
 ### if resource doesn't set service.name it shows as "unknown_service"
-resource = Resource(attributes={"service.name": "shopping-cart"})
+resource = Resource(attributes={"service.name": "shopping-cart", "service": "shopping-cart", "environment":"production"})
 trace.set_tracer_provider(TracerProvider(resource=resource))
 otlp_exporter = OTLPSpanExporter(endpoint="http://agent:4317", insecure=True)
 span_processor = BatchSpanProcessor(otlp_exporter)
