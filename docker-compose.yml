@@ -76,6 +76,7 @@ services:
       - "shopping-cart"
     networks:
       - web-shop
+    restart: on-failure
     logging:
       driver: loki
       options:
@@ -90,6 +91,7 @@ services:
       - "web-shop"
     networks:
       - web-shop
+    restart: on-failure
 
   mariadb:
     image: mariadb:latest
