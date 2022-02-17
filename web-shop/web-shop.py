@@ -56,7 +56,7 @@ def view_cart():
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
         app.logger.exception("Got a real bad response from shopping cart. Something is wrong. traceID={}".format(trace_id))
     else:
-        app.logger.info("Retrieved items from shopping cart. Displaying items. traceID={}".format(product_name, trace_id))
+        app.logger.info("Retrieved items from shopping cart. Displaying items. traceID={}".format(trace_id))
         items = response.json()
         app.logger.info("Successfully obtained items from shopping cart. traceID={}".format(trace_id))
   return render_template('cart.html', items=items, person=person)
