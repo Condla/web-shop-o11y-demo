@@ -57,4 +57,3 @@ docker-compose up -d
 ## TODOs + Improvements
 
 * configure the grafana agent to collect logs instead of using the docker plugin. This will make the demo more "out of the box"
-* configure the grafana agent to scrape prometheus metrics instead of prometheus itself. This is a minor change but is a more realistic scenario when working with Grafana Cloud instead of a local Prometheus installation.
