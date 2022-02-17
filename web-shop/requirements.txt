@@ -6,3 +6,4 @@ opentelemetry-sdk==1.9.1
 opentelemetry-exporter-otlp==1.9.1
 opentelemetry-instrumentation-flask==0.28b1
 opentelemetry-instrumentation-requests==0.28b1
+opentelemetry-instrumentation-logging==0.28b1

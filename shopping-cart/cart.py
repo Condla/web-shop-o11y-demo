@@ -11,9 +11,7 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-# Configure Logging
-logging.basicConfig(level=logging.DEBUG,format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
 
 # Configure Tracing
 ### if resource doesn't set service.name it shows as "unknown_service"
@@ -22,11 +20,14 @@ trace.set_tracer_provider(TracerProvider(resource=resource))
 otlp_exporter = OTLPSpanExporter(endpoint="http://agent:4317", insecure=True)
 span_processor = BatchSpanProcessor(otlp_exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
-
 trace_integration(mariadb,"connect","mariadb")
 tracer = trace.get_tracer(__name__)
 
 app = Flask(__name__)
+
+# instrumentation
+log_format = "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] trace_id=%(otelTraceID)s span_id=%(otelSpanID)s resource.service.name=%(otelServiceName)s - %(message)s"
+LoggingInstrumentor().instrument(set_logging_format=True, logging_format=log_format, log_level=logging.INFO, tracer_provider=tracer)
 FlaskInstrumentor().instrument_app(app)
 
 # Configure Metrics

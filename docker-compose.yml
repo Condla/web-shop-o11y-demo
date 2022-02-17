@@ -21,7 +21,6 @@ services:
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
-    restart: unless-stopped
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -59,6 +58,15 @@ services:
       - "loki"
     networks:
       - web-shop
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+    
   
   web-shop:
     build: "web-shop/."
@@ -68,6 +76,13 @@ services:
       - "shopping-cart"
     networks:
       - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
   
   shop-simulator:
     build: "shop-simulator/."
@@ -84,6 +99,13 @@ services:
       MARIADB_ROOT_PASSWORD: myrootpassword
     networks:
       - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   agent:
     image: grafana/agent:latest
