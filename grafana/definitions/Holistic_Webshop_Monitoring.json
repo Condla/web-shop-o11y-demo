@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1645043972013,
+  "iteration": 1645096072603,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -76,7 +76,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percentunit"
         },
         "overrides": []
       },
@@ -104,13 +105,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(process_cpu_seconds_total{job=\"$job\"}[1m])",
+          "expr": "sum(rate(process_cpu_seconds_total{service=\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
           "interval": "",
-          "legendFormat": "Seconds",
+          "legendFormat": "{{service}}",
           "refId": "A"
         }
       ],
-      "title": "CPU Usage of $job",
+      "title": "CPU Usage of $service",
       "type": "timeseries"
     },
     {
@@ -192,13 +193,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{job=\"$job\"}[1m]))",
+          "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{service=\"$service\"}[1m]))",
           "interval": "",
           "legendFormat": "Return Status {{status}}",
           "refId": "A"
         }
       ],
-      "title": "Request Rate and Error Count of $job",
+      "title": "Request Rate and Error Count of $service",
       "type": "timeseries"
     },
     {
@@ -280,13 +281,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=\"$job\"}[$__interval])/rate(traces_spanmetrics_latency_count{service_name=\"$job\"}[$__interval]))",
+          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=\"$service\"}[$__interval])/rate(traces_spanmetrics_latency_count{service_name=\"$service\"}[$__interval]))",
           "interval": "",
           "legendFormat": "{{service_name}} {{ operation }}",
           "refId": "A"
         }
       ],
-      "title": "Latency of $job by Endpoint",
+      "title": "Latency of $service by Endpoint",
       "type": "timeseries"
     },
     {
@@ -368,13 +369,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(rate(flask_http_request_duration_seconds_sum{job=~\"$job\"}[10m])) * 1 / sum(rate(flask_http_request_duration_seconds_count{job=~\"$job\"}[10m]))",
+          "expr": "sum(rate(flask_http_request_duration_seconds_sum{service=~\"$service\"}[10m])) * 1 / sum(rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[10m]))",
           "interval": "",
           "legendFormat": "Average [10m]",
           "refId": "A"
         }
       ],
-      "title": "Average Latency of $job",
+      "title": "Average Latency of $service",
       "type": "timeseries"
     },
     {
@@ -538,7 +539,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "shopping-cart",
           "value": "shopping-cart"
         },
@@ -546,15 +547,15 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(flask_http_request_duration_seconds_sum, job)",
+        "definition": "label_values(flask_http_request_duration_seconds_sum, service)",
         "hide": 0,
         "includeAll": false,
-        "label": "job",
+        "label": "service",
         "multi": false,
-        "name": "job",
+        "name": "service",
         "options": [],
         "query": {
-          "query": "label_values(flask_http_request_duration_seconds_sum, job)",
+          "query": "label_values(flask_http_request_duration_seconds_sum, service)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -573,6 +574,6 @@
   "timezone": "",
   "title": "Holistic Webshop Monitoring",
   "uid": "U7qtLZB7k",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
