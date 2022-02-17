@@ -30,7 +30,10 @@ Quick Overview:
 
 ## How To get started
 
-* Step 1: Configure your docker to use the Loki docker plugin for logging and point it to your loki instance.
+* Step 1: Configure your docker installation to use the Loki docker plugin for logging and point it to your loki instance.
+  * Install loki docker driver: ```docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions```
+  * Restart docker, e.g. on Linux: ```sudo systemctl restart docker```
+  * Check if plugin is enabled: ```docker plugin ls```
 
 * Step 2: Run docker compose. Run it a second time if for some reason the services are faster up than the database
 ```
@@ -53,7 +56,3 @@ docker-compose up -d
   * Drill down to the bottom to find the SQL insert statement as well as the database message that gives away the reason of the error.
 
 * Step 5: Think about how much time this could have saved you in a real life scenario to find the issue.
-
-## TODOs + Improvements
-
-* configure the grafana agent to collect logs instead of using the docker plugin. This will make the demo more "out of the box"
