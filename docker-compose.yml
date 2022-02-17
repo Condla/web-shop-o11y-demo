@@ -1,4 +1,9 @@
 version: '3'
+
+networks:
+  web-shop:
+    driver: bridge
+
 services:
 
   grafana:
@@ -10,15 +15,41 @@ services:
       - "3000:3000"
     environment:
       - GF_FEATURE_TOGGLES_ENABLE=tempoSearch
+    networks:
+      - web-shop
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - 9100
+    networks:
+      - web-shop
 
   prometheus:
     build: ./prometheus
     ports:
       - "9090" 
+    networks:
+      - web-shop
+
   loki:
     image: grafana/loki:latest
     ports:
       - "3100:3100"
+    networks:
+      - web-shop
+
   shopping-cart:
     build: "shopping-cart/."
     ports:
@@ -26,6 +57,8 @@ services:
     depends_on:
       - "mariadb"
       - "loki"
+    networks:
+      - web-shop
   
   web-shop:
     build: "web-shop/."
@@ -33,11 +66,15 @@ services:
       - "80:6666"
     depends_on:
       - "shopping-cart"
+    networks:
+      - web-shop
   
   shop-simulator:
     build: "shop-simulator/."
     depends_on:
       - "web-shop"
+    networks:
+      - web-shop
 
   mariadb:
     image: mariadb:latest
@@ -45,6 +82,8 @@ services:
       - "3306"
     environment:
       MARIADB_ROOT_PASSWORD: myrootpassword
+    networks:
+      - web-shop
 
   agent:
     image: grafana/agent:latest
@@ -55,6 +94,8 @@ services:
       - "4317"
     volumes:
       - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
+    networks:
+      - web-shop
 
   tempo:
     image: grafana/tempo:latest
@@ -67,3 +108,5 @@ services:
     command: [ "-config.file=/etc/tempo.yaml"]
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
+    networks:
+      - web-shop
