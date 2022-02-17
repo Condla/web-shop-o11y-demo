@@ -57,7 +57,7 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
   <header class="w3-container w3-xlarge">
     <p class="w3-left">Cool Products</p>
     <p class="w3-right">
-<a href="/cart?name={{person}}"><i class="fa fa-shopping-cart w3-margin-right"></i></a>
+      <i class="fa fa-shopping-cart w3-margin-right"></i>
       <i class="fa fa-search"></i>
     </p>
   </header>
@@ -66,8 +66,8 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
   <div class="w3-display-container w3-container">
     <img src="https://grafana.com/products/assets/grafana/Grafana8_Kubernetes.jpg" alt="Jeans" style="width:100%">
     <div class="w3-display-topleft w3-text-white" style="padding:24px 48px">
-      <h1 class="w3-jumbo w3-hide-small">Welcome {{person}}</h1>
-      <h1 class="w3-hide-large w3-hide-medium">Welcome {{person}}</h1>
+      <h1 class="w3-jumbo w3-hide-small">Awesome Stuff</h1>
+      <h1 class="w3-hide-large w3-hide-medium">Awesome Stuff</h1>
       <h1 class="w3-hide-small"></h1>
       <p><a href="#jeans" class="w3-button w3-black w3-padding-large w3-large">SHOP NOW</a></p>
     </div>
@@ -82,22 +82,61 @@ body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
   
     
 
-{% for product in products %}
+
     <div class="w3-col l3 s6">
       <div class="w3-container">
         <div class="w3-display-container">
-          <img src="http://placekitten.com/{{product["width"]}}/{{product["height"]}}" style="width:100%">
-          <span class="w3-tag w3-display-topleft">{{product["tag"]}}</span>
+          <img src="http://placekitten.com/201/252" style="width:100%">
+          <span class="w3-tag w3-display-topleft">On Sale</span>
           <div class="w3-display-middle w3-display-hover">
-	  <form method="post" action="/shop?product={{product["name"]}}&name={{person}}">
-            <button type="submit" name="product" value="{{product["name"]}}" class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
-          </form>
+            <button class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
           </div>
         </div>
-        <p>{{ product["name"] }}<br><b>{{product["price"]}}</b></p>
+        <p>Trixy<br><b>$18.99</b></p>
       </div>
     </div>
-{% endfor %}
+
+    <div class="w3-col l3 s6">
+      <div class="w3-container">
+        <div class="w3-display-container">
+          <img src="http://placekitten.com/202/252" style="width:100%">
+          <span class="w3-tag w3-display-topleft">Only 23 Left</span>
+          <div class="w3-display-middle w3-display-hover">
+            <button class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
+          </div>
+        </div>
+        <p>Furball<br><b>$19.99</b></p>
+      </div>
+    </div>
+    
+    
+        <div class="w3-col l3 s6">
+      <div class="w3-container">
+        <div class="w3-display-container">
+          <img src="http://placekitten.com/202/251" style="width:100%">
+          <div class="w3-display-middle w3-display-hover">
+            <button class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
+          </div>
+        </div>
+        <p>Snowball<br><b>$18.99</b></p>
+      </div>
+    </div>
+    
+    
+        <div class="w3-col l3 s6">
+      <div class="w3-container">
+        <div class="w3-display-container">
+          <img src="http://placekitten.com/201/251" style="width:100%">
+          <span class="w3-tag w3-display-topleft">New</span>
+          <div class="w3-display-middle w3-display-hover">
+            <button class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
+          </div>
+        </div>
+        <p>The cutest cat of them all. Period.<br><b>$29.99</b></p>
+      </div>
+    </div>
+
+
 
 
   </div>
@@ -186,9 +225,11 @@ function myAccFunc() {
   }
 }
 
+// Click on the "Jeans" link on page load to open the accordion for demo purposes
 document.getElementById("myBtn").click();
 
 
+// Open and close sidebar
 function w3_open() {
   document.getElementById("mySidebar").style.display = "block";
   document.getElementById("myOverlay").style.display = "block";
@@ -202,8 +243,4 @@ function w3_close() {
 
 </body>
 </html>
-
-
-
-
 
