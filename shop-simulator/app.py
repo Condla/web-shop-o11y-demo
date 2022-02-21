@@ -3,8 +3,9 @@ import asyncio
 import time
 import random
 
-products = ["A brand new Ferrari", "Something else expensive", "Dog food"]
+products = ["Nintendo Switch", "Harley Davidson", "Telescope", "Golf Clubs", "Tennis Racket"]
 actions = ["show", "show", "show", "show", "show", "add", "show", "add", "show", "add"]
+customers = ["Willie", "Aengus", "Devin", "Cyril", "Abdelkrim", "Raul", "Ward"]
 
 async def simulate_online_shopper(name):
   while True:
@@ -24,8 +25,7 @@ async def simulate_online_shopper(name):
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    loop.create_task(simulate_online_shopper('Stefan'))
-    loop.create_task(simulate_online_shopper('Willie'))
-    loop.create_task(simulate_online_shopper('Aengus'))
-    loop.create_task(simulate_online_shopper('Raul'))
+    for item in range(100):
+      for customer in customers:
+        loop.create_task(simulate_online_shopper(customer))
     loop.run_forever()
