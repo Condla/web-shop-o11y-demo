@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1645135326886,
+  "iteration": 1645530242592,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -170,7 +170,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
@@ -275,7 +276,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
@@ -380,7 +382,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
@@ -469,7 +472,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
@@ -479,7 +483,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=\"$service\"}[$__interval])/rate(traces_spanmetrics_latency_count{service_name=\"$service\"}[$__interval]))",
+          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=\"$service\"}[$__interval]))/sum by (operation)(rate(traces_spanmetrics_latency_count{service_name=\"$service\"}[$__interval]))",
           "interval": "",
           "legendFormat": "{{service_name}} {{ operation }}",
           "refId": "A"
@@ -588,7 +592,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
@@ -641,8 +646,8 @@
       "type": "logs"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 34,
+  "refresh": "30s",
+  "schemaVersion": 35,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -677,13 +682,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Holistic Webshop Monitoring",
   "uid": "U7qtLZB7k",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
