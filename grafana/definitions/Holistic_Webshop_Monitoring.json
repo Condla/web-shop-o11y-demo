@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1645554320464,
+  "iteration": 1645911206630,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -57,7 +57,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -122,10 +122,23 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(rate(process_cpu_seconds_total{service=\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+          "expr": "sum(rate(process_cpu_seconds_total{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+          "hide": false,
           "interval": "",
           "legendFormat": "{{service}}",
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(rate(process_cpu_usage{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{service}}",
+          "refId": "B"
         }
       ],
       "title": "CPU Usage of $service",
@@ -288,10 +301,22 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{service=\"$service\"}[1m]))",
+          "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[1m]))",
           "interval": "",
           "legendFormat": "Return Status {{status}}",
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum by (status) (rate(http_server_requests_seconds_count{service=~\"$service\"}[1m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Return Status {{status}}",
+          "refId": "B"
         }
       ],
       "title": "Request Rate and Error Count of $service",
@@ -399,6 +424,18 @@
           "interval": "",
           "legendFormat": "Average [10m]",
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(rate(http_server_requests_seconds_sum{service=~\"$service\"}[10m])) * 1 / sum(rate(http_server_requests_seconds_count{service=~\"$service\"}[10m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Average [10m]",
+          "refId": "B"
         }
       ],
       "title": "Average Latency of $service",
@@ -486,7 +523,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=\"$service\"}[$__interval]))/sum by (operation)(rate(traces_spanmetrics_latency_count{service_name=\"$service\"}[$__interval]))",
+          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=~\"$service\"}[$__interval]))/sum by (operation)(rate(traces_spanmetrics_latency_count{service_name=~\"$service\"}[$__interval]))",
           "interval": "",
           "legendFormat": "{{service_name}} {{ operation }}",
           "refId": "A"
@@ -730,7 +767,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "topk(10,sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=\"$service\"}[$__interval]))/sum by (operation)(rate(traces_spanmetrics_latency_count{service_name=\"$service\"}[$__interval])))",
+          "expr": "topk(10,sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=~\"$service\"}[$__interval]))/sum by (operation)(rate(traces_spanmetrics_latency_count{service_name=~\"$service\"}[$__interval])))",
           "instant": false,
           "interval": "",
           "legendFormat": "{{ operation }}",
@@ -810,22 +847,22 @@
       {
         "current": {
           "selected": true,
-          "text": "web-shop",
-          "value": "web-shop"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(flask_http_request_duration_seconds_sum, service)",
+        "definition": "label_values(service)",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "service",
         "multi": false,
         "name": "service",
         "options": [],
         "query": {
-          "query": "label_values(flask_http_request_duration_seconds_sum, service)",
+          "query": "label_values(service)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -837,13 +874,13 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Holistic Webshop Monitoring",
   "uid": "U7qtLZB7k",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
