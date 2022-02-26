@@ -34,6 +34,7 @@ FlaskInstrumentor().instrument_app(app)
 PrometheusMetrics(app)
 
 shopping_cart_url = "shopping-cart:5555"
+products_url = "products:8080"
 
 @app.route('/cart', methods=["GET", "POST"])
 def view_cart():
@@ -62,20 +63,28 @@ def view_cart():
 def view_shop():
     person = request.args.get("name")
     product_name = request.args.get("product")
-    request_string = "http://{}/cart/{}".format(shopping_cart_url, person)
     headers = {'Content-type': 'application/json'}
+    request_string = "http://{}/products/grey_cats".format(products_url)
+    
+    response = requests.get(request_string)
+    if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+        app.logger.exception("Got a real bad response from products service. Something is wrong.")
+    else:
+        app.logger.info("Retrieved available items from products service. Displaying items.")
+        products = response.json()
+        app.logger.info("Successfully obtained items from shopping cart")
 
     ### get list of products and prices (from products service); for now a list.
-#    products = {'iPhone': {"price:, 'Nintendo Switch', 'Mountain Bike', 'Running Shoes', 'Grafana Enterprise', 'Grafana Cloud Logs Subscription']
-    products = [
-{"name": "Luna", "price": 39.99, "height": 251, "width": 200, "tag": "On Sale"},
-{"name": "Charlie", "price": 42.99, "height": 249, "width": 200, "tag":""},
-{"name": "Loki", "price": "52.99", "height": "250", "width": 201, "tag": "Only 251 left"},
-{"name": "The cutest cat in the world. Period", "price": 62.99, "height": 250, "width": 199, "tag": "new"}
-]
+#    products = [
+#{"name": "Luna", "price": 39.99, "height": 251, "width": 200, "tag": "On Sale"},
+#{"name": "Charlie", "price": 42.99, "height": 249, "width": 200, "tag":""},
+#{"name": "Loki", "price": "52.99", "height": "250", "width": 201, "tag": "Only 251 left"},
+#{"name": "The cutest cat in the world. Period", "price": 62.99, "height": 250, "width": 199, "tag": "new"}
+#]
 
     ### add to shopping cart
     if request.method == "POST":
+        request_string = "http://{}/cart/{}".format(shopping_cart_url, person)
         payload = {"product": product_name}
         response = requests.post(request_string, json=payload,headers=headers)
         if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
