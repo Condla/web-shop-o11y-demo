@@ -71,8 +71,22 @@ services:
     build: "products/."
     ports:
       - "8080:8080"
+    environment:
+      OTEL_METRICS_EXPORTER: "none"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=products"
+      JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
     networks:
       - web-shop
+    volumes:
+      - ./opentelemetry-javaagent.jar:/opentelemetry-javaagent.jar
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
   
   web-shop:
     build: "web-shop/."

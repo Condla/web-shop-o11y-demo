@@ -36,6 +36,15 @@ scrape_configs:
           group: 'shop'
           service: 'shopping-cart'
 
+  - job_name: 'products'
+    scrape_interval: 5s
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['products:8080']
+        labels:
+          group: 'shop'
+          service: 'products'
+
   - job_name: 'span-metrics'
     scrape_interval: 5s
     static_configs:
