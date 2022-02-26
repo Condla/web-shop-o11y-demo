@@ -9,6 +9,7 @@ This demo spins up a simplified containerized "web shop" service.
 Currently, it consists of:
 * a user interface that allows you to add items to a shopping cart, as well as delete all items in the shopping cart.
 * a shopping cart backend service that interacts with a MariaDB instance. It persists the shopping cart items of the different users.
+* a products backend service (ongoing work). It serves the available products of the web shop.
 * a mariadb instance.
 * a service that simulates light user traffic by adding things to the shopping cart and navigating the UI.
 
@@ -22,11 +23,14 @@ Additionally, you have the required agents and instrumentation included as well 
 ## Architecture
 
 Quick Overview:
-* The shop simulator service as well as navigating the shop UI makes calls to the shopping cart API
-* The shopping cart API interacts with MariaDB
+* The shop simulator service simulates user traffic on top of the web shop UI.
+* The web shop UI is a Python Flask service that renders 2 HTML pages: the shop landing page as well as the shopping cart view. The shop landing page loads products by requesting them from the products API. The shopping cart view interacts with the shopping cart service to get the current shopping cart items from the user.
+* The shopping cart service is written in Flask and offers an API to interact with MariaDB.
+* The products service is written in Java Spring Boot and offers an API to load the currently available shop items.
 * Telemetry is instrumented by using some of the available python otel libraries. It's collected using the OTEL collector and directly sent to Tempo. This can be changed so that telemetry is sent to the grafana agent, which then sends it to Tempo.
-* Prometheus is configured to scrape the web shop service as well as the shopping cart API for metrics.
-* Logs are collected using the Loki docker plugin. The plugin is configured to send all logs of all docker containers to the Loki instance.
+* The Java autoinstrumentation is performed using the javaagent.
+* Prometheus is configured to scrape the web shop service as well as the shopping cart API and the products API for metrics.
+* Logs are collected using the Loki docker plugin. The plugin needs to be installed before starting the demo. The docker compose points to the local Loki container to persist the logs.
 
 ## How To get started
 
@@ -35,9 +39,9 @@ Quick Overview:
   * Restart docker, e.g. on Linux: ```sudo systemctl restart docker```
   * Check if plugin is enabled: ```docker plugin ls```
 
-* Step 2: Run docker compose. Run it a second time if for some reason the services are faster up than the database
+* Step 2: Run the up script which will start docker compose in the background.
 ```
-docker-compose up -d
+/bin/bash up.sh
 ```
 
 * Step 3: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
@@ -56,3 +60,10 @@ docker-compose up -d
   * Drill down to the bottom to find the SQL insert statement as well as the database message that gives away the reason of the error.
 
 * Step 5: Think about how much time this could have saved you in a real life scenario to find the issue.
+
+## What this demo should demonstrate
+
+* How to use Grafana, Prometheus, Loki, Tempo and OpenTelemetry to reduce debugging time.
+* How to use OpenTelemetry with Python Flask applications.
+* How to use OpenTelemetry with Java Spring Boot applications.
+* It demonstrates the interoperability of OpenTelemetry between microservices written in different languages.
