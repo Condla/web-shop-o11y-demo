@@ -67,11 +67,10 @@ def view_shop():
 
     ### get list of products and prices (from products service); for now a list.
 #    products = {'iPhone': {"price:, 'Nintendo Switch', 'Mountain Bike', 'Running Shoes', 'Grafana Enterprise', 'Grafana Cloud Logs Subscription']
-    products = ["Trixy", "Snowball", "Minki", "The cutest cat in the world. Period"]
     products = [
 {"name": "Luna", "price": 39.99, "height": 251, "width": 200, "tag": "On Sale"},
 {"name": "Charlie", "price": 42.99, "height": 249, "width": 200, "tag":""},
-{"name": "Loki", "price": 52.99, "height": 250, "width": 201, "tag": "Only 251 left"},
+{"name": "Loki", "price": "52.99", "height": "250", "width": 201, "tag": "Only 251 left"},
 {"name": "The cutest cat in the world. Period", "price": 62.99, "height": 250, "width": 199, "tag": "new"}
 ]
 
