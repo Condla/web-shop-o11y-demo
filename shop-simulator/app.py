@@ -5,7 +5,7 @@ import random
 
 products = ["Nintendo Switch", "Harley Davidson", "Telescope", "Golf Clubs", "Tennis Racket"]
 actions = ["show", "show", "show", "show", "show", "add", "show", "add", "show", "add"]
-customers = ["Willie", "Aengus", "Devin", "Cyril", "Abdelkrim", "Raul", "Ward"]
+customers = ["Willie", "Aengus", "Devin", "Cyril", "Abdelkrim", "Raul", "Ward", "Nabeel"]
 
 async def simulate_online_shopper(name):
   while True:
