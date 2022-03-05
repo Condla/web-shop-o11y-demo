@@ -136,7 +136,7 @@ services:
       - "80"
       - "6832"
       - "55679"
-      - "4317"
+      - "4317:4317"
     volumes:
       - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
     networks:
