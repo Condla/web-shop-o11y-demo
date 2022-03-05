@@ -4,15 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/products")
 public class ProductController {
 
 	Map<String,String> map;
-
-	@GetMapping("/products/grey_cats")
+        @Deprecated
+	@GetMapping("/grey_cats")
 	public List getProducts() {
 		List<Map> products = new ArrayList();
 		map = new HashMap();
@@ -45,5 +47,6 @@ public class ProductController {
 		products.add(map);
 		return products;
 	}
+         
 
 }
