@@ -47,6 +47,7 @@ def initiate_db():
   cur.execute("CREATE DATABASE IF NOT EXISTS webshop")
   cur.execute("USE webshop")
   cur.execute("CREATE TABLE IF NOT EXISTS shopping_cart (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, customer VARCHAR(30) NOT NULL, product VARCHAR(30) NOT NULL);")
+  cur.execute("CREATE TABLE IF NOT EXISTS products (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(30) NOT NULL, price VARCHAR(10) NOT NULL, tag VARCHAR(100), pic_ref VARCHAR(8000));")
   conn.close()
 
 

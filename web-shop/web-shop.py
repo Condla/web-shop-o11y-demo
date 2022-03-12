@@ -74,14 +74,6 @@ def view_shop():
         products = response.json()
         app.logger.info("Successfully obtained items from shopping cart")
 
-    ### get list of products and prices (from products service); for now a list.
-#    products = [
-#{"name": "Luna", "price": 39.99, "height": 251, "width": 200, "tag": "On Sale"},
-#{"name": "Charlie", "price": 42.99, "height": 249, "width": 200, "tag":""},
-#{"name": "Loki", "price": "52.99", "height": "250", "width": 201, "tag": "Only 251 left"},
-#{"name": "The cutest cat in the world. Period", "price": 62.99, "height": 250, "width": 199, "tag": "new"}
-#]
-
     ### add to shopping cart
     if request.method == "POST":
         request_string = "http://{}/cart/{}".format(shopping_cart_url, person)

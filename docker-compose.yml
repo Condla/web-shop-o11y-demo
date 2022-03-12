@@ -79,6 +79,8 @@ services:
       JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
     networks:
       - web-shop
+    depends_on:
+      - "shopping-cart"
     volumes:
       - ./opentelemetry-javaagent.jar:/opentelemetry-javaagent.jar
     logging:
@@ -117,7 +119,7 @@ services:
   mariadb:
     image: mariadb:latest
     ports:
-      - "3306"
+      - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: myrootpassword
     networks:
