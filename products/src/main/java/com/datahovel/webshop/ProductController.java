@@ -1,5 +1,6 @@
 package com.datahovel.webshop;
 
+import java.rmi.ServerException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -15,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,6 +30,7 @@ public class ProductController {
 	@Autowired
 	private ProductRepository productRepository;
 	Iterable<Product> products;
+	Product product;
 
     private final Producer producer;
 
@@ -36,12 +40,24 @@ public class ProductController {
 	}
 
 
-	@GetMapping("/grey_cats")
-	public Iterable<Product> getTopProducts() {
+	@GetMapping("/")
+	public Iterable<Product> getAllProducts() {
 
 		products = productRepository.findAll();
 		return products;
 		}
+
+	@PostMapping("/")
+	public Product addProduct(@RequestBody Product product) throws ServerException {
+		product = productRepository.save(product);
+		if (product == null) {
+			logger.error("Couldn't add product to database.");
+			throw new ServerException("null");
+		}
+		else {
+			return product;
+		}
+	}
 
     @PostMapping("/publish")
 	public void sendToKafka(@RequestParam("message") String message) {
