@@ -18,6 +18,13 @@ services:
     networks:
       - web-shop
 
+  prometheus:
+    build: ./prometheus
+    ports:
+      - "9090" 
+    networks:
+      - web-shop
+
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
@@ -35,13 +42,6 @@ services:
     networks:
       - web-shop
 
-  prometheus:
-    build: ./prometheus
-    ports:
-      - "9090" 
-    networks:
-      - web-shop
-
   loki:
     image: grafana/loki:latest
     ports:
@@ -52,7 +52,10 @@ services:
   shopping-cart:
     build: "shopping-cart/."
     ports:
-      - "5555"
+      - "5555:5555"
+    environment:
+      SQLALCHEMY_DATABASE_URI: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
     depends_on:
       - "mariadb"
       - "loki"
@@ -67,61 +70,13 @@ services:
           - action: labelmap
             regex: compose_(service)
  
-  products:
-    build: "products/."
-    ports:
-      - "8080:8080"
-    environment:
-      OTEL_METRICS_EXPORTER: "none"
-      OTEL_EXPORTER: "otlp_span"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
-      OTEL_RESOURCE_ATTRIBUTES: "service.name=products"
-      JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
-    networks:
-      - web-shop
-    depends_on:
-      - "shopping-cart"
-    volumes:
-      - ./opentelemetry-javaagent.jar:/opentelemetry-javaagent.jar
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
-        loki-relabel-config: |
-          - action: labelmap
-            regex: compose_(service)
- 
-  web-shop:
-    build: "web-shop/."
-    ports:
-      - "80:6666"
-    depends_on:
-      - "shopping-cart"
-    networks:
-      - web-shop
-    restart: on-failure
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
-        loki-relabel-config: |
-          - action: labelmap
-            regex: compose_(service)
-  
-  shop-simulator:
-    build: "shop-simulator/."
-    depends_on:
-      - "web-shop"
-    networks:
-      - web-shop
-    restart: on-failure
-
   mariadb:
     image: mariadb:latest
     ports:
       - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: myrootpassword
+      MARIADB_DATABASE: webshop
     networks:
       - web-shop
     logging:
@@ -157,7 +112,48 @@ services:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
     networks:
       - web-shop
-  
+
+  products:
+    build: "products/."
+    ports:
+      - "8080:8080"
+    environment:
+      OTEL_METRICS_EXPORTER: "none"
+      OTEL_EXPORTER: "otlp_span"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=products"
+      JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
+    networks:
+      - web-shop
+    depends_on:
+      - "shopping-cart"
+    volumes:
+      - ./opentelemetry-javaagent.jar:/opentelemetry-javaagent.jar
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+
+  web-shop:
+    build: "web-shop/."
+    ports:
+      - "80:6666"
+    depends_on:
+      - "shopping-cart"
+    networks:
+      - web-shop
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     hostname: zookeeper
