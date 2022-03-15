@@ -8,24 +8,33 @@
 
 {% block content %}
   <div class="w3-container w3-text-grey">
-	<p>
+	  <p></p>
+	<table>
+	<tr>
+	<th><b>Product</b></th>
+	<th><b>Quantity</b></th>
+	<th><b>Unit Price</b></th>
+	<th><b>Total Price</b></th></tr>
+	{% for item in items %}
+	
+<tr>
+			<td> {{ item.product.name }} </td>
+			<td> {{ item.quantity}}</td>
+			<td> {{ '%0.2f' | format(item.product.price) | float }}</td>
+			<td> {{ '%0.2f' | format(item.quantity * item.product.price) | float }}</td>
+
+		</tr>			
+	
+	{% endfor %}
+</table>
+<p align="right">
 	<form method="post" action="/cart?name={{person}}">
 	  <button type="submit" name="name" value="{{person}}">
 	    Empty Shopping Cart
 	  </button>
 	</form>
-        </p>
-	This is your current shopping cart:
-	<ul>
-	
-	{% for item in items %}
-	
-		<li>{{ item }}</li>
-	
-	{% endfor %}
-	
-	</ul>
-        <p>
+</p>
+<p align="right">
 	<form method="post" action="/cart?name={{person}}">
 	  <button type="submit" name="name" value="{{person}}">
 	    Check Out and Pay

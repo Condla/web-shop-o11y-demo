@@ -33,14 +33,13 @@ FlaskInstrumentor().instrument_app(app)
 ## Get Prometheus stats of Flask app
 PrometheusMetrics(app)
 
-shopping_cart_url = "shopping-cart:5555"
-products_url = "products:8080"
+shopping_cart_url = "http://shopping-cart:5555"
+products_url = "http://products:8080"
 
 @app.route('/cart', methods=["GET", "POST"])
 def view_cart():
     person = request.args.get("name")
-    product_name = request.args.get("product")
-    request_string = "http://{}/cart/{}".format(shopping_cart_url, person)
+    request_string = "{}/cart/{}".format(shopping_cart_url, person)
     headers = {'Content-type': 'application/json'}
 
     if request.method == "POST":
@@ -64,7 +63,7 @@ def view_shop():
     person = request.args.get("name")
     product_name = request.args.get("product")
     headers = {'Content-type': 'application/json'}
-    request_string = "http://{}/products/grey_cats".format(products_url)
+    request_string = "{}/products/".format(products_url)
     
     response = requests.get(request_string)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
@@ -76,7 +75,7 @@ def view_shop():
 
     ### add to shopping cart
     if request.method == "POST":
-        request_string = "http://{}/cart/{}".format(shopping_cart_url, person)
+        request_string = "{}/cart/{}".format(shopping_cart_url, person)
         payload = {"product": product_name}
         response = requests.post(request_string, json=payload,headers=headers)
         if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):

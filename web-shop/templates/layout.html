@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>The First Kitten Webshop</title>
+  <title>The Webshop</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href=".">
@@ -20,21 +20,21 @@
 <nav class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top" style="z-index:3;width:250px" id="mySidebar">
   <div class="w3-container w3-display-container w3-padding-16">
     <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-    <h3 class="w3-wide"><b>The Kitty Webshop</b></h3>
+    <h3 class="w3-wide"><b>The Webshop</b></h3>
   </div>
   <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
-    <a href="#" class="w3-bar-item w3-button">Hairy Cats</a>
-    <a href="#" class="w3-bar-item w3-button">More Cats</a>
+    <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Some Products</a>
+    <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">More Products</a>
     <a onclick="myAccFunc()" href="javascript:void(0)" class="w3-button w3-block w3-white w3-left-align" id="myBtn">
-      House Cats <i class="fa fa-caret-down"></i>
+      Special Products <i class="fa fa-caret-down"></i>
     </a>
     <div id="demoAcc" class="w3-bar-block w3-hide w3-padding-large w3-medium">
-      <a href="#" class="w3-bar-item w3-button w3-light-grey"><i class="fa fa-caret-right w3-margin-right"></i>Grey Cats</a>
-      <a href="#" class="w3-bar-item w3-button">Red Cats</a>
-      <a href="#" class="w3-bar-item w3-button">Black Cats</a>
-      <a href="#" class="w3-bar-item w3-button">White Cats</a>
+      <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button w3-light-grey"><i class="fa fa-caret-right w3-margin-right"></i>Cool Stuff</a>
+      <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">More Cool Stuff</a>
+      <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Slightly Less Cool Stuff</a>
+      <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Generic Stuff</a>
     </div>
-    <a href="#" class="w3-bar-item w3-button">Big Cats</a>
+    <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Big Products</a>
   </div>
 </nav>
 
@@ -65,7 +65,8 @@
 
   <!-- Image header -->
   <div class="w3-display-container w3-container">
-    <img src="https://placekitten.com/900/450" alt="Jeans" style="width:100%">
+    <!--<img src="https://placekitten.com/900/450" alt="Jeans" style="width:100%">-->
+    <img src="/static/Grafana_LinkedIn_banner4.png" alt="Grafana" style="width:100%">
     <div class="w3-display-topleft w3-text-white" style="padding:24px 48px">
       {% block title %}
       {% endblock %}
