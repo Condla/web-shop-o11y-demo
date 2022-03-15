@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.datahovel.webshop.kafka.Producer;
 import com.datahovel.webshop.model.Product;
 import com.datahovel.webshop.repository.ProductRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +35,8 @@ public class ProductController {
 	Product product;
 
     private final Producer producer;
+	String message;
+	ObjectMapper objectMapper = new ObjectMapper();
 
 	@Autowired
 	ProductController(Producer producer) {
@@ -60,7 +64,8 @@ public class ProductController {
 	}
 
     @PostMapping("/publish")
-	public void sendToKafka(@RequestParam("message") String message) {
+	public void sendToKafka(@RequestParam("message") Product product) throws JsonProcessingException {
+		message = objectMapper.writeValueAsString(product);
 		this.producer.sendMessage(message);
 	}
 }
