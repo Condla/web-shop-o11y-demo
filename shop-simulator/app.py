@@ -3,7 +3,7 @@ import asyncio
 import time
 import random
 
-products = ["Nintendo Switch", "Harley Davidson", "Telescope", "Golf Clubs", "Tennis Racket"]
+products = ["Loki", "Carla", "Telescope", "Charlie", "Tennis Racket"]
 actions = ["show", "show", "show", "show", "show", "add", "show", "add", "show", "add"]
 customers = ["Willie", "Aengus", "Devin", "Cyril", "Abdelkrim", "Raul", "Ward", "Nabeel"]
 
@@ -21,7 +21,6 @@ async def simulate_online_shopper(name):
         requests.get("http://web-shop:6666/nothing".format(name))
 
     await asyncio.sleep(random.randint(1,5))
-
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
