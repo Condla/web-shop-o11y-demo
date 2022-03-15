@@ -38,3 +38,16 @@ datasources:
         - datasourceUid: tempo
           name: traceId
       httpMethod: POST
+
+
+  - name: MySQL
+    type: mysql
+    url: mariadb:3306
+    database: webshop
+    user: root
+    jsonData:
+      maxOpenConns: 0
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+    secureJsonData:
+      password: myrootpassword

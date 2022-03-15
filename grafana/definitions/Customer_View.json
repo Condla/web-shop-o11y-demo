@@ -21,14 +21,13 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 2,
     "links": [],
     "liveNow": false,
     "panels": [
       {
         "datasource": {
           "type": "mysql",
-          "uid": "ggx_ROEnz"
+          "uid": "P211906C1C32DB77E"
         },
         "fieldConfig": {
           "defaults": {
@@ -114,13 +113,13 @@
           {
             "datasource": {
               "type": "mysql",
-              "uid": "ggx_ROEnz"
+              "uid": "P211906C1C32DB77E"
             },
             "format": "table",
             "group": [],
             "metricColumn": "none",
             "rawQuery": true,
-            "rawSql": "SELECT customer.name, sum(cart_item.quantity * product.price) \n  FROM cart_item \n  LEFT JOIN product \n    ON cart_item.product_id = product.id\n  LEFT JOIN cart ON cart_item.cart_id = cart.id\n  LEFT JOIN customer ON cart.customer_id = customer.id \nGROUP BY customer.name ORDER BY sum(cart_item.quantity * product.price) DESC LIMIT 5;\n",
+            "rawSql": "SELECT customer.name, sum(cart_item.quantity * product.price)\n  FROM cart_item \n  LEFT JOIN product\n  ON cart_item.product_id = product.id\n  LEFT JOIN cart ON cart_item.cart_id = cart.id\n  LEFT JOIN customer ON cart.customer_id = customer.id\n  GROUP BY customer.name ORDER BY sum(cart_item.quantity * product.price) DESC LIMIT 5;",
             "refId": "A",
             "select": [
               [
@@ -163,6 +162,6 @@
     "timezone": "",
     "title": "Customer View",
     "uid": "MYCRtOPnz",
-    "version": 3,
+    "version": 1,
     "weekStart": ""
   }
