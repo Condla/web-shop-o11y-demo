@@ -46,7 +46,12 @@ def get_cart_items(customer_name):
     cart_items = []
     try:
       cart_items = CartItem.query.filter_by(cart=cart).all()
-      response_object = cart_items
+ #     cart_items = CartItem.query.filter_by(cart=cart)\
+ #       .join(Cart, Cart.id == CartItem.cart_id)\
+ #       .join(Customer, Customer.id == Cart.customer_id)\
+ #       .join(Product, Product.id == CartItem.product_id)\
+ #       .add_columns(Product.name).all()
+      response_object = [cart_item for cart_item in cart_items]
       status_code = 200
     except:
       logging.exception("Could not retrieve cart items due to database exception.")
