@@ -13,12 +13,12 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String price;
+    private Float price;
     private String tag;
     private String pic_ref;
     public Product() {
     }
-    public Product(String name, String price, String tag, String pic_ref) {
+    public Product(String name, Float price, String tag, String pic_ref) {
         this.name = name;
         this.price = price;
         this.tag = tag;
@@ -36,10 +36,10 @@ public class Product {
     public void setName(String name) {
         this.name = name;
     }
-    public String getPrice() {
+    public Float getPrice() {
         return price;
     }
-    public void setPrice(String price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
     public String getTag() {
