@@ -224,3 +224,11 @@ services:
       PORT: 9021
     networks:
       - web-shop
+  
+  shop-simulator:
+    build: "shop-simulator/."
+    depends_on:
+      - "web-shop"
+    networks:
+      - web-shop
+    restart: on-failure
