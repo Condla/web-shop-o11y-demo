@@ -232,3 +232,11 @@ services:
     networks:
       - web-shop
     restart: on-failure
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:master
+    volumes:
+        - ./blackbox_exporter:/config
+    command: --config.file=/config/blackbox.yml
+    ports:
+      - 9115:9115

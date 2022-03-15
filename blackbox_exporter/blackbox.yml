@@ -1,0 +1,13 @@
+modules: 
+  http_2xx: 
+    http: 
+      fail_if_not_ssl: false
+      ip_protocol_fallback: false
+      method: GET
+      no_follow_redirects: false
+      preferred_ip_protocol: ip4
+      valid_http_versions: 
+        - HTTP/1.1
+        - HTTP/2.0
+    prober: http
+    timeout: 15s

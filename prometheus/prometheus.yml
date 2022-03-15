@@ -51,3 +51,24 @@ scrape_configs:
       - targets: ['agent:1234']
         labels:
           group: 'shop'
+
+
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - http://web-shop:6666/cart
+        - http://web-shop:6666/shop
+        - http://products:8080
+        - http://shopping-cart:5555/cart/blackbox
+        - https://example.com
+        - https://www.telegraph.co.uk
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
