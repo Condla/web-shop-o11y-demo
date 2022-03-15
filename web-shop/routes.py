@@ -1,37 +1,6 @@
-from flask import Flask, request, Response, render_template
-import random
+from flask import request, render_template
 import requests
-import logging
-import json
-from prometheus_flask_exporter import PrometheusMetrics
-from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.instrumentation.logging import LoggingInstrumentor
-
-# configure tracing and trace exporting
-### if resource doesn't set service.name it shows as "unknown_service"
-resource = Resource(attributes={"service.name": "web-shop", "service": "web-shop", "environment": "production"})
-trace.set_tracer_provider(TracerProvider(resource=resource))
-otlp_exporter = OTLPSpanExporter(endpoint="http://agent:4317", insecure=True)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
-tracer = trace.get_tracer(__name__)
-
-app = Flask(__name__)
-
-# instrumentation
-RequestsInstrumentor().instrument()
-log_format = "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] trace_id=%(otelTraceID)s span_id=%(otelSpanID)s resource.service.name=%(otelServiceName)s - %(message)s"
-LoggingInstrumentor().instrument(set_logging_format=True, logging_format=log_format, log_level=logging.INFO, tracer_provider=tracer)
-FlaskInstrumentor().instrument_app(app)
-
-## Get Prometheus stats of Flask app
-PrometheusMetrics(app)
+from flask import current_app as app
 
 shopping_cart_url = "http://shopping-cart:5555"
 products_url = "http://products:8080"
