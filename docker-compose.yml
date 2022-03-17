@@ -140,7 +140,7 @@ services:
   web-shop:
     build: "web-shop/."
     ports:
-      - "80:6666"
+      - "6666:6666"
     depends_on:
       - "shopping-cart"
     networks:
