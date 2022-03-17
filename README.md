@@ -48,14 +48,18 @@ Quick Overview:
 /bin/bash up.sh
 ```
 
-* Step 2.5: Wait for some time. You probably don't need to restart any services, but it takes some time until all of them are up and running correctly even after docker-compose was run successfully.
+* Step 2.5: Wait for some time. You probably need to restart some services, e.g., when the shopping-cart service waits for mariadb, but mariadb is not fully initalized. Ideally restart the shopping-cart service, then the products service, as it relys on the tables created by the shopping-cart.
+```
+docker-compose restart shopping-cart
+docker-compose restart products
+```
 
 * Step 3: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
   * If you didn't add any products the shop should be empty.
   * You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
 
 ```
-    curl -X POST -H "Content-Type: application/json" -d '{"name": "Meows", "price": "29.99", "tag": "cool", "pic_ref": "https://placekitten.com/251/250"}' localhost:8080/products/
+curl -X POST -H "Content-Type: application/json" -d '{"name": "Meows", "price": "29.99", "tag": "cool", "pic_ref": "https://placekitten.com/251/250"}' localhost:8080/products/
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Loki", "price": "39.99", "tag": "", "pic_ref": "https://placekitten.com/251/251"}' localhost:8080/products/
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Charlie", "price": "19.50", "tag": "special", "pic_ref": "https://placekitten.com/250/251"}' localhost:8080/products/
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": "25.00", "tag": "special", "pic_ref": "https://placekitten.com/249/250"}' localhost:8080/products/
