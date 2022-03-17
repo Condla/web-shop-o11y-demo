@@ -64,7 +64,11 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": 
 * Step 4: Go to `<ip>:3000` enter `admin/admin` for username and password and change the password.
   * Go to the dashboards menu and open the "Holistic Webshop Monitoring" dashboard that gives you an overview including a drill down of the webshop services.
 
-* Step 5: (in progress): go to the "Customer View" dashboard. This is meant for business users so they can track the number of transactions and revenue generated rather than the technical details that keep the webshop up and running.
+* Step 4.5: (in progress): go to the "Customer View" dashboard. This is meant for business users so they can track the number of transactions and revenue generated rather than the technical details that keep the webshop up and running.
+
+* Step 5: Follow a single request trace from an initial POST request in your web-shop throughout data base interactions of the producs and shopping-cart APIs until a Kafka message is produced (screenshot below).
+
+![](images/web-shop-traces.png)
 
 ## What this demo should demonstrate
 
