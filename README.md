@@ -74,7 +74,6 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": 
 * Step 5: Follow a single request trace from an initial POST request in your web-shop throughout data base interactions of the producs and shopping-cart APIs until a Kafka message is produced (screenshot below).
 
 ![](images/web-shop-traces.png)
-![](images/web-shop-architecture.png)
 
 ## What this demo should demonstrate
 
