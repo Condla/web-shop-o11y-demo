@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +20,7 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 @SpringBootApplication
 public class Application {
 
+	Logger logger = LoggerFactory.getLogger(Application.class);
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
@@ -58,9 +61,9 @@ public class Application {
 			.build();
 	}
 
-	@KafkaListener(id = "products-api", topics = "test")
-	public void listen(String in) {
-		System.out.println(in);
+	@KafkaListener(groupId = "products-api", topics = "shopping_cart_stream")
+	public void consume(String message) {
+		logger.info(message);
 	}
 
 }

@@ -48,9 +48,17 @@ def view_shop():
         payload = {"product": product_name}
         response = requests.post(request_string, json=payload,headers=headers)
         if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
-          app.logger.error("Got a real bad response from shopping cart. Something is wrong.")
+          app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
         else:
           app.logger.info("Successfully added item to shopping cart.")
+          request_string = "{}/products/interest".format(products_url)
+          payload = {"product": product_name}
+          response = requests.post(request_string, json=payload, headers=headers)
+          if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+            app.logger.exception("Could not post item to product stream.")
+          else:
+            app.logger.info("Added product to product stream.")
+        
     app.logger.info("Showing web interface.") 
     return render_template('index.html', products=products, person=person)
 

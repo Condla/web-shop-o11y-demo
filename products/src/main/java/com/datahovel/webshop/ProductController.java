@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +26,8 @@ public class ProductController {
 	@Autowired
 	private ProductRepository productRepository;
 	Iterable<Product> products;
-	Product product;
 
     private final Producer producer;
-	String message;
 	ObjectMapper objectMapper = new ObjectMapper();
 
 	@Autowired
@@ -58,9 +55,9 @@ public class ProductController {
 		}
 	}
 
-    @PostMapping("/chec")
-	public void sendToKafka(@RequestParam("message") Product product) throws JsonProcessingException {
-		message = objectMapper.writeValueAsString(product);
+    @PostMapping("/interest")
+	public void sendToKafka(@RequestBody String message) throws JsonProcessingException {
+		logger.info(message);
 		this.producer.sendMessage(message);
 	}
 }
