@@ -53,12 +53,14 @@ Quick Overview:
 * Step 3: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
   * If you didn't add any products the shop should be empty.
   * You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
-  ```
+
+```
     curl -X POST -H "Content-Type: application/json" -d '{"name": "Meows", "price": "29.99", "tag": "cool", "pic_ref": "https://placekitten.com/251/250"}' localhost:8080/products/
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Loki", "price": "39.99", "tag": "", "pic_ref": "https://placekitten.com/251/251"}' localhost:8080/products/
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Charlie", "price": "19.50", "tag": "special", "pic_ref": "https://placekitten.com/250/251"}' localhost:8080/products/
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": "25.00", "tag": "special", "pic_ref": "https://placekitten.com/249/250"}' localhost:8080/products/
-  ```
+```
+
   * You should be able to see the 4 new products in the shop now.
 
 * Step 4: Go to `<ip>:3000` enter `admin/admin` for username and password and change the password.
@@ -69,6 +71,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": 
 * Step 5: Follow a single request trace from an initial POST request in your web-shop throughout data base interactions of the producs and shopping-cart APIs until a Kafka message is produced (screenshot below).
 
 ![](images/web-shop-traces.png)
+![](images/web-shop-architecture.png)
 
 ## What this demo should demonstrate
 
