@@ -24,7 +24,7 @@ Additionally, you have the required agents and instrumentation included as well 
 * node_exporter: an exporter to expose metrics of the the underlying infrastructure
 
 ## Architecture
-
+![](images/web-shop-architecture.png)
 Quick Overview:
 * The shop simulator service simulates user traffic on top of the web shop UI.
 * The web shop UI is a Python Flask service that renders 2 HTML pages: the shop landing page as well as the shopping cart view. The shop landing page loads products by requesting them from the products API. The shopping cart view interacts with the shopping cart service to get the current shopping cart items from the user.
