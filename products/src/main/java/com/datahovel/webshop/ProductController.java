@@ -55,7 +55,7 @@ public class ProductController {
 		}
 	}
 
-    @PostMapping("/interest")
+    @PostMapping("/checkout")
 	public void sendToKafka(@RequestBody String message) throws JsonProcessingException {
 		logger.info(message);
 		this.producer.sendMessage(message);

@@ -8,8 +8,18 @@ products_url = "http://products:8080"
 @app.route('/cart', methods=["GET", "POST"])
 def view_cart():
     person = request.args.get("name")
+    checkout = request.args.get("checkout")
     request_string = "{}/cart/{}".format(shopping_cart_url, person)
+    product_stream = "{}/product"
     headers = {'Content-type': 'application/json'}
+    
+    response = requests.get(request_string)
+    if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+        app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
+    else:
+        app.logger.info("Retrieved items from shopping cart. Displaying items.")
+        items = response.json()
+        app.logger.info("Successfully obtained items from shopping cart")
 
     if request.method == "POST":
         response = requests.delete(request_string, headers=headers)
@@ -17,7 +27,19 @@ def view_cart():
             app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
         else:
             app.logger.info("Successfully emptied shopping cart.")
-    
+            if checkout:
+                if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+                   app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
+                else:
+                    for item in items:
+                        request_string = "{}/products/checkout".format(products_url)
+                        payload = item
+                        response = requests.post(request_string, json=payload, headers=headers)
+                        if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+                          app.logger.exception("Could not check out item.")
+                        else:
+                          app.logger.info("Checked out item.")
+
     response = requests.get(request_string)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
         app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
@@ -51,13 +73,6 @@ def view_shop():
           app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
         else:
           app.logger.info("Successfully added item to shopping cart.")
-          request_string = "{}/products/interest".format(products_url)
-          payload = {"product": product_name}
-          response = requests.post(request_string, json=payload, headers=headers)
-          if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
-            app.logger.exception("Could not post item to product stream.")
-          else:
-            app.logger.info("Added product to product stream.")
         
     app.logger.info("Showing web interface.") 
     return render_template('index.html', products=products, person=person)
