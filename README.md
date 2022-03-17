@@ -1,24 +1,27 @@
 # Web Shop Observability Demo
 
-This is a simple Python demo to show metrics, logs and traces collection with the Grafana stack.
+This is a simple demo to show metrics, logs and traces collection and visualisation with the Grafana stack in a distributes microservice system.
 
 ## Overview
 
 This demo spins up a simplified containerized "web shop" service.
 
 Currently, it consists of:
-* a user interface that allows you to add items to a shopping cart, as well as delete all items in the shopping cart.
-* a shopping cart backend service that interacts with a MariaDB instance. It persists the shopping cart items of the different users.
-* a products backend service (ongoing work). It serves the available products of the web shop.
-* a mariadb instance.
-* a service that simulates light user traffic by adding things to the shopping cart and navigating the UI.
+* web-shop: a user interface that allows you to add items to a shopping cart, as well as delete all items in the shopping cart.
+* shopping-cart: a backend service that interacts with a MariaDB instance. It persists the shopping cart items of the different users.
+* products: a backend service that serves the available products of the web shop.
+* mariadb: A mariadb instance to persist products and shopping cart items.
+* shopping cart simulator: a service that simulates light user traffic by adding things to the shopping cart via the web-shop API.
+* broker: a kafka broker to persist checked out shopping carts before they are reset.
 
 Additionally, you have the required agents and instrumentation included as well as the backends to collect metrics, logs and traces:
-* Grafana to build dashboards and explore the collected telemetry 
-* the Grafana agent to scrape metrics, collect logs and traces
-* Prometheus to act as the metrics backend
-* Grafana Loki to act as the logs backend
-* Grafana Tempo to persist trace spans
+* grafana: a Grafana instance to view and build dashboards, and explore the collected telemetry, as well as to create alerts on them. 
+* agent: a Grafana Agent to scrape metrics, collect logs and traces
+* prometheus: a Prometheus instance to act as the metrics backend
+* loki: Grafana Loki to act as the logs backend
+* tempo: Grafana Tempo to persist trace spans
+* blackbox_exporter: an exporter to expose uptime metric of the services
+* node_exporter: an exporter to expose metrics of the the underlying infrastructure
 
 ## Architecture
 
@@ -26,11 +29,12 @@ Quick Overview:
 * The shop simulator service simulates user traffic on top of the web shop UI.
 * The web shop UI is a Python Flask service that renders 2 HTML pages: the shop landing page as well as the shopping cart view. The shop landing page loads products by requesting them from the products API. The shopping cart view interacts with the shopping cart service to get the current shopping cart items from the user.
 * The shopping cart service is written in Flask and offers an API to interact with MariaDB.
-* The products service is written in Java Spring Boot and offers an API to load the currently available shop items.
-* Telemetry is instrumented by using some of the available python otel libraries. It's collected using the OTEL collector and directly sent to Tempo. This can be changed so that telemetry is sent to the grafana agent, which then sends it to Tempo.
+* The products service is written in Java Spring Boot and offers an API to load the currently available shop items from MariaDB.
+* The products servie additionally has a Kafka producer and consumer implemented. The producer will send the content of the shopping cart as JSON to a Kafka topic. The consumer simply logs the message
+* Telemetry is instrumented by using some of the available python otel libraries. It's collected using the OTEL collector of the Grafana Agent and then sent to Tempo.
 * The Java autoinstrumentation is performed using the javaagent.
 * Prometheus is configured to scrape the web shop service as well as the shopping cart API and the products API for metrics.
-* Logs are collected using the Loki docker plugin. The plugin needs to be installed before starting the demo. The docker compose points to the local Loki container to persist the logs.
+* Logs are collected using the Loki docker plugin. The plugin needs to be installed before starting the demo. Docker compose points to the local Loki container to persist the logs.
 
 ## How To get started
 
@@ -44,26 +48,27 @@ Quick Overview:
 /bin/bash up.sh
 ```
 
+* Step 2.5: Wait for some time. You probably don't need to restart any services, but it takes some time until all of them are up and running correctly even after docker-compose was run successfully.
+
 * Step 3: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
-  * From here you can add multiple products.
-  * The last product will not be added due to a database issue. VARCHAR(30) for product names and the last product is longer than 30 characters.
-  * You can also go to the shopping cart to see what's in there so far.
-  * You can empty the shopping cart.
-  * You should note that everything is there except the last item.
+  * If you didn't add any products the shop should be empty.
+  * You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
+  ```
+    curl -X POST -H "Content-Type: application/json" -d '{"name": "Meows", "price": "29.99", "tag": "cool", "pic_ref": "https://placekitten.com/251/250"}' localhost:8080/products/
+curl -X POST -H "Content-Type: application/json" -d '{"name": "Loki", "price": "39.99", "tag": "", "pic_ref": "https://placekitten.com/251/251"}' localhost:8080/products/
+curl -X POST -H "Content-Type: application/json" -d '{"name": "Charlie", "price": "19.50", "tag": "special", "pic_ref": "https://placekitten.com/250/251"}' localhost:8080/products/
+curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": "25.00", "tag": "special", "pic_ref": "https://placekitten.com/249/250"}' localhost:8080/products/
+  ```
+  * You should be able to see the 4 new products in the shop now.
 
 * Step 4: Go to `<ip>:3000` enter `admin/admin` for username and password and change the password.
-  * Got to Explore the logs.
-  * Filter for Errors and observe some log messages that will give you a hint of what's happened, but not tell the full story.
-  * Check out the link to Tempo in one of the error log lines to dig into the details of what happened.
-  * A side-by-side view should now give you the complete trace of spans of what happened.
-  * You will also see in which services and methods issues were encountered.
-  * Drill down to the bottom to find the SQL insert statement as well as the database message that gives away the reason of the error.
+  * Go to the dashboards menu and open the "Holistic Webshop Monitoring" dashboard that gives you an overview including a drill down of the webshop services.
 
-* Step 5: Think about how much time this could have saved you in a real life scenario to find the issue.
+* Step 5: (in progress): go to the "Customer View" dashboard. This is meant for business users so they can track the number of transactions and revenue generated rather than the technical details that keep the webshop up and running.
 
 ## What this demo should demonstrate
 
 * How to use Grafana, Prometheus, Loki, Tempo and OpenTelemetry to reduce debugging time.
 * How to use OpenTelemetry with Python Flask applications.
 * How to use OpenTelemetry with Java Spring Boot applications.
-* It demonstrates the interoperability of OpenTelemetry between microservices written in different languages.
+* It demonstrates the interoperability of OpenTelemetry between microservices written in different languages and a realistic scenario.
