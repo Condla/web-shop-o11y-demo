@@ -67,6 +67,8 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": 
 
   * You should be able to see the 4 new products in the shop now.
 
+![](images/web-shop-ui.png)
+
 * Step 4: Go to `<ip>:3000` enter `admin/admin` for username and password and change the password.
   * Go to the dashboards menu and open the "Holistic Webshop Monitoring" dashboard that gives you an overview including a drill down of the webshop services.
 
