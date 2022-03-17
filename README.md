@@ -1,6 +1,7 @@
 # Web Shop Observability Demo
 
 This is a simple demo to show metrics, logs and traces collection and visualisation with the Grafana stack in a distributes microservice system.
+Feel free to check out the code to all of the services and notice how it is instrumented to scrape and collect the telemetry.
 
 ## Overview
 
