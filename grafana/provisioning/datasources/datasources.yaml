@@ -27,6 +27,9 @@ datasources:
         spanEndTimeShift: "500ms"
         spanStartTimeShift: "-500ms"
         tags: ['service']
+        mappedTags: [{key: 'service.name', value: 'service'}]
+        mapTagNamesEnabled: true
+
 
   - name: Prometheus
     type: prometheus
