@@ -57,11 +57,11 @@ services:
       SQLALCHEMY_DATABASE_URI: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
       OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
     depends_on:
-      - "mariadb"
-      - "loki"
+      mariadb:
+        condition: service_healthy
+      
     networks:
       - web-shop
-    restart: on-failure
     logging:
       driver: loki
       options:
@@ -86,6 +86,13 @@ services:
         loki-relabel-config: |
           - action: labelmap
             regex: compose_(service)
+    healthcheck:
+#      test: ["mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pmyrootpassword"]
+      test: mysqladmin ping -h 127.0.0.1 -uroot -pmyrootpassword
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   agent:
     image: grafana/agent:latest
@@ -94,6 +101,7 @@ services:
       - "6832"
       - "55679"
       - "4317:4317"
+      - "1234:1234"
     volumes:
       - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
     networks:

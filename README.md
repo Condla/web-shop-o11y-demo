@@ -49,12 +49,6 @@ Quick Overview:
 /bin/bash up.sh
 ```
 
-* Step 2.5: Wait for some time. You probably need to restart some services, e.g., when the shopping-cart service waits for mariadb, but mariadb is not fully initalized. Ideally restart the shopping-cart service, then the products service, as it relys on the tables created by the shopping-cart.
-```
-docker-compose restart shopping-cart
-docker-compose restart products
-```
-
 * Step 3: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
   * If you didn't add any products the shop should be empty.
   * You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
