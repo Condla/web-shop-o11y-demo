@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1647980367795,
+  "iteration": 1647980367815,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -91,7 +91,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (http_target) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum by (http_target) (rate(traces_spanmetrics_latency_count{}[1m]))",
+          "expr": "sum by (http_target) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service_name=~\"$service\"}[1m]))/sum by (http_target) (rate(traces_spanmetrics_latency_count{service_name=~\"$service\"}[1m]))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1027,7 +1027,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "short"
         },
         "overrides": [
           {
@@ -1264,8 +1265,8 @@
       {
         "current": {
           "selected": true,
-          "text": "shopping-cart",
-          "value": "shopping-cart"
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
