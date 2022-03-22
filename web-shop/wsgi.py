@@ -25,7 +25,7 @@ app = create_app()
 # need to try with NGINX as an app server
 @postfork
 def init_tracing():
-    resource = Resource(attributes={"service.name": "web-shop", "service": "web-shop", "environment":"production"})
+    resource = Resource(attributes={"service.name": "web-shop", "team.name": "frontend", "environment":"production"})
     trace.set_tracer_provider(TracerProvider(resource=resource))
     otlp_exporter = OTLPSpanExporter(endpoint="http://agent:4317", insecure=True)
     span_processor = BatchSpanProcessor(otlp_exporter)

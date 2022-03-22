@@ -129,7 +129,7 @@ services:
       OTEL_METRICS_EXPORTER: "none"
       OTEL_EXPORTER: "otlp_span"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
-      OTEL_RESOURCE_ATTRIBUTES: "service.name=products,service=products"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=products,team.name=backend,environment=production"
       JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
     networks:
       - web-shop
