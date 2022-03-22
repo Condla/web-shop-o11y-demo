@@ -31,8 +31,8 @@ traces:
       backend: logs_instance
       logs_instance_name: loki
       roots: true
-      processes: false
-      spans: false
+      processes: true
+      spans: true
       span_attributes:
         - http.method
         - http.target
