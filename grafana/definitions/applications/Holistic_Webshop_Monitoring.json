@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1647980367815,
+  "iteration": 1647980367821,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -36,7 +36,7 @@
             {
               "targetBlank": true,
               "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_target%3D\\\"${__field.labels.http_target}\\\"\"}]}"
+              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_target%3D\\\"${__field.labels.http_target}\\\" | status = \\\"STATUS_CODE_ERROR\\\"\"}]}"
             }
           ],
           "mappings": [],
@@ -529,7 +529,7 @@
             {
               "targetBlank": true,
               "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
+              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
             }
           ],
           "mappings": [],
@@ -670,7 +670,7 @@
             {
               "targetBlank": true,
               "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
+              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
             }
           ],
           "mappings": [],
@@ -767,6 +767,13 @@
               "mode": "off"
             }
           },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Show relevant logs",
+              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | svc = \\\"$service\\\" | span%3D\\\"${__field.labels.operation}\\\" | dur >= ${__value.numeric}ms\"}]} "
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -838,7 +845,7 @@
             {
               "targetBlank": true,
               "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\"\"}]}"
+              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\" | dur >= ${__data.fields.Last}ms\"}]}"
             }
           ],
           "mappings": [],
@@ -913,6 +920,22 @@
                 "value": 126
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              },
+              {
+                "id": "unit",
+                "value": "none"
+              }
+            ]
           }
         ]
       },
@@ -932,7 +955,12 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Current Value"
+          }
+        ]
       },
       "pluginVersion": "8.4.4",
       "targets": [
@@ -954,9 +982,11 @@
         {
           "id": "reduce",
           "options": {
+            "labelsToFields": false,
             "reducers": [
               "max",
-              "lastNotNull"
+              "lastNotNull",
+              "last"
             ]
           }
         },
@@ -1292,7 +1322,7 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
