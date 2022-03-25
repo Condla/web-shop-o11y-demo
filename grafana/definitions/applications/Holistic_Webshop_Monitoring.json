@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1647980367821,
+  "iteration": 1648214011442,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -36,7 +36,7 @@
             {
               "targetBlank": true,
               "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_target%3D\\\"${__field.labels.http_target}\\\" | status = \\\"STATUS_CODE_ERROR\\\"\"}]}"
+              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_target%3D\\\"${__field.labels.http_target}\\\" | status = \\\"STATUS_CODE_ERROR\\\" | line_format \\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]} "
             }
           ],
           "mappings": [],
@@ -1020,7 +1020,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "bars",
+            "drawStyle": "line",
             "fillOpacity": 11,
             "gradientMode": "none",
             "hideFrom": {
@@ -1044,6 +1044,13 @@
               "mode": "off"
             }
           },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Go to Logs",
+              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{compose_service%3D~\\\"${__field.labels.compose_service}\\\"}\"}]}"
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1329,6 +1336,6 @@
   "timezone": "",
   "title": "Holistic Webshop Monitoring",
   "uid": "U7qtLZB7k",
-  "version": 3,
+  "version": 15,
   "weekStart": ""
 }
