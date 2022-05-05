@@ -14,7 +14,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_FEATURE_TOGGLES_ENABLE=tempoSearch
+      - GF_FEATURE_TOGGLES_ENABLE="tempoSearch tempoServiceGraph"
     networks:
       - web-shop
 
@@ -50,7 +50,7 @@ services:
       - web-shop
 
   shopping-cart:
-    build: "shopping-cart/."
+    image: "condla/shopping-cart:1.0"
     ports:
       - "5555:5555"
     environment:
@@ -122,7 +122,7 @@ services:
       - web-shop
 
   products:
-    build: "products/."
+    image: "condla/products:1.0"
     ports:
       - "8080:8080"
     environment:
@@ -135,6 +135,7 @@ services:
       - web-shop
     depends_on:
       - "shopping-cart"
+      - "broker"
     volumes:
       - ./opentelemetry-javaagent.jar:/opentelemetry-javaagent.jar
     logging:
@@ -146,9 +147,9 @@ services:
             regex: compose_(service)
 
   web-shop:
-    build: "web-shop/."
+    image: "condla/web-shop:1.0"
     ports:
-      - "6666:6666"
+      - "3389:6666"
     depends_on:
       - "shopping-cart"
     networks:
@@ -234,7 +235,7 @@ services:
       - web-shop
   
   shop-simulator:
-    build: "shop-simulator/."
+    image: "condla/shop-simulator:1.0"
     depends_on:
       - "web-shop"
     networks:
