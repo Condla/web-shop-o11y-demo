@@ -14,7 +14,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_FEATURE_TOGGLES_ENABLE="tempoSearch tempoServiceGraph"
+      GF_FEATURE_TOGGLES_ENABLE: "tempoSearch tempoServiceGraph"
+      GF_INSTALL_PLUGINS: grafana-k6-app
     networks:
       - web-shop
 
@@ -234,13 +235,13 @@ services:
     networks:
       - web-shop
   
-  shop-simulator:
-    image: "condla/shop-simulator:1.0"
-    depends_on:
-      - "web-shop"
-    networks:
-      - web-shop
-    restart: on-failure
+#  shop-simulator:
+#    image: "condla/shop-simulator:1.0"
+#    depends_on:
+#      - "web-shop"
+#    networks:
+#      - web-shop
+#    restart: on-failure
 
   blackbox_exporter:
     image: prom/blackbox-exporter:master
