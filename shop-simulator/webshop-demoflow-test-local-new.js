@@ -7,26 +7,26 @@ import { vu } from 'k6/execution';
 
 const users = new SharedArray('shop users', function() {
   return	[
-		{"username": "${users[vu.idInTest -1].username}"},
-		{"username": "Carlos"},
-		{"username": "Raul"},
-		{"username": "Abdelkrim"},
-		{"username": "Willie"},
-		{"username": "Aengus"},
-		{"username": "Ward"},
-		{"username": "Emil"},
-		{"username": "Dave"},
-		{"username": "Cyril"},
-		{"username": "Devin"},
-		{"username": "Mattias"},
-		{"username": "Alain"},
-		{"username": "Nabeel"},
-		{"username": "Kris"},
-		{"username": "Konrad"},
-		{"username": "Federica"},
-		{"username": "Simon"},
-		{"username": "Andreas"},
-		{"username": "Hans"}
+		{"username": "Stefan", "cat": "Loki"},
+		{"username": "Carlos", "cat": "Thor"},
+		{"username": "Raul", "cat": "Loki"},
+		{"username": "Abdelkrim", "cat": "Loki"},
+		{"username": "Willie", "cat": "Loki"},
+		{"username": "Aengus", "cat": "Loki"},
+		{"username": "Ward", "cat": "Loki"},
+		{"username": "Emil", "cat": "Loki"},
+		{"username": "Dave", "cat": "Loki"},
+		{"username": "Cyril", "cat": "Loki"},
+		{"username": "Devin", "cat": "Loki"},
+		{"username": "Mattias", "cat": "Loki"},
+		{"username": "Alain", "cat": "Loki"},
+		{"username": "Nabeel", "cat": "Loki"},
+		{"username": "Kris", "cat": "Loki"},
+		{"username": "Konrad", "cat": "Loki"},
+		{"username": "Federica", "cat": "Loki"},
+		{"username": "Simon", "cat": "Loki"},
+		{"username": "Andreas", "cat": "Loki"},
+		{"username": "Hans", "cat": "Loki"}
 ]
 });
 
@@ -39,7 +39,7 @@ export const options = {
         'amazon:fr:paris': { loadZone: 'amazon:fr:paris', percent: 80 },
       },
       apm: [],
-      name: "Webshop Test ${users[vu.idInTest -1].username}"
+      name: "Webshop Test"
     },
   },
   thresholds: {},
@@ -88,26 +88,26 @@ export function scenario_1() {
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
     sleep(1.6)
   })
 
-  group(`page_3 - http://34.78.246.133:3389/shop?product=Carlos&name=Marcus`, function () {
+  group(`page_3 - http://34.78.246.133:3389/shop?product=Carlos&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.78.246.133:3389/shop?product=Carlos&name=Marcus`,
+      `http://34.78.246.133:3389/shop?product=${users[vu.idInTest -1].cat}&name=${users[vu.idInTest -1].username}`,
       {
-        product: `Carlos`,
+        product: 'Carlos',
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
@@ -118,13 +118,13 @@ export function scenario_1() {
     response = http.post(
       `http://34.78.246.133:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`,
       {
-        product: `Carla`,
+        product: 'Carla',
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
@@ -134,7 +134,7 @@ export function scenario_1() {
   group(`page_5 - http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}`, function () {
     response = http.get(`http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}`, {
       headers: {
-        `upgrade-insecure-requests`: `1`,
+        'upgrade-insecure-requests': '1',
       },
     })
     sleep(3.4)
@@ -146,9 +146,9 @@ export function scenario_1() {
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
@@ -158,7 +158,7 @@ export function scenario_1() {
   group(`page_6 - http://34.78.246.133:3389/shop?name=${users[vu.idInTest -1].username}#cats`, function () {
     response = http.get(`http://34.78.246.133:3389/shop?name=${users[vu.idInTest -1].username}`, {
       headers: {
-        `upgrade-insecure-requests`: `1`,
+        'upgrade-insecure-requests': '1',
       },
     })
     sleep(1.9)
@@ -168,13 +168,13 @@ export function scenario_1() {
     response = http.post(
       `http://34.78.246.133:3389/shop?product=Loki&name=${users[vu.idInTest -1].username}`,
       {
-        product: `Loki`,
+        product: 'Loki',
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
@@ -185,13 +185,13 @@ export function scenario_1() {
     response = http.post(
       `http://34.78.246.133:3389/shop?product=Charlie&name=${users[vu.idInTest -1].username}`,
       {
-        product: `Charlie`,
+        product: 'Charlie',
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
@@ -202,13 +202,13 @@ export function scenario_1() {
     response = http.post(
       `http://34.78.246.133:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`,
       {
-        product: `Carla`,
+        product: 'Carla',
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
@@ -218,7 +218,7 @@ export function scenario_1() {
   group(`page_10 - http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}`, function () {
     response = http.get(`http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}`, {
       headers: {
-        `upgrade-insecure-requests`: `1`,
+        'upgrade-insecure-requests': '1',
       },
     })
     sleep(2.9)
@@ -232,9 +232,9 @@ export function scenario_1() {
       },
       {
         headers: {
-          `content-type`: `application/x-www-form-urlencoded`,
-          origin: `http://34.78.246.133:3389`,
-          `upgrade-insecure-requests`: `1`,
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
         },
       }
     )
