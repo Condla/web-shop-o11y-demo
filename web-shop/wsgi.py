@@ -2,6 +2,7 @@
 
 from web_shop import create_app
 import logging
+from os import environ
 from uwsgidecorators import postfork
 from prometheus_flask_exporter import PrometheusMetrics
 from opentelemetry import trace
@@ -27,7 +28,7 @@ app = create_app()
 def init_tracing():
     resource = Resource(attributes={"service.name": "web-shop", "team.name": "frontend", "environment":"production"})
     trace.set_tracer_provider(TracerProvider(resource=resource))
-    otlp_exporter = OTLPSpanExporter(endpoint="http://agent:4317", insecure=True)
+    otlp_exporter = OTLPSpanExporter(endpoint=environ.get("OTEL_EXPORTER_OTLP_ENDPOINT"), insecure=True)
     span_processor = BatchSpanProcessor(otlp_exporter)
     trace.get_tracer_provider().add_span_processor(span_processor)
 
