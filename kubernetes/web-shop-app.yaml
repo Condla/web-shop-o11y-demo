@@ -1,0 +1,351 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: web-shop-app
+  labels:
+    name: web-shop-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: zookeeper
+  name: zookeeper
+spec:
+  ports:
+    - name: "2181"
+      port: 2181
+      targetPort: 2181
+  selector:
+    service: zookeeper
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: zookeeper
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: zookeeper
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: zookeeper
+    spec:
+      containers:
+        - env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: "2181"
+            - name: ZOOKEEPER_TICK_TIME
+              value: "2000"
+          image: confluentinc/cp-zookeeper:7.0.1
+          name: zookeeper
+          ports:
+            - containerPort: 2181
+          resources: {}
+      hostname: zookeeper
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: broker
+  name: broker
+spec:
+  ports:
+    - name: "9092"
+      port: 9092
+      targetPort: 9092
+    - name: "9101"
+      port: 9101
+      targetPort: 9101
+  selector:
+    service: broker
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: broker
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: broker
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: broker
+    spec:
+      containers:
+        - env:
+            - name: CONFLUENT_METRICS_ENABLE
+              value: "true"
+            - name: CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS
+              value: broker:29092
+            - name: CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS
+              value: "1"
+            - name: CONFLUENT_SUPPORT_CUSTOMER_ID
+              value: anonymous
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+            - name: KAFKA_BROKER_ID
+              value: "1"
+            - name: KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_CREATE_TOPICS
+              value: audit:1:1,networkevents:1:1,webserverlogs:1:1,dbcommits:1:1,machine1:1:1,machine2:1:1
+            - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+              value: "0"
+            - name: KAFKA_JMX_HOSTNAME
+              value: localhost
+            - name: KAFKA_JMX_PORT
+              value: "9101"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+            - name: KAFKA_METRIC_REPORTERS
+              value: io.confluent.metrics.reporter.ConfluentMetricsReporter
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: zookeeper:2181
+          image: confluentinc/cp-server:7.0.1
+          name: broker
+          ports:
+            - containerPort: 9092
+            - containerPort: 9101
+          resources: {}
+      hostname: broker
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: mariadb
+  name: mariadb
+spec:
+  ports:
+    - name: "3306"
+      port: 3306
+      targetPort: 3306
+  selector:
+    service: mariadb
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: mariadb
+  name: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: mariadb
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: mariadb
+    spec:
+      containers:
+        - env:
+            - name: MARIADB_DATABASE
+              value: webshop
+            - name: MARIADB_ROOT_PASSWORD
+              value: myrootpassword
+          image: mariadb:latest
+          name: mariadb
+          ports:
+            - containerPort: 3306
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: shopping-cart
+  name: shopping-cart
+spec:
+  ports:
+    - name: "5555"
+      port: 5555
+      targetPort: 5555
+  selector:
+    service: shopping-cart
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: shopping-cart
+  name: shopping-cart
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: shopping-cart
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: shopping-cart
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://grafana-agent-traces.default:4317
+            - name: SQLALCHEMY_DATABASE_URI
+              value: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
+          image: condla/shopping-cart:1.1
+          name: shopping-cart
+          
+          ports:
+            - containerPort: 5555
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/actuator/prometheus"
+  namespace: web-shop-app
+  labels:
+    service: products
+  name: products
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    service: products
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: products
+    environment: production
+  name: products
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: products
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: products
+        environment: production
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTS
+              value: -javaagent:/opentelemetry-javaagent.jar
+            - name: OTEL_EXPORTER
+              value: otlp_span
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://grafana-agent-traces.default:4317
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=products,team.name=backend,environment=production
+          image: condla/products:otel-1.0
+          name: products
+          ports:
+            - containerPort: 8080
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: web-shop
+  name: web-shop
+spec:
+  ports:
+    - name: "6666"
+      port: 3389
+      targetPort: 6666
+  selector:
+    service: web-shop
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    service: web-shop
+  name: web-shop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: web-shop
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: web-shop
+    spec:
+      containers:
+        - env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://grafana-agent-traces.default:4317
+          image: condla/web-shop:1.1
+          name: web-shop
+          ports:
+            - containerPort: 6666
+          resources: {}
+      restartPolicy: Always
+status: {}
