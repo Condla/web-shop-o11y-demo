@@ -1,0 +1,9 @@
+INFO: 2022/06/23 06:16:21 logger.go:49: Logger starting...
+INFO: 2022/06/23 06:16:40 logger.go:129: Message body: {}
+INFO: 2022/06/23 06:16:40 logger.go:136: Converting to json map.
+INFO: 2022/06/23 06:16:40 logger.go:138: Message map: map[]
+INFO: 2022/06/23 06:16:40 logger.go:139: Start marshalling
+INFO: 2022/06/23 06:16:40 logger.go:146: Marshalling done. Message map: map[]
+INFO: 2022/06/23 06:16:40 logger.go:157: Executing workload...
+INFO: 2022/06/23 06:16:50 logger.go:166: Done... 10005 ms.
+INFO: 2022/06/23 06:16:50 logger.go:150: Message json payload: {}
