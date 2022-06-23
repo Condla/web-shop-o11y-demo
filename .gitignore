@@ -4,3 +4,4 @@ target
 .mvn
 opentelemetry-javaagent.jar
 .vscode
+kubernetes/agent-config*
