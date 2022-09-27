@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -21,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1648214011442,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -83,7 +85,7 @@
         "text": {},
         "textMode": "value"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "9.1.5",
       "targets": [
         {
           "datasource": {
@@ -91,7 +93,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (http_target) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service_name=~\"$service\"}[1m]))/sum by (http_target) (rate(traces_spanmetrics_latency_count{service_name=~\"$service\"}[1m]))",
+          "expr": "sum by (http_target) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service_name=~\"$service\"}[1m]))/sum by (http_target) (rate(traces_spanmetrics_latency_count{http_target=~\".+\", service_name=~\"$service\"}[1m]))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -112,6 +114,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -184,7 +188,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -232,6 +237,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -259,6 +266,13 @@
               "mode": "off"
             }
           },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "",
+              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code%3D\\\"${__field.labels.status}\\\" | line_format \\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]}  "
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -349,6 +363,21 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Return Status 502"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -363,7 +392,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -393,6 +423,18 @@
           "interval": "",
           "legendFormat": "Return Status {{status}}",
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (code) (rate(gin_requests_total{}[1m]))",
+          "hide": false,
+          "legendFormat": "Return Status {{code}}",
+          "range": true,
+          "refId": "C"
         }
       ],
       "title": "Request Rate and Error Count of $service",
@@ -410,6 +452,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -482,7 +526,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -573,7 +618,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "9.1.5",
       "targets": [
         {
           "datasource": {
@@ -641,7 +686,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "9.1.5",
       "targets": [
         {
           "datasource": {
@@ -713,7 +758,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "9.1.5",
       "targets": [
         {
           "datasource": {
@@ -740,6 +785,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -803,7 +850,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -839,7 +887,8 @@
           },
           "custom": {
             "align": "auto",
-            "displayMode": "auto"
+            "displayMode": "auto",
+            "inspect": false
           },
           "links": [
             {
@@ -962,7 +1011,7 @@
           }
         ]
       },
-      "pluginVersion": "8.4.4",
+      "pluginVersion": "9.1.5",
       "targets": [
         {
           "datasource": {
@@ -1017,6 +1066,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1111,7 +1162,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -1213,8 +1265,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1268,7 +1319,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -1293,15 +1345,15 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "30s",
-  "schemaVersion": 35,
+  "refresh": "5s",
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -1336,6 +1388,6 @@
   "timezone": "",
   "title": "Holistic Webshop Monitoring",
   "uid": "U7qtLZB7k",
-  "version": 15,
+  "version": 1,
   "weekStart": ""
 }
