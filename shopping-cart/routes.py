@@ -2,8 +2,11 @@ from flask import request, jsonify, Response
 from flask import current_app as app
 import logging, json
 from models import db, Customer, Cart, CartItem, Product
+import time
+import random
 
 def get_or_setup_customer(customer_name):
+  customer = 0
   try:
     logging.debug("Check for customer in database.")
     customer = Customer.query.filter_by(name=customer_name).first()
@@ -118,3 +121,13 @@ def delete_cart_items(customer_name):
       logging.exception("Could not delete shopping cart due to a database error.")
     logging.info("Successfully deleted shopping cart from user.")
     return jsonify(response_object), status_code
+
+
+@app.route('/cart/<customer_name>/discount', methods=["POST"])
+def apply_discount(customer_name):
+  response_object = {"response": "Discount applied!"}
+  status_code = 200
+  logging.info("Successfully applied discount.")
+  if random.randint(1,12) == 1:
+    time.sleep(10)
+  return jsonify(response_object), status_code 
