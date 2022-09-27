@@ -14,7 +14,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      GF_FEATURE_TOGGLES_ENABLE: "tempoSearch tempoServiceGraph"
+      GF_FEATURE_TOGGLES_ENABLE: "tempoSearch tempoServiceGraph publicDashboards"
       GF_INSTALL_PLUGINS: grafana-k6-app
     networks:
       - web-shop
@@ -50,8 +50,19 @@ services:
     networks:
       - web-shop
 
+  mimir:
+    image: grafana/mimir:latest
+    ports:
+     - "9009:9009"
+    volumes:
+     - "./mimir/demo.yaml:/etc/mimir/demo.yaml"
+    command:
+      - '--config.file=/etc/mimir/demo.yaml'
+    networks:
+     - web-shop
+
   shopping-cart:
-    image: "condla/shopping-cart:1.1"
+    build: "./shopping-cart"
     ports:
       - "5555:5555"
     environment:
@@ -146,7 +157,7 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.1"
+    build: "./web-shop"
     ports:
       - "3389:6666"
     environment:
@@ -223,3 +234,24 @@ services:
     command: --config.file=/config/blackbox.yml
     ports:
       - 9115:9115
+
+  squid:
+    image: ubuntu/squid
+    ports:
+      - "3128:3128"
+    restart: unless-stopped
+    volumes:
+      - ./squid/squid.conf:/etc/squid/squid.conf
+    environment:
+      TZ: UTC
+    networks:
+      - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+
+
