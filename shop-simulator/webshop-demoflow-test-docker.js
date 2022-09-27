@@ -223,8 +223,25 @@ export function scenario_1() {
     })
     sleep(2.9)
   })
-
-  group(`page_11 - http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}&checkout=true`, function () {
+  
+  group(`page_11a - http://34.78.246.133:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`, function () {
+    response = http.post(
+      `http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}&discount=true`,
+      {
+        name: `${users[vu.idInTest -1].username}`,
+      },
+      {
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://34.78.246.133:3389',
+          'upgrade-insecure-requests': '1',
+        },
+      }
+    )
+    sleep(1.4)
+  })
+  
+  group(`page_11b - http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}&checkout=true`, function () {
     response = http.post(
       `http://34.78.246.133:3389/cart?name=${users[vu.idInTest -1].username}&checkout=true`,
       {

@@ -47,8 +47,8 @@ export const options = {
     Scenario_1: {
       executor: 'per-vu-iterations',
       gracefulStop: '30s',
-      iterations: 3000,
-      maxDuration: '1h00m',
+      iterations: 20,
+      maxDuration: '1h30m',
       vus: users.length,
 //      stages: [
 //        { target: 20, duration: '1m' },
@@ -71,8 +71,8 @@ export const options = {
 export function scenario_1() {
   let response
 
-  group(`page_1 - http://34.79.93.8:3389/shop?name=${users[vu.idInTest -1].username}`, function () {
-    response = http.get(`http://34.79.93.8:3389/shop?name=${users[vu.idInTest -1].username}`, {
+  group(`page_1 - http://localhost:3389/shop?name=${users[vu.idInTest -1].username}`, function () {
+    response = http.get(`http://localhost:3389/shop?name=${users[vu.idInTest -1].username}`, {
       headers: {
         'upgrade-insecure-requests': '1',
       },
@@ -80,16 +80,16 @@ export function scenario_1() {
     sleep(2.6)
   })
 
-  group(`page_2 - http://34.79.93.8:3389/shop?product=Meows&name=${users[vu.idInTest -1].username}`, function () {
+  group(`page_2 - http://localhost:3389/shop?product=Meows&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.79.93.8:3389/shop?product=Meows&name=${users[vu.idInTest -1].username}`,
+      `http://localhost:3389/shop?product=Meows&name=${users[vu.idInTest -1].username}`,
       {
         product: `Meows`,
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }
@@ -97,16 +97,16 @@ export function scenario_1() {
     sleep(1.6)
   })
 
-  group(`page_3 - http://34.79.93.8:3389/shop?product=Carlos&name=${users[vu.idInTest -1].username}`, function () {
+  group(`page_3 - http://localhost:3389/shop?product=Carlos&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.79.93.8:3389/shop?product=${users[vu.idInTest -1].cat}&name=${users[vu.idInTest -1].username}`,
+      `http://localhost:3389/shop?product=${users[vu.idInTest -1].cat}&name=${users[vu.idInTest -1].username}`,
       {
         product: 'Carlos',
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }
@@ -114,16 +114,16 @@ export function scenario_1() {
     sleep(1.5)
   })
 
-  group(`page_4 - http://34.79.93.8:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`, function () {
+  group(`page_4 - http://localhost:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.79.93.8:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`,
+      `http://localhost:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`,
       {
         product: 'Carla',
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }
@@ -131,8 +131,8 @@ export function scenario_1() {
     sleep(2.3)
   })
 
-  group(`page_5 - http://34.79.93.8:3389/cart?name=${users[vu.idInTest -1].username}`, function () {
-    response = http.get(`http://34.79.93.8:3389/cart?name=${users[vu.idInTest -1].username}`, {
+  group(`page_5 - http://localhost:3389/cart?name=${users[vu.idInTest -1].username}`, function () {
+    response = http.get(`http://localhost:3389/cart?name=${users[vu.idInTest -1].username}`, {
       headers: {
         'upgrade-insecure-requests': '1',
       },
@@ -140,14 +140,14 @@ export function scenario_1() {
     sleep(3.4)
 
     response = http.post(
-      `http://34.79.93.8:3389/cart?name=${users[vu.idInTest -1].username}`,
+      `http://localhost:3389/cart?name=${users[vu.idInTest -1].username}`,
       {
         name: `${users[vu.idInTest -1].username}`,
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }
@@ -155,8 +155,8 @@ export function scenario_1() {
     sleep(3.1)
   })
 
-  group(`page_6 - http://34.79.93.8:3389/shop?name=${users[vu.idInTest -1].username}#cats`, function () {
-    response = http.get(`http://34.79.93.8:3389/shop?name=${users[vu.idInTest -1].username}`, {
+  group(`page_6 - http://localhost:3389/shop?name=${users[vu.idInTest -1].username}#cats`, function () {
+    response = http.get(`http://localhost:3389/shop?name=${users[vu.idInTest -1].username}`, {
       headers: {
         'upgrade-insecure-requests': '1',
       },
@@ -164,16 +164,16 @@ export function scenario_1() {
     sleep(1.9)
   })
 
-  group(`page_7 - http://34.79.93.8:3389/shop?product=Loki&name=${users[vu.idInTest -1].username}`, function () {
+  group(`page_7 - http://localhost:3389/shop?product=Loki&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.79.93.8:3389/shop?product=Loki&name=${users[vu.idInTest -1].username}`,
+      `http://localhost:3389/shop?product=Loki&name=${users[vu.idInTest -1].username}`,
       {
         product: 'Loki',
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }
@@ -181,16 +181,16 @@ export function scenario_1() {
     sleep(0.8)
   })
 
-  group(`page_8 - http://34.79.93.8:3389/shop?product=Charlie&name=${users[vu.idInTest -1].username}`, function () {
+  group(`page_8 - http://localhost:3389/shop?product=Charlie&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.79.93.8:3389/shop?product=Charlie&name=${users[vu.idInTest -1].username}`,
+      `http://localhost:3389/shop?product=Charlie&name=${users[vu.idInTest -1].username}`,
       {
         product: 'Charlie',
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }
@@ -198,16 +198,16 @@ export function scenario_1() {
     sleep(0.8)
   })
 
-  group(`page_9 - http://34.79.93.8:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`, function () {
+  group(`page_9 - http://localhost:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.79.93.8:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`,
+      `http://localhost:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`,
       {
         product: 'Carla',
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }
@@ -215,25 +215,42 @@ export function scenario_1() {
     sleep(1.4)
   })
 
-  group(`page_10 - http://34.79.93.8:3389/cart?name=${users[vu.idInTest -1].username}`, function () {
-    response = http.get(`http://34.79.93.8:3389/cart?name=${users[vu.idInTest -1].username}`, {
+  group(`page_10 - http://localhost:3389/cart?name=${users[vu.idInTest -1].username}`, function () {
+    response = http.get(`http://localhost:3389/cart?name=${users[vu.idInTest -1].username}`, {
       headers: {
         'upgrade-insecure-requests': '1',
       },
     })
     sleep(2.9)
   })
-
-  group(`page_11 - http://34.79.93.8:3389/cart?name=${users[vu.idInTest -1].username}&checkout=true`, function () {
+  
+  group(`page_11a - http://localhost:3389/shop?product=Carla&name=${users[vu.idInTest -1].username}`, function () {
     response = http.post(
-      `http://34.79.93.8:3389/cart?name=${users[vu.idInTest -1].username}&checkout=true`,
+      `http://localhost:3389/cart?name=${users[vu.idInTest -1].username}&discount=true`,
       {
         name: `${users[vu.idInTest -1].username}`,
       },
       {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          origin: 'http://34.79.93.8:3389',
+          origin: 'http://localhost:3389',
+          'upgrade-insecure-requests': '1',
+        },
+      }
+    )
+    sleep(1.4)
+  })
+  
+  group(`page_11b - http://localhost:3389/cart?name=${users[vu.idInTest -1].username}&checkout=true`, function () {
+    response = http.post(
+      `http://localhost:3389/cart?name=${users[vu.idInTest -1].username}&checkout=true`,
+      {
+        name: `${users[vu.idInTest -1].username}`,
+      },
+      {
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          origin: 'http://localhost:3389',
           'upgrade-insecure-requests': '1',
         },
       }

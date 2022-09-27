@@ -1,1 +1,1 @@
-docker run --rm -i grafana/k6 run - <webshop-demoflow-test-local-new.js
+docker run --rm -i grafana/k6 run - <webshop-demoflow-test-docker.js
