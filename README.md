@@ -39,17 +39,22 @@ Quick Overview:
 
 ## How To get started
 
-* Step 1: Configure your docker installation to use the Loki docker plugin for logging and point it to your loki instance.
-  * Install loki docker driver: ```docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions```
-  * Restart docker, e.g. on Linux: ```sudo systemctl restart docker```
-  * Check if plugin is enabled: ```docker plugin ls```
+### Option 1: Kubernetes
 
-* Step 2: Run the up script which will start docker compose in the background.
+Prerequisites: Access to a Kubernetes cluster with kubectl
+* Deploy the sample application:
+```
+kubectl apply -f kubernetes/web-shop-app.yaml
+```
+* 
+
+### Option 2: Docker Compose
+* Step 1: Run the up script which will start docker compose in the background.
 ```
 /bin/bash up.sh
 ```
 
-* Step 3: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
+* Step 2: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
   * If you didn't add any products the shop should be empty.
   * You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
 
@@ -64,15 +69,15 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": 
 
 ![](images/web-shop-ui.png)
 
-* Step 4: Go to `<ip>:3000` enter `admin/admin` for username and password and change the password.
+* Step 3: Go to `<ip>:3000` enter `admin/admin` for username and password and change the password.
   * Go to the dashboards menu and open the "Holistic Webshop Monitoring" dashboard that gives you an overview including a drill down of the webshop services.
 
 ![](images/web-shop-dashboard.png)
 
 
-* Step 4.5: (in progress): go to the "Customer View" dashboard. This is meant for business users so they can track the number of transactions and revenue generated rather than the technical details that keep the webshop up and running.
+* Step 3.5: (in progress): go to the "Customer View" dashboard. This is meant for business users so they can track the number of transactions and revenue generated rather than the technical details that keep the webshop up and running.
 
-* Step 5: Follow a single request trace from an initial POST request in your web-shop throughout data base interactions of the producs and shopping-cart APIs until a Kafka message is produced (screenshot below).
+* Step 4: Follow a single request trace from an initial POST request in your web-shop throughout data base interactions of the producs and shopping-cart APIs until a Kafka message is produced (screenshot below).
 
 ![](images/web-shop-traces.png)
 
