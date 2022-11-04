@@ -1,0 +1,1492 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 49,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 30,
+        "panels": [],
+        "title": "4 Golden Signals",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "",
+                "url": "/explore?orgId=1&left={\"datasource\":\"WebShop-Logs\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_target%3D\\\"${__field.labels.http_target}\\\" | status = \\\"STATUS_CODE_ERROR\\\" | line_format \\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]} "
+              }
+            ],
+            "mappings": [],
+            "noValue": "0%",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 0.04
+                },
+                {
+                  "color": "red",
+                  "value": 0.08
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 24,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {},
+          "textMode": "value"
+        },
+        "pluginVersion": "9.2.3-997144b7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "sum by (span_name) (rate(traces_spanmetrics_latency_count{status_code = \"STATUS_CODE_ERROR\", service=~\"$service\"}[1m]))/sum by (span_name) (rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+            "interval": "",
+            "legendFormat": "{{http_target}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Error Percentage Per Endpoint",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-BlPu"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 41,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 4
+        },
+        "id": 4,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "7_Tpjs97k"
+            },
+            "editorMode": "code",
+            "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=\"web-shop\", namespace=\"web-shop-app\"} * on(namespace,pod)   group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"web-shop\", namespace=\"web-shop-app\", workload=~\"$service\"} ) by (workload, workload_type) ",
+            "hide": false,
+            "legendFormat": "{{workload}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "CPU Usage of $service",
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 50,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "^2.*$"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "^4.*$"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "orange",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "^3.*$"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "yellow",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "^5.*$"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "red",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 4
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "sum by (status, service) (rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[5m]))",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{status}} - {{service}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "sum by (status, service) (rate(http_server_requests_seconds_count{service=~\"$service\"}[1m]))",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{status}} - {{service}}",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Request Rate and Error Count of $service",
+        "transformations": [],
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-BlPu"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 41,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 13
+        },
+        "id": 6,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "8.5.4",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "sum by (service) (rate(flask_http_request_duration_seconds_sum{service=~\"$service\"}[10m])) / sum by (service)(rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[10m]))",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{service}}",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "sum by (service) (rate(http_server_requests_seconds_sum{service=~\"$service\"}[10m])) / sum by (service) (rate(http_server_requests_seconds_count{service=~\"$service\"}[10m]))",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{service}}",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "Average Latency of $service",
+        "transformations": [],
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "",
+                "url": "/explore?orgId=1&left={\"datasource\":\"WebShop-Logs\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | svc%3D\\\"${__field.labels.service_name}\\\" | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" \"}]}"
+              }
+            ],
+            "mappings": [],
+            "max": 1,
+            "min": 0,
+            "noValue": "0%",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 0.1
+                },
+                {
+                  "color": "red",
+                  "value": 0.2
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 8,
+          "x": 12,
+          "y": 13
+        },
+        "id": 21,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.2.3-997144b7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "sum by (service) (rate(traces_spanmetrics_latency_count{status_code = \"STATUS_CODE_ERROR\", service=~\"$service\"}[1m]))/sum by (service) (rate(traces_spanmetrics_latency_count{status_code =~ \".+\", service=~\"$service\"}[1m]))",
+            "interval": "",
+            "legendFormat": "{{ service }}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Error Percentage Per Service",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [],
+            "max": 1,
+            "min": 0,
+            "noValue": "0%",
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "orange",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 4,
+          "x": 20,
+          "y": 13
+        },
+        "id": 19,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "pluginVersion": "9.2.3-997144b7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "exemplar": true,
+            "expr": "sum (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum (rate(traces_spanmetrics_latency_count{status_code =~ \".+\"}[1m]))",
+            "interval": "",
+            "legendFormat": "",
+            "refId": "A"
+          }
+        ],
+        "title": "Total Spans Error Percentage",
+        "transparent": true,
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "g3DTjyrnz"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "",
+                "url": "/explore?orgId=1&left={\"datasource\":\"WebShop-Logs\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | svc%3D\\\"${__field.labels.svc}\\\" | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" \"}]}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 0.1
+                },
+                {
+                  "color": "red",
+                  "value": 0.2
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 8,
+          "x": 12,
+          "y": 17
+        },
+        "id": 26,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {},
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.2.3-997144b7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "WebShop-Logs"
+            },
+            "expr": "sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code =~ \"...\" | http_status_code!~\"2..\" [1m])) / sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code=~\"...\" [1m]))",
+            "legendFormat": "{{ svc }}",
+            "refId": "A"
+          }
+        ],
+        "title": "Status Code non-2xx Percentage",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Show relevant logs",
+                "url": "/explore?orgId=1&left={\"datasource\":\"WebShop-Logs\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | svc = \\\"$service\\\" | span%3D\\\"${__field.labels.operation}\\\" | dur >= ${__value.numeric}ms\"}]} "
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 22
+        },
+        "id": 13,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+            "interval": "",
+            "legendFormat": "{{service}} {{ span_name }}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Latency of $service by Operation",
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "7_Tpjs97k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "",
+                "url": "/explore?orgId=1&left={\"datasource\":\"WebShop-Logs\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt |  span%3D\\\"${__data.fields.Field}﻿﻿\\\" | dur%20>%3D%20${__value.numeric}ms\"}]}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Max"
+              },
+              "properties": [
+                {
+                  "id": "custom.displayMode",
+                  "value": "gradient-gauge"
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "continuous-BlPu"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Last *"
+              },
+              "properties": [
+                {
+                  "id": "custom.displayMode",
+                  "value": "gradient-gauge"
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "continuous-BlPu"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 22
+        },
+        "id": 15,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "Current Value"
+            }
+          ]
+        },
+        "pluginVersion": "9.2.3-997144b7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "WebShop-Metrics"
+            },
+            "editorMode": "code",
+            "exemplar": true,
+            "expr": "topk(10,sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m])))",
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{ span_name }}",
+            "refId": "A"
+          }
+        ],
+        "title": "Operations of $service with Highest Latency",
+        "transformations": [
+          {
+            "id": "reduce",
+            "options": {
+              "labelsToFields": false,
+              "reducers": [
+                "max",
+                "lastNotNull",
+                "last"
+              ]
+            }
+          },
+          {
+            "id": "sortBy",
+            "options": {
+              "fields": {},
+              "sort": [
+                {
+                  "desc": true,
+                  "field": "Last *"
+                }
+              ]
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Last": true
+              },
+              "indexByName": {},
+              "renameByName": {
+                "Field": "Method",
+                "Last": "",
+                "Last *": "Current",
+                "Max": "Max"
+              }
+            }
+          }
+        ],
+        "transparent": true,
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "g3DTjyrnz"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 11,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "normal"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "links": [
+              {
+                "targetBlank": true,
+                "title": "Go to Logs",
+                "url": "/explore?orgId=1&left={\"datasource\":\"WebShop-Logs\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{service%3D~\\\"${__field.labels.service}\\\"}\"}]}"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "shopping-cart"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "web-shop"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "purple",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 24,
+          "x": 0,
+          "y": 31
+        },
+        "id": 11,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "WebShop-Logs"
+            },
+            "expr": "sum by (service) (count_over_time({service=~\"$service\"}[5m]))",
+            "legendFormat": "{{service}}",
+            "refId": "A"
+          }
+        ],
+        "title": "5m Average Number of Web Shop Logs by Service",
+        "transparent": true,
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "g3DTjyrnz"
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 40
+        },
+        "id": 10,
+        "options": {
+          "dedupStrategy": "none",
+          "enableLogDetails": true,
+          "prettifyLogMessage": false,
+          "showCommonLabels": false,
+          "showLabels": false,
+          "showTime": false,
+          "sortOrder": "Descending",
+          "wrapLogMessage": false
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "WebShop-Logs"
+            },
+            "expr": "{service=~\"$service\"}",
+            "refId": "A"
+          }
+        ],
+        "title": "Web Shop Logs",
+        "transparent": true,
+        "type": "logs"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 52
+        },
+        "id": 32,
+        "panels": [],
+        "title": "Team Dev Stats",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-github-datasource",
+          "uid": "pbeIkLgVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 19,
+          "x": 0,
+          "y": 53
+        },
+        "id": 28,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true
+        },
+        "pluginVersion": "9.0.5-d1f1041",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-github-datasource",
+              "uid": "pbeIkLgVk"
+            },
+            "options": {
+              "gitRef": "main"
+            },
+            "owner": "Condla",
+            "queryType": "Commits",
+            "refId": "A",
+            "repository": "web-shop-o11y-demo"
+          }
+        ],
+        "timeFrom": "30d",
+        "title": "Commits",
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "grafana-github-datasource",
+          "uid": "pbeIkLgVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "orange",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 5,
+          "x": 19,
+          "y": 53
+        },
+        "id": 34,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.0.5-d1f1041",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-github-datasource",
+              "uid": "pbeIkLgVk"
+            },
+            "options": {
+              "query": "is:issue is:open",
+              "timeField": 0
+            },
+            "owner": "condla",
+            "queryType": "Issues",
+            "refId": "A",
+            "repository": "web-shop-o11y-demo"
+          }
+        ],
+        "timeFrom": "30d",
+        "title": "Issues Opened",
+        "transformations": [
+          {
+            "id": "reduce",
+            "options": {
+              "reducers": [
+                "count"
+              ]
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Field": true
+              },
+              "indexByName": {},
+              "renameByName": {}
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-github-datasource",
+          "uid": "pbeIkLgVk"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "orange",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 5,
+          "x": 19,
+          "y": 57
+        },
+        "id": 35,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.0.5-d1f1041",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-github-datasource",
+              "uid": "pbeIkLgVk"
+            },
+            "options": {
+              "query": "is:issue is:closed",
+              "timeField": 0
+            },
+            "owner": "condla",
+            "queryType": "Issues",
+            "refId": "A",
+            "repository": "web-shop-o11y-demo"
+          }
+        ],
+        "timeFrom": "30d",
+        "title": "Issues Closed",
+        "transformations": [
+          {
+            "id": "reduce",
+            "options": {
+              "includeTimeField": false,
+              "labelsToFields": false,
+              "mode": "seriesToRows",
+              "reducers": [
+                "count"
+              ]
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Field": true
+              },
+              "indexByName": {},
+              "renameByName": {}
+            }
+          }
+        ],
+        "type": "stat"
+      }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "web-shop-app",
+            "value": "web-shop-app"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "7_Tpjs97k"
+          },
+          "definition": "label_values(namespace)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "namespace",
+          "multi": false,
+          "name": "namespace",
+          "options": [],
+          "query": {
+            "query": "label_values(namespace)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WebShop-Metrics"
+          },
+          "definition": "label_values(namespace_workload_pod:kube_pod_owner:relabel{cluster=\"web-shop\", namespace=~\"$namespace\", workload=~\".+\"}, workload)",
+          "hide": 0,
+          "includeAll": true,
+          "label": "service",
+          "multi": false,
+          "name": "service",
+          "options": [],
+          "query": {
+            "query": "label_values(namespace_workload_pod:kube_pod_owner:relabel{cluster=\"web-shop\", namespace=~\"$namespace\", workload=~\".+\"}, workload)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 2,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Holistic Webshop Monitoring",
+    "uid": "U7qtLZB7k",
+    "version": 32,
+    "weekStart": ""
+  }
