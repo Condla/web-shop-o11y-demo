@@ -1,3 +1,4 @@
+source set_env.sh
 export NAMESPACE=grafana
 export METRICS_USER=$METRICS_USER
 export METRICS_PASSWORD=$METRICS_PASSWORD
@@ -9,9 +10,17 @@ export TRACES_PASSWORD=$TRACES_PASSWORD
 kubectl apply -f web-shop-app.yaml
 
 #deploy agent configs
-kubectl apply -n $NAMESPACE  -f agent-config-map.yaml
-kubectl apply -n $NAMESPACE  -f agent-config-map-logs.yaml
-kubectl apply -n $NAMESPACE  -f agent-config-map-traces.yaml
+cat << EOF | envsubst | kubectl apply -n $NAMESPACE -f-
+`cat agent-config-map.yaml`
+EOF
+
+cat << EOF | envsubst | kubectl apply -n $NAMESPACE -f-
+`cat agent-config-map-logs.yaml`
+EOF
+
+cat << EOF | envsubst | kubectl apply -n $NAMESPACE -f-
+`cat agent-config-map-traces.yaml`
+EOF
 
 #deploy ksm
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm install ksm prometheus-community/kube-state-metrics --set image.tag=v2.4.2 -n $NAMESPACE
