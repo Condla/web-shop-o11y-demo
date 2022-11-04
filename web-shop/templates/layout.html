@@ -13,6 +13,7 @@
   .w3-sidebar a {font-family: "Roboto", sans-serif}
   body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
   </style>
+  <script type="text/javascript" src="static/main.js"></script>
 </head>
 <body class="w3-content" style="max-width:1200px">
 
@@ -34,7 +35,7 @@
       <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Slightly Less Cool Stuff</a>
       <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Generic Stuff</a>
     </div>
-    <a href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Big Products</a>
+    <a onclick="do_something_cool()" href="/shop?name={{person}}#cats" class="w3-bar-item w3-button">Big Products</a>
   </div>
 </nav>
 
@@ -80,7 +81,6 @@
   <!-- End page content -->
 </div>
 
-<script type="module" src="static/main.js"></script>
 
 </body>
 </html>

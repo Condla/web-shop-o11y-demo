@@ -1,6 +1,22 @@
 server:
   log_level: debug
 
+#        metrics_instance: 'mimir'
+#      logs_instance: 'loki'
+#      traces_instance: 'tempo'
+#      server:
+#        host: 0.0.0.0 
+#        port: 9999
+#        #api_key: 'my_super_secret' # optional, if set, client will be required to provide it via x-api-key header
+#        cors_allowed_origins:
+#          - 'https://app.com'
+#      logs_labels: # labels to add to loki log record
+#        app: frontend # static value
+#        kind: # value will be taken from log items. exception, log, measurement, etc
+#      sourcemaps:
+#        download: true # will download source file, extract source map location,
+#        # download source map and use it to transform stack trace locations
+
 metrics:
   wal_directory: /var/lib/agent/wal
   global:
@@ -8,17 +24,17 @@ metrics:
     external_labels:
       cluster: web-shop
   configs:
-  - name: integrations
+  - name: mimir
     remote_write:
     - url: http://mimir:9009/api/v1/push
     scrape_configs:
-    - job_name: 'prometheus'
+    - job_name: 'mimir'
 
       # Override the global default and scrape targets from this job every 5 seconds.
       scrape_interval: 5s
 
       static_configs:
-        - targets: ['localhost:9090']
+        - targets: ['localhost:9009']
 
     - job_name: "node"
       static_configs:
@@ -100,7 +116,7 @@ logs:
 
 traces:
   configs:
-  - name: latencyEndpoint
+  - name: tempo
     receivers:
       otlp:
         protocols:
@@ -127,4 +143,3 @@ traces:
         - http.status_code
       overrides:
         trace_id_key: "traceId"
-

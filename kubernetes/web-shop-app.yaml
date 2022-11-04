@@ -239,7 +239,7 @@ spec:
               value: http://grafana-agent-traces.grafana:4317
             - name: SQLALCHEMY_DATABASE_URI
               value: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
-          image: condla/shopping-cart:1.1
+          image: condla/shopping-cart:1.2
           name: shopping-cart
           
           ports:
@@ -301,7 +301,7 @@ spec:
               value: none
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=products,team.name=backend,environment=production
-          image: condla/products:otel-1.0
+          image: condla/products:otel-1.2
           name: products
           ports:
             - containerPort: 8080
@@ -349,7 +349,7 @@ spec:
         - env:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://grafana-agent-traces.grafana:4317
-          image: condla/web-shop:1.1
+          image: condla/web-shop:1.3
           name: web-shop
           ports:
             - containerPort: 6666
