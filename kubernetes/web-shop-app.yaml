@@ -5,6 +5,13 @@ metadata:
   labels:
     name: web-shop-app
 ---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: grafana
+  labels:
+    name: grafana
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -23,18 +30,17 @@ status:
   loadBalancer: {}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   namespace: web-shop-app
   labels:
     service: zookeeper
   name: zookeeper
 spec:
-  replicas: 1
+  serviceName: zookeeper
   selector:
     matchLabels:
       service: zookeeper
-  strategy: {}
   template:
     metadata:
       labels:
@@ -53,7 +59,8 @@ spec:
           resources: {}
       hostname: zookeeper
       restartPolicy: Always
-status: {}
+status: 
+  replicas: 1
 ---
 apiVersion: v1
 kind: Service
@@ -64,9 +71,9 @@ metadata:
   name: broker
 spec:
   ports:
-    - name: "9092"
-      port: 9092
-      targetPort: 9092
+    - name: "29092"
+      port: 29092
+      targetPort: 29092
     - name: "9101"
       port: 9101
       targetPort: 9101
@@ -76,18 +83,17 @@ status:
   loadBalancer: {}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   namespace: web-shop-app
   labels:
     service: broker
   name: broker
 spec:
-  replicas: 1
   selector:
     matchLabels:
       service: broker
-  strategy: {}
+  serviceName: broker
   template:
     metadata:
       labels:
@@ -104,7 +110,7 @@ spec:
             - name: CONFLUENT_SUPPORT_CUSTOMER_ID
               value: anonymous
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+              value: PLAINTEXT://broker:29092
             - name: KAFKA_BROKER_ID
               value: "1"
             - name: KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR
@@ -134,12 +140,13 @@ spec:
           image: confluentinc/cp-server:7.0.1
           name: broker
           ports:
-            - containerPort: 9092
+            - containerPort: 29092
             - containerPort: 9101
           resources: {}
       hostname: broker
       restartPolicy: Always
-status: {}
+status: 
+  replicas: 1
 ---
 apiVersion: v1
 kind: Service
@@ -229,7 +236,7 @@ spec:
       containers:
         - env:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://grafana-agent-traces.default:4317
+              value: http://grafana-agent-traces.grafana:4317
             - name: SQLALCHEMY_DATABASE_URI
               value: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
           image: condla/shopping-cart:1.1
@@ -289,7 +296,7 @@ spec:
             - name: OTEL_EXPORTER
               value: otlp_span
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://grafana-agent-traces.default:4317
+              value: http://grafana-agent-traces.grafana:4317
             - name: OTEL_METRICS_EXPORTER
               value: none
             - name: OTEL_RESOURCE_ATTRIBUTES
@@ -341,7 +348,7 @@ spec:
       containers:
         - env:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://grafana-agent-traces.default:4317
+              value: http://grafana-agent-traces.grafana:4317
           image: condla/web-shop:1.1
           name: web-shop
           ports:

@@ -31,11 +31,11 @@ datasources:
         mapTagNamesEnabled: true
 
 
-  - name: Prometheus
+  - name: Mimir
     type: prometheus
     access: proxy
     uid: prometheus
-    url: http://prometheus:9090
+    url: http://mimir:9009/prometheus
     jsonData:
       exemplarTraceIdDestinations:
         - datasourceUid: tempo

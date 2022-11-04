@@ -19,13 +19,6 @@ services:
     networks:
       - web-shop
 
-  prometheus:
-    build: ./prometheus
-    ports:
-      - "9090" 
-    networks:
-      - web-shop
-
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
@@ -118,6 +111,13 @@ services:
       - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
     networks:
       - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   tempo:
     image: grafana/tempo:latest
