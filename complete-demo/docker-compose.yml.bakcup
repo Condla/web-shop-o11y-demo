@@ -7,15 +7,39 @@ networks:
 services:
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana
     volumes:
       - "./grafana/definitions:/var/lib/grafana/dashboards"
       - "./grafana/provisioning:/etc/grafana/provisioning"
     ports:
       - "3000:3000"
     environment:
-      GF_FEATURE_TOGGLES_ENABLE: "tempoSearch tempoServiceGraph publicDashboards tempoApmTable "
+      GF_FEATURE_TOGGLES_ENABLE: "tempoSearch tempoServiceGraph publicDashboards"
       GF_INSTALL_PLUGINS: grafana-k6-app
+    networks:
+      - web-shop
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - 9100
+    networks:
+      - web-shop
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
     networks:
       - web-shop
 
@@ -30,68 +54,8 @@ services:
     networks:
      - web-shop
 
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - "3100:3100"
-    networks:
-      - web-shop
-
-  tempo:
-    image: grafana/tempo:latest
-    ports:
-      - "3200"
-      - "4317"
-      - "55680"
-      - "55681"
-      - "14250"
-    command: [ "-config.file=/etc/tempo.yaml"]
-    volumes:
-      - ./tempo/tempo.yaml:/etc/tempo.yaml
-    networks:
-      - web-shop    
-
-  agent:
-    image: grafana/agent:latest
-    ports:
-      - "80"
-      - "6832"
-      - "55679"
-      - "4317:4317"
-      - "1234:1234"
-    volumes:
-      - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
-    networks:
-      - web-shop
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
-        loki-relabel-config: |
-          - action: labelmap
-            regex: compose_(service)
-
-  web-shop:
-    image: "condla/web-shop:1.2"
-    ports:
-      - "3389:6666"
-    environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
-    depends_on:
-      - "shopping-cart"
-    networks:
-      - web-shop
-    restart: on-failure
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
-        loki-relabel-config: |
-          - action: labelmap
-            regex: compose_(service)
-
   shopping-cart:
-    image: "condla/shopping-cart:1.2"
+    build: "./shopping-cart"
     ports:
       - "5555:5555"
     environment:
@@ -100,6 +64,7 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+      
     networks:
       - web-shop
     logging:
@@ -110,29 +75,6 @@ services:
           - action: labelmap
             regex: compose_(service)
  
-  products:
-    image: "condla/products:otel-1.2"
-    ports:
-      - "8080:8080"
-    environment:
-      OTEL_METRICS_EXPORTER: "none"
-      OTEL_EXPORTER: "otlp_span"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
-      OTEL_RESOURCE_ATTRIBUTES: "service.name=products,team.name=backend,environment=production"
-      JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
-    networks:
-      - web-shop
-    depends_on:
-      - "shopping-cart"
-      - "broker"
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
-        loki-relabel-config: |
-          - action: labelmap
-            regex: compose_(service)
-
   mariadb:
     image: mariadb:latest
     ports:
@@ -156,6 +98,94 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+
+  agent:
+    image: grafana/agent:latest
+    ports:
+      - "80"
+      - "6832"
+      - "55679"
+      - "4317:4317"
+      - "1234:1234"
+    volumes:
+      - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
+    networks:
+      - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "3200"
+      - "4317"
+      - "55680"
+      - "55681"
+      - "14250"
+    command: [ "-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml
+    networks:
+      - web-shop
+
+  products:
+    image: "condla/products:otel-1.0"
+    ports:
+      - "8080:8080"
+    environment:
+      OTEL_METRICS_EXPORTER: "none"
+      OTEL_EXPORTER: "otlp_span"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=products,team.name=backend,environment=production"
+      JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
+    networks:
+      - web-shop
+    depends_on:
+      - "shopping-cart"
+      - "broker"
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+
+  web-shop:
+    build: "./web-shop"
+    ports:
+      - "3389:6666"
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
+    depends_on:
+      - "shopping-cart"
+    networks:
+      - web-shop
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - web-shop
 
   broker:
     image: confluentinc/cp-server:7.0.1
@@ -189,17 +219,21 @@ services:
     networks:
       - web-shop
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.1
-    hostname: zookeeper
-    container_name: zookeeper
+#  shop-simulator:
+#    image: "condla/shop-simulator:1.0"
+#    depends_on:
+#      - "web-shop"
+#    networks:
+#      - web-shop
+#    restart: on-failure
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:master
+    volumes:
+        - ./blackbox_exporter:/config
+    command: --config.file=/config/blackbox.yml
     ports:
-      - "2181:2181"
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - web-shop
+      - 9115:9115
 
   squid:
     image: ubuntu/squid
@@ -219,38 +253,5 @@ services:
         loki-relabel-config: |
           - action: labelmap
             regex: compose_(service)
-
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    ports:
-      - 9100
-    networks:
-      - web-shop
-    
-#  shop-simulator:
-#    image: "condla/shop-simulator:1.0"
-#    depends_on:
-#      - "web-shop"
-#    networks:
-#      - web-shop
-#    restart: on-failure
-
-#  blackbox_exporter:
-#    image: prom/blackbox-exporter:master
-#    volumes:
-#        - ./blackbox_exporter:/config
-#    command: --config.file=/config/blackbox.yml
-#    ports:
-#      - 9115:9115
 
 
