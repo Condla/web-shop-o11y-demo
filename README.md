@@ -1,6 +1,6 @@
 # Web Shop Observability Demo
 
-This is a simple demo to show metrics, logs and traces collection and visualisation with the Grafana stack in a distributes microservice system.
+This is a simple demo to show metrics, logs and traces collection and visualisation with the Grafana stack in a distributed microservices system.
 Feel free to check out the code to all of the services and notice how it is instrumented to scrape and collect the telemetry.
 
 ## Overview
@@ -12,17 +12,18 @@ Currently, it consists of:
 * shopping-cart: a backend service that interacts with a MariaDB instance. It persists the shopping cart items of the different users.
 * products: a backend service that serves the available products of the web shop.
 * mariadb: A mariadb instance to persist products and shopping cart items.
-* shopping cart simulator: a service that simulates light user traffic by adding things to the shopping cart via the web-shop API.
 * broker: a kafka broker to persist checked out shopping carts before they are reset.
+
+
 
 Additionally, you have the required agents and instrumentation included as well as the backends to collect metrics, logs and traces:
 * grafana: a Grafana instance to view and build dashboards, and explore the collected telemetry, as well as to create alerts on them. 
 * agent: a Grafana Agent to scrape metrics, collect logs and traces
-* prometheus: a Prometheus instance to act as the metrics backend
+* mimir: Grafana Mimir to act as the metrics backend
 * loki: Grafana Loki to act as the logs backend
 * tempo: Grafana Tempo to persist trace spans
 * blackbox_exporter: an exporter to expose uptime metric of the services
-* node_exporter: an exporter to expose metrics of the the underlying infrastructure
+* node_exporter: an exporter to expose metrics of the underlying infrastructure
 
 ## Architecture
 ![](images/web-shop-architecture.png)
@@ -39,12 +40,26 @@ Quick Overview:
 
 ## How To get started
 
+There are two options to deploy this demo. One option is to run it in a K8s cluster and send all the telemetry to Grafana Cloud. The other option is to run everything locally in docker-compose.
+
 ### Option 1: Kubernetes
 
-Prerequisites: Access to a Kubernetes cluster with kubectl
-* Deploy the sample application:
+Steps:
+* Access to a Kubernetes cluster with `kubectl`
+* Access to a free *Grafana Cloud* account. Create one at grafana.com. It's free! Did I mention it's free?
+* In the `kubernetes` directory create a file `set_env.sh` to set the following environment variables:
+    * `$METRICS_USER`
+    * `$METRICS_PASSWORD`
+    * `$LOGS_USER`
+    * `$LOGS_PASSWORD`
+    * `$TRACES_USER`
+    * `$TRACES_PASSWORD`
+    You can obtain these in your Grafana Cloud instance in the section for the backends.
+
+* Deploy the app and agents by running this script.
 ```
-kubectl apply -f kubernetes/web-shop-app.yaml
+cd kubernetes
+/bin/bash deploy.sh
 ```
 * 
 
@@ -54,9 +69,14 @@ kubectl apply -f kubernetes/web-shop-app.yaml
 /bin/bash up.sh
 ```
 
-* Step 2: Go to `<ip>:80/shop?name=<enter a name here>` to see the web shop interface.
-  * If you didn't add any products the shop should be empty.
-  * You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
+## Next Steps
+
+Regardless of where you have deployed the app and the agents/backends you'll now have access to the web application running on the public ip address accessible via port 3389.
+
+* Go to `<ip>:3389/shop?name=<enter a name here>` to see the web shop interface.
+* If you didn't add any products the shop should be empty.
+* You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
+  * NOTE: `8080` is the port of the `products` service. So you're directly interacting with the `products` API
 
 ```
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Meows", "price": "29.99", "tag": "cool", "pic_ref": "https://placekitten.com/251/250"}' localhost:8080/products/
@@ -65,25 +85,25 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "Charlie", "price"
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": "25.00", "tag": "special", "pic_ref": "https://placekitten.com/249/250"}' localhost:8080/products/
 ```
 
-  * You should be able to see the 4 new products in the shop now.
+  * If you refresh the web shop. You should be able to see the 4 new products in the shop now.
 
 ![](images/web-shop-ui.png)
 
-* Step 3: Go to `<ip>:3000` enter `admin/admin` for username and password and change the password.
-  * Go to the dashboards menu and open the "Holistic Webshop Monitoring" dashboard that gives you an overview including a drill down of the webshop services.
+## Grafana Access
+
+* Grafana is available via Grafana Cloud or running in docker-compose on port 3000. The default username password combination for the docker-compose instance is `admin/grafana`.
+* Go to the dashboards menu and open the "Holistic Webshop Monitoring" dashboard that gives you an overview including a drill down of the webshop services.
 
 ![](images/web-shop-dashboard.png)
 
 
-* Step 3.5: (in progress): go to the "Customer View" dashboard. This is meant for business users so they can track the number of transactions and revenue generated rather than the technical details that keep the webshop up and running.
+## Run the realistic user simulation.
 
-* Step 4: Follow a single request trace from an initial POST request in your web-shop throughout data base interactions of the producs and shopping-cart APIs until a Kafka message is produced (screenshot below).
-
-![](images/web-shop-traces.png)
+* Use k6 to create a realistic user simulation. You can find some scripts in the `shop-simulator` directory.
+* Just run ```/bin/bash run-test.sh```
 
 ## What this demo should demonstrate
 
-* How to use Grafana, Prometheus, Loki, Tempo and OpenTelemetry to reduce debugging time.
-* How to use OpenTelemetry with Python Flask applications.
-* How to use OpenTelemetry with Java Spring Boot applications.
-* It demonstrates the interoperability of OpenTelemetry between microservices written in different languages and a realistic scenario.
+There's multiple ways you could use this demo instance. There's multiple errors built in the simulation, the proxy is configured to reach a timeout to simulate proxy timeouts and many other scenarios to show how you can use the LGTM stack to solve issues.
+
+I plan to publish some demo flows here.
