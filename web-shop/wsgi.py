@@ -20,6 +20,7 @@ from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.wsgi import OpenTelemetryMiddleware
 
 app = create_app()
+app.app_agent_receiver_endpoint = environ.get("APP_AGENT_RECEIVER_ENDPOINT")
 
 # this postfork thingy is only required, when app runs in a wsgi container.
 # this is explained here: https://opentelemetry-python.readthedocs.io/en/latest/examples/fork-process-model/README.html

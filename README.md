@@ -64,6 +64,11 @@ cd kubernetes
 * 
 
 ### Option 2: Docker Compose
+
+* Step 0: (Optional):
+  * If you want to allow Grafana Faro receive front-end telemetry, you need to specify the publically accessible endpoint for the Grafana Agent App Receiver in the `web-shop` section as the corresponding environment variable `APP_AGENT_RECEIVER_ENDPOINT`.
+  * In this case you also need to specify the public entry point of the application in the `agent` config as `APP_ENDPOINT`. This will ensure that only the corresponding CORS headers are accepted.
+
 * Step 1: Run the up script which will start docker compose in the background.
 ```
 /bin/bash up.sh

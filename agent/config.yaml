@@ -1,6 +1,43 @@
 server:
   log_level: debug
 
+
+integrations:
+  metrics:
+    autoscrape:
+      enable: true
+      metrics_instance: mimir
+
+  agent:
+    # The Agent dashboards are written to assume Kubernetes, so we inject some
+    # fake Kubernetes labels here.
+    extra_labels:
+      cluster: docker-compose
+      namespace: docker-compose
+      container: grafana-agent
+      pod: grafana-agent-${HOSTNAME:-example}
+
+  app_agent_receiver_configs:
+      - autoscrape:
+          enable: true
+          metrics_instance: 'mimir'
+        instance: 'frontend'
+        logs_instance: 'loki'
+        traces_instance: 'tempo'
+        server:
+          host: 0.0.0.0
+          port: 12347
+          cors_allowed_origins:
+            - ${APP_ENDPOINT}
+          api_key: 'secret' # optional, if set, client will be required to provide it via x-api-key header
+        logs_labels: # labels to add to loki log record
+          app: 'web-shop-frontend' # static value
+          kind: # value will be taken from log items. exception, log, measurement, etc
+        logs_send_timeout: 5000
+        sourcemaps:
+          download: true # will download source file, extract source map location,
+          # download source map and use it to transform stack trace locations
+
 #        metrics_instance: 'mimir'
 #      logs_instance: 'loki'
 #      traces_instance: 'tempo'

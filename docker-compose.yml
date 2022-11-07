@@ -53,24 +53,25 @@ services:
 
   agent:
     image: grafana/agent:latest
- #   entrypoint:
- #     - /bin/agent
- #     - -config.file=/etc/agent-config/agent.yaml
- #     - -metrics.wal-directory=/tmp/agent/wal
- #     - -enable-features=integrations-next
- #     - -config.expand-env
- #     - -config.enable-read-api
+    entrypoint:
+      - /bin/agent
+      - -config.file=/etc/agent/agent.yaml
+      - -enable-features=integrations-next
+      - -config.expand-env
+      - -config.enable-read-api
     ports:
       - "80"
       - "6832"
       - "55679"
       - "4317:4317"
       - "1234:1234"
-      - "12345:12345"
+      - "12347:12347"
     volumes:
       - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
     networks:
       - web-shop
+    environment:
+      APP_ENDPOINT: "http://34.78.246.133:3389"
     logging:
       driver: loki
       options:
@@ -80,11 +81,12 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.3"
+    image: "condla/web-shop:1.4"
     ports:
       - "3389:6666"
     environment:
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
+      APP_AGENT_RECEIVER_ENDPOINT: "http://34.78.246.133:12347"
     depends_on:
       - "shopping-cart"
     networks:

@@ -1,6 +1,7 @@
 from flask import request, render_template
 import requests
 from flask import current_app as app
+from os import environ
 
 shopping_cart_url = "http://shopping-cart:5555"
 products_url = "http://products:8080"
@@ -8,6 +9,7 @@ proxies = {
     "http": "http://squid:3128",
     "https": "https://squid:3128"
 }
+
 
 @app.route('/cart', methods=["GET", "POST"])
 def view_cart():
@@ -26,8 +28,8 @@ def view_cart():
         check_out_cart(checkout, headers, request_string, items)
     
     items = get_items_from_shopping_cart(request_string) 
-
-    return render_template('cart.html', items=items, person=person)
+    app.logger.info(app.app_agent_receiver_endpoint)
+    return render_template('cart.html', items=items, person=person, app_agent_receiver_endpoint=app.app_agent_receiver_endpoint)
 
 @app.route('/shop', methods=["GET", "POST"])
 def view_shop():
@@ -42,7 +44,7 @@ def view_shop():
         add_to_shopping_cart(person, product_name, headers)
         
     app.logger.info("Showing web interface.") 
-    return render_template('index.html', products=products, person=person)
+    return render_template('index.html', products=products, person=person, app_agent_receiver_endpoint=app.app_agent_receiver_endpoint)
 
 def add_to_shopping_cart(person, product_name, headers):
     request_string = "{}/cart/{}".format(shopping_cart_url, person)

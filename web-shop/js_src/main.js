@@ -1,15 +1,20 @@
 import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
 
+
+// Raw JavaScript
+var appAgentReceiverEndpoint = document.getElementById("variables").dataset.appAgentReceiverEndpoint;
+console.log(appAgentReceiverEndpoint);
+
 const faro = initializeFaro({
-  url: 'https://thegym.theblackapp.de/collect',
-  apiKey: 'key',
+  url: appAgentReceiverEndpoint + '/collect',
+  apiKey: 'secret',
   instrumentations: [...getWebInstrumentations()],
   app: {
     name: 'web-shop-frontend',
-    version: '1.3.0',
+    version: '1.4.0',
   },
 });
-faro.api.pushLog(['hello faro!']);
+faro.api.pushLog(['Hello, Faro!']);
 
 //export const {trace, context} = faro.api.getOTEL();
 
