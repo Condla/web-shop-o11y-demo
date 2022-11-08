@@ -85,7 +85,7 @@
         "text": {},
         "textMode": "value"
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "9.2.3",
       "targets": [
         {
           "datasource": {
@@ -618,7 +618,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "9.2.3",
       "targets": [
         {
           "datasource": {
@@ -686,7 +686,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "9.2.3",
       "targets": [
         {
           "datasource": {
@@ -758,7 +758,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "9.2.3",
       "targets": [
         {
           "datasource": {
@@ -1011,7 +1011,7 @@
           }
         ]
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "9.2.3",
       "targets": [
         {
           "datasource": {
@@ -1054,6 +1054,38 @@
       ],
       "transparent": true,
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 27,
+      "options": {
+        "nodes": {
+          "arcs": [],
+          "mainStatUnit": "string"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "key": "Q-94da5f55-7445-4da5-8197-a48a4a61727f-0",
+          "queryType": "serviceMap",
+          "refId": "A"
+        }
+      ],
+      "title": "Service Map",
+      "type": "nodeGraph"
     },
     {
       "datasource": {
@@ -1155,7 +1187,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 41
       },
       "id": 11,
       "options": {
@@ -1194,7 +1226,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 50
       },
       "id": 10,
       "options": {
@@ -1312,7 +1344,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 62
       },
       "id": 17,
       "options": {

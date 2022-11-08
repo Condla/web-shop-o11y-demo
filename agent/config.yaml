@@ -162,6 +162,8 @@ traces:
     remote_write:
       - endpoint: tempo:4317
         insecure: true
+    service_graphs:
+        enabled: true
     spanmetrics:
       dimensions:
         - name: http.method

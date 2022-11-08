@@ -29,7 +29,8 @@ datasources:
         tags: ['service']
         mappedTags: [{key: 'service.name', value: 'service'}]
         mapTagNamesEnabled: true
-
+      serviceMap:
+        datasourceUid: prometheus
 
   - name: Mimir
     type: prometheus
