@@ -1,5 +1,5 @@
 import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
-
+import { TracingInstrumentation } from "@grafana/faro-web-tracing";
 
 // Raw JavaScript
 var appAgentReceiverEndpoint = document.getElementById("variables").dataset.appAgentReceiverEndpoint;
@@ -8,7 +8,18 @@ console.log(appAgentReceiverEndpoint);
 const faro = initializeFaro({
   url: appAgentReceiverEndpoint + '/collect',
   apiKey: 'secret',
-  instrumentations: [...getWebInstrumentations()],
+  instrumentations: [
+    ...getWebInstrumentations(),
+    new TracingInstrumentation(),
+
+    new TracingInstrumentation({
+      // Optional, if you want to add custom attributes to the resource
+      resourceAttributes: {
+        "service.name": "web-shop-frontend",
+      },
+    })
+
+  ],
   app: {
     name: 'web-shop-frontend',
     version: '1.4.0',
