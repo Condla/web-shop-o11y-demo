@@ -1,6 +1,6 @@
 server:
   http_listen_port: 3200
-  log_level: warn
+  log_level: debug
 
 distributor:
   receivers:
@@ -43,3 +43,44 @@ storage:
       max_workers: 100
       queue_depth: 10000
 search_enabled: true
+metrics_generator_enabled: true
+
+metrics_generator:
+  ring:
+    kvstore:
+      store: memberlist
+  processor:
+    service_graphs:
+      wait: 10s
+      max_items: 10000
+      workers: 10
+      dimensions:
+        - http.method
+        - http.target
+        - team.name
+    span_metrics:
+      dimensions:
+        - http.method
+        - http.target
+        - team.name
+  registry:
+    stale_duration: 5m
+
+  storage:
+    path: /tmp/data
+    wal:
+      truncate_frequency: 0h5m0s
+      max_wal_time: 900
+    remote_write:
+      - url: http://mimir:9009/api/v1/push 
+
+
+overrides:
+  metrics_generator_processors:
+    - span-metrics
+    - service-graphs
+  max_traces_per_user: 100000
+  max_search_bytes_per_trace: 50000
+
+multitenancy_enabled: false
+

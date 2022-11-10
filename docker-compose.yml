@@ -9,13 +9,13 @@ services:
   grafana:
     image: grafana/grafana:latest
     volumes:
-      - "./grafana/definitions:/var/lib/grafana/dashboards"
-      - "./grafana/provisioning:/etc/grafana/provisioning"
+      - "./grafana/dashboards:/var/lib/grafana/dashboards"
+      - "./grafana/conf:/etc/grafana/"
     ports:
       - "3000:3000"
     environment:
-      GF_FEATURE_TOGGLES_ENABLE: "tempoSearch tempoServiceGraph publicDashboards tempoApmTable "
-      GF_INSTALL_PLUGINS: grafana-k6-app
+      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards ngalert accesscontrol panelTitleSearch tempoSearch tempoApmTable traceToMetrics recordedQueries"
+      GF_INSTALL_PLUGINS: "grafana-k6-app,grafana-polystat-panel"
     networks:
       - web-shop
 
@@ -67,11 +67,12 @@ services:
       - "1234:1234"
       - "12347:12347"
     volumes:
-      - "${PWD}/agent/config.yaml:/etc/agent/agent.yaml"
+      - "./agent/config.yaml:/etc/agent/agent.yaml"
     networks:
       - web-shop
     environment:
-      APP_ENDPOINT: "http://34.78.246.133:3389"
+      #APP_ENDPOINT: "http://34.78.246.133:3389"
+      APP_ENDPOINT: "http://grafana.datahovel.com:3389"
     logging:
       driver: loki
       options:
@@ -81,7 +82,8 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.4"
+    #image: "condla/web-shop:1.4"
+    build: "./web-shop"
     ports:
       - "3389:6666"
     environment:

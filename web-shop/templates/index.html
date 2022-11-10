@@ -25,8 +25,7 @@
           <img src="{{product.pic_ref}}" style="width:100%">
           <span class="w3-tag w3-display-topleft">{{product["tag"]}}</span>
           <div class="w3-display-middle w3-display-hover">
-	  <form method="post" action="/shop?product={{product.name}}&name={{person}}">
-            <button type="submit" name="product" value="{{product.name}}" class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
+            <button onclick='buy_now("{{ product.name}}", "{{ person }}")' type="submit" name="product" value="{{product.name}}" class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
           </form>
           </div>
         </div>

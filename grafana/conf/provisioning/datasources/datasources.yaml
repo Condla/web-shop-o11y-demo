@@ -32,6 +32,13 @@ datasources:
       serviceMap:
         datasourceUid: prometheus
 
+      tracesToMetrics:
+        datasourceUid: 'prometheus'
+        tags: [{key: 'service.name', value: 'service_name'}]
+        queries:
+          - name: 'Requests Rate'
+            query: 'sum(rate(traces_spanmetrics_calls_total{$__tags}[1m]))'
+
   - name: Mimir
     type: prometheus
     access: proxy

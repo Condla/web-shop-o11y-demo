@@ -28,6 +28,450 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 41,
+      "panels": [],
+      "title": "Front End Health Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 39,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Front End Details",
+          "url": "/d/BWuxchvVz/frontend?orgId=1&from=1667854367428&to=1667887993374"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({app=\"$app\",kind=\"exception\"} [$__range])) by (app)",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Exceptions",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 600
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 29,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "editorMode": "code",
+          "expr": "avg_over_time({kind=\"measurement\",app=\"$app\"} |= \"ttfb\" | logfmt | unwrap ttfb [$__range]) by (app)",
+          "legendFormat": "TTFB",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "TTFB",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1800
+              },
+              {
+                "color": "red",
+                "value": 3000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 31,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "editorMode": "code",
+          "expr": "avg_over_time({kind=\"measurement\",app=\"$app\"} |= \" fcp=\" | logfmt | unwrap fcp [$__range]) by (app)",
+          "legendFormat": "FCP",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "FCP",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 0.1
+              },
+              {
+                "color": "red",
+                "value": 0.3
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "editorMode": "code",
+          "expr": "avg_over_time({kind=\"measurement\",app=\"$app\"} |= \"cls\" | logfmt | unwrap cls [$__range]) by (app)",
+          "legendFormat": "CLS",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "CLS",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 2500
+              },
+              {
+                "color": "red",
+                "value": 4000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "editorMode": "code",
+          "expr": "avg_over_time({kind=\"measurement\",app=\"$app\"} |= \" lcp=\" | logfmt | unwrap lcp [$__range]) by (app)",
+          "legendFormat": "LCP",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "LCP",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 300
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 37,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "editorMode": "code",
+          "expr": "avg_over_time({kind=\"measurement\",app=\"$app\"} |= \" fid=\" | logfmt | unwrap fid [$__range]) by (app)",
+          "legendFormat": "FID",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "FID",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 43,
+      "panels": [],
+      "title": "Endpoint Heath + 4 Golden Signals",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -38,10 +482,11 @@
             {
               "targetBlank": true,
               "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_target%3D\\\"${__field.labels.http_target}\\\" | status = \\\"STATUS_CODE_ERROR\\\" | line_format \\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]} "
+              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_target%3D\\\"${__field.labels.http_target}\\\" | status = \\\"STATUS_CODE_ERROR\\\" | line_format \\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]} "
             }
           ],
           "mappings": [],
+          "noValue": "0%",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -67,7 +512,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 5
       },
       "id": 24,
       "options": {
@@ -92,139 +537,50 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by (http_target) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service_name=~\"$service\"}[1m]))/sum by (http_target) (rate(traces_spanmetrics_latency_count{http_target=~\".+\", service_name=~\"$service\"}[1m]))",
+          "expr": "sum by (http_target) (rate(traces_spanmetrics_latency_count{status_code=\"STATUS_CODE_ERROR\", http_target!=\"*\", http_target=~\".+\", service=~\"$service\"}[1m])) / sum by (http_target) (rate(traces_spanmetrics_latency_count{ http_target!=\"*\", http_target=~\".+\", service=~\"$service\"}[1m]))",
           "interval": "",
           "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Error Percentage Per Endpoint",
+      "title": "Error Percentage of Failing Endpoints",
       "transparent": true,
       "type": "stat"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 41,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "type": "tempo",
+        "uid": "tempo"
       },
       "gridPos": {
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 3
+        "y": 8
       },
-      "id": 4,
+      "id": 27,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
+        "nodes": {
+          "arcs": [],
+          "mainStatUnit": "string"
         }
       },
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
+            "type": "tempo",
+            "uid": "tempo"
           },
-          "exemplar": true,
-          "expr": "sum(rate(process_cpu_seconds_total{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{service}}",
+          "key": "Q-94da5f55-7445-4da5-8197-a48a4a61727f-0",
+          "queryType": "serviceMap",
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum(rate(process_cpu_usage{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{service}}",
-          "refId": "B"
         }
       ],
-      "title": "CPU Usage of $service",
-      "transparent": true,
-      "type": "timeseries"
+      "title": "Service Map",
+      "type": "nodeGraph"
     },
     {
       "datasource": {
@@ -385,7 +741,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 3
+        "y": 8
       },
       "id": 2,
       "options": {
@@ -440,6 +796,344 @@
       "title": "Request Rate and Error Count of $service",
       "transparent": true,
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 41,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(rate(process_cpu_seconds_total{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{service}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(rate(process_cpu_usage{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{service}}",
+          "refId": "B"
+        }
+      ],
+      "title": "CPU Usage of $service",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "",
+              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
+            }
+          ],
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 12,
+        "y": 17
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum by (service_name) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service=~\"$service\"}[1m]))/sum by (service_name) (rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+          "interval": "",
+          "legendFormat": "{{ service_name }}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Error Percentage Per Service",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 4,
+        "x": 20,
+        "y": 17
+      },
+      "id": 19,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum (rate(traces_spanmetrics_latency_count{}[1m]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Spans Error Percentage",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "",
+              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 12,
+        "y": 21
+      },
+      "id": 26,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code =~ \"...\" | http_status_code!~\"2..\" [1m])) / sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code=~\"...\" [1m]))",
+          "legendFormat": "{{ svc }}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Status Code non-2xx Percentage",
+      "transparent": true,
+      "type": "stat"
     },
     {
       "datasource": {
@@ -519,7 +1213,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 12
+        "y": 26
       },
       "id": 6,
       "options": {
@@ -570,318 +1264,6 @@
       },
       "fieldConfig": {
         "defaults": {
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
-            }
-          ],
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 8,
-        "x": 12,
-        "y": 12
-      },
-      "id": 21,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "9.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum by (service_name) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service_name=~\"$service\"}[1m]))/sum by (service_name) (rate(traces_spanmetrics_latency_count{service_name=~\"$service\"}[1m]))",
-          "interval": "",
-          "legendFormat": "{{ service_name }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Error Percentage Per Service",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 4,
-        "x": 20,
-        "y": 12
-      },
-      "id": 19,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "9.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum (rate(traces_spanmetrics_latency_count{}[1m]))",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Total Spans Error Percentage",
-      "transparent": true,
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
-            }
-          ],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 12,
-        "y": 16
-      },
-      "id": 26,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "9.2.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code =~ \"...\" | http_status_code!~\"2..\" [1m])) / sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code=~\"...\" [1m]))",
-          "legendFormat": "{{ svc }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Status Code non-2xx Percentage",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "Show relevant logs",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | svc = \\\"$service\\\" | span%3D\\\"${__field.labels.operation}\\\" | dur >= ${__value.numeric}ms\"}]} "
-            }
-          ],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 21
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=~\"$service\"}[$__interval]))/sum by (operation)(rate(traces_spanmetrics_latency_count{service_name=~\"$service\"}[$__interval]))",
-          "interval": "",
-          "legendFormat": "{{service_name}} {{ operation }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Latency of $service by Endpoint",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
           "color": {
             "mode": "thresholds"
           },
@@ -894,7 +1276,7 @@
             {
               "targetBlank": true,
               "title": "",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\" | dur >= ${__data.fields.Last}ms\"}]}"
+              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\" | dur >= ${__data.fields.Last}ms\"}]}"
             }
           ],
           "mappings": [],
@@ -992,7 +1374,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 21
+        "y": 26
       },
       "id": 15,
       "options": {
@@ -1018,8 +1400,9 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "topk(10,sum by (operation) (rate(traces_spanmetrics_latency_sum{service_name=~\"$service\"}[$__interval]))/sum by (operation)(rate(traces_spanmetrics_latency_count{service_name=~\"$service\"}[$__interval])))",
+          "expr": "topk(10,sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m])))",
           "instant": false,
           "interval": "",
           "legendFormat": "{{ operation }}",
@@ -1057,35 +1440,106 @@
     },
     {
       "datasource": {
-        "type": "tempo",
-        "uid": "tempo"
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Show relevant logs",
+              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span = \\\"${__field.labels.span_name}\\\" | dur >= ${__value.numeric}﻿ms\"}]}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
       },
       "gridPos": {
-        "h": 11,
-        "w": 24,
+        "h": 9,
+        "w": 12,
         "x": 0,
-        "y": 30
+        "y": 35
       },
-      "id": 27,
+      "id": 13,
       "options": {
-        "nodes": {
-          "arcs": [],
-          "mainStatUnit": "string"
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
-            "type": "tempo",
-            "uid": "tempo"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "key": "Q-94da5f55-7445-4da5-8197-a48a4a61727f-0",
-          "queryType": "serviceMap",
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+          "interval": "",
+          "legendFormat": "{{service_name}} {{ operation }}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Service Map",
-      "type": "nodeGraph"
+      "title": "Latency of $service by Endpoint",
+      "transparent": true,
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1131,7 +1585,7 @@
             {
               "targetBlank": true,
               "title": "Go to Logs",
-              "url": "http://localhost:3000/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{compose_service%3D~\\\"${__field.labels.compose_service}\\\"}\"}]}"
+              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{compose_service%3D~\\\"${__field.labels.compose_service}\\\"}\"}]}"
             }
           ],
           "mappings": [],
@@ -1185,9 +1639,9 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 41
+        "w": 12,
+        "x": 12,
+        "y": 35
       },
       "id": 11,
       "options": {
@@ -1218,6 +1672,19 @@
       "type": "timeseries"
     },
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "id": 45,
+      "panels": [],
+      "title": "Logs",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "loki",
         "uid": "loki"
@@ -1226,7 +1693,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 50
+        "y": 45
       },
       "id": 10,
       "options": {
@@ -1264,6 +1731,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
@@ -1297,7 +1766,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1344,7 +1814,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 57
       },
       "id": 17,
       "options": {
@@ -1377,7 +1847,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
+  "refresh": false,
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -1409,6 +1879,28 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "web-shop-frontend",
+          "value": "web-shop-frontend"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "App",
+        "multi": false,
+        "name": "app",
+        "options": [
+          {
+            "selected": true,
+            "text": "web-shop-frontend",
+            "value": "web-shop-frontend"
+          }
+        ],
+        "query": "web-shop-frontend",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -1420,6 +1912,6 @@
   "timezone": "",
   "title": "Holistic Webshop Monitoring",
   "uid": "U7qtLZB7k",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }

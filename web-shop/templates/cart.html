@@ -9,45 +9,39 @@
 {% block content %}
   <div class="w3-container w3-text-grey">
 	  <p></p>
-	<table>
-	<tr>
-	<th><b>Product</b></th>
-	<th><b>Quantity</b></th>
-	<th><b>Unit Price</b></th>
-	<th><b>Total Price</b></th></tr>
-	{% for item in items %}
-	
-<tr>
-			<td> {{ item.product.name }} </td>
-			<td> {{ item.quantity}}</td>
-			<td> {{ '%0.2f' | format(item.product.price) | float }}</td>
-			<td> {{ '%0.2f' | format(item.quantity * item.product.price) | float }}</td>
+	<table id="cart_table">
+	<tr id="header_row">
+	<th:19 id="product_col"><b>Product</b></th>
+	<th id="quantity_col"><b>Quantity</b></th>
+	<th id="unit_price_col"><b>Unit Price</b></th>
+	<th id="total_price_col"><b>Total Price</b></th></tr>
 
+    {% set i=0 %}	
+	{% for item in items %}
+      {% set i = i + 1 %}	
+<tr id="row_{{i}}">
+			<td id="product_col_{{i}}"> {{ item.product.name }} </td>
+			<td id="quantity_col_{{i}}"> {{ item.quantity}}</td>
+			<td id="unit_price_col_{{i}}"> {{ '%0.2f' | format(item.product.price) | float }}</td>
+			<td id="total_price_col_{{i}}"> {{ '%0.2f' | format(item.quantity * item.product.price) | float }}</td>
 		</tr>			
-	
 	{% endfor %}
 </table>
 <p align="right">
-	<form method="post" action="/cart?name={{person}}">
-	  <button type="submit" name="name" value="{{person}}">
+	  <button onclick='empty_cart("{{ person }}")' type="submit" name="empty_cart" value="{{person}}">
 	    Empty Shopping Cart
 	  </button>
-	</form>
 </p>
 <p align="right">
-	<form method="post" action="/cart?name={{person}}&checkout=true">
-	  <button type="submit" name="name" value="{{person}}">
+	  <button onclick='checkout_cart("{{ person }}")' type="submit" name="checkout_cart" value="{{person}}">
 	    Check Out and Pay
 	  </button>
-	</form>
 	</p>
 <p align="right">
-		<form method="post" action="/cart?name={{person}}&discount=true">
-		  <button type="submit" name="name" value="{{person}}">
-			Apply 10% Discount
-		  </button>
-		</form>
-		</p>
+	  <button onclick='apply_discount("{{ person }}")' type="submit" name="apply_discount" value="{{person}}">
+		Apply 10% Discount
+	  </button>
+	</p>
   </div>
 
 
