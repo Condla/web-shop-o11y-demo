@@ -71,8 +71,7 @@ services:
     networks:
       - web-shop
     environment:
-      #APP_ENDPOINT: "http://34.78.246.133:3389"
-      APP_ENDPOINT: "http://grafana.datahovel.com:3389"
+      APP_ENDPOINT: http://${PUBLIC_APP_URL}:3389
     logging:
       driver: loki
       options:
@@ -82,13 +81,12 @@ services:
             regex: compose_(service)
 
   web-shop:
-    #image: "condla/web-shop:1.4"
-    build: "./web-shop"
+    image: "condla/web-shop:1.5"
     ports:
-      - "3389:6666"
+      - "3389:3389"
     environment:
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
-      APP_AGENT_RECEIVER_ENDPOINT: "http://34.78.246.133:12347"
+      APP_AGENT_RECEIVER_ENDPOINT: "http://${PUBLIC_APP_URL}:12347"
     depends_on:
       - "shopping-cart"
     networks:

@@ -55,4 +55,4 @@ if __name__ == "__main__":
     #if you set debug to True, then the /metrics endpoint returns 404
     # this section is only called, when executed directly, not when using
     # an app server, such as uwsgi
-    app.run(debug=False, host='0.0.0.0', port=6666)
+    app.run(debug=False, host='0.0.0.0', port=3389)

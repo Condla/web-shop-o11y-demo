@@ -104,8 +104,10 @@ curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": 
 
 ## Run the realistic user simulation.
 
-* Use k6 to create a realistic user simulation. You can find some scripts in the `shop-simulator` directory.
-* Just run ```/bin/bash run-test.sh```
+* To start a user simulation using k6 just run
+  ```./simulate-user-traffic.sh```
+* To stop the test press `Ctrl+C`
+* This will create a bit of traffic on the web shop and allows you to start observing normal and strange patterns of the application with the help of Grafana.
 
 ## What this demo should demonstrate
 
