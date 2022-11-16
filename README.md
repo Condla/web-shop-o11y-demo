@@ -35,59 +35,56 @@ Quick Overview:
 * The products servie additionally has a Kafka producer and consumer implemented. The producer will send the content of the shopping cart as JSON to a Kafka topic. The consumer simply logs the message
 * Telemetry is instrumented by using some of the available python otel libraries. It's collected using the OTEL collector of the Grafana Agent and then sent to Tempo.
 * The Java autoinstrumentation is performed using the javaagent.
-* Prometheus is configured to scrape the web shop service as well as the shopping cart API and the products API for metrics.
+* The Grafana Agent acts as an OTEL collected and is configured to scrape the web shop service as well as the shopping cart API and the products API for Prometheus metrics.
 * Logs are collected using the Loki docker plugin. The plugin needs to be installed before starting the demo. Docker compose points to the local Loki container to persist the logs.
 
 ## How To get started
 
 There are two options to deploy this demo. One option is to run it in a K8s cluster and send all the telemetry to Grafana Cloud. The other option is to run everything locally in docker-compose.
 
-### Option 1: Kubernetes
 
-Steps:
-* Access to a Kubernetes cluster with `kubectl`
-* Access to a free *Grafana Cloud* account. Create one at grafana.com. It's free! Did I mention it's free?
-* In the `kubernetes` directory create a file `set_env.sh` to set the following environment variables:
-    * `$METRICS_USER`
-    * `$METRICS_PASSWORD`
-    * `$LOGS_USER`
-    * `$LOGS_PASSWORD`
-    * `$TRACES_USER`
-    * `$TRACES_PASSWORD`
-    You can obtain these in your Grafana Cloud instance in the section for the backends.
+### Prerequisites
+  * I've tested this on a Ubuntu machine, but it should run on any Linux based system using `systemctl`.
+  * It gets stuck on a M1 MacBook, so I recommend a VM with 2+ cores and 4GB RAM.
+  * `git`, `docker` and `docker-compose` commands should be installed and accessible without `sudo`
+  * Also `docker-compose` shouldn't be any older than `1.29.2`
 
-* Deploy the app and agents by running this script.
+### Installation
+* Step 0:
 ```
-cd kubernetes
-/bin/bash deploy.sh
+git clone https://github.com/Condla/web-shop-o11y-demo.git
+cd web-shop-o11y-demo
 ```
-* 
 
-### Option 2: Docker Compose
+* Step 1:
+  * Make sure you forward the port 3000 to your localhost (or run docker-compose on your local machine). This will be used to access Grafana.
+  * Make sure you forward the port 3389 to your localhost (or run docker-compose on your local machine). This will be used to access the web application.
+  * Make sure you forward the port 12347 to your localhost (or run docker-compose on your local machine). This is where the app agent receiver listens to front end telemetry sent directly from the browser.
 
-* Step 0: (Optional):
-  * If you want to allow Grafana Faro receive front-end telemetry, you need to specify the publically accessible endpoint for the Grafana Agent App Receiver in the `web-shop` section as the corresponding environment variable `APP_AGENT_RECEIVER_ENDPOINT`.
-  * In this case you also need to specify the public entry point of the application in the `agent` config as `APP_ENDPOINT`. This will ensure that only the corresponding CORS headers are accepted.
+> *Note*: Optionally you can set the environment variable `PUBLIC_APP_URL`. This should be set to the URL you are running the script from.
+>```export PUBLIC_APP_URL=grafana.datahovel.com```
+> In this case you need to make sure that the ports 3000, 3389 and 12347 are accessible from the public internet.
 
-* Step 1: Run the up script which will start docker compose in the background.
+* Step 2: Run the up script which will start the application including the observability platform in the background.
 ```
 /bin/bash up.sh
 ```
 
+* Step 3: Lean back. The download of all docker images will take a while the first time you run this.
+
 ## Next Steps
 
-Regardless of where you have deployed the app and the agents/backends you'll now have access to the web application running on the public ip address accessible via port 3389.
+Regardless of where you have deployed the app and the agents/backends you'll now have access to the web application accessible via port 3389.
 
-* Go to `<ip>:3389/shop?name=<enter a name here>` to see the web shop interface.
+* Go to `<ip|localhost>:3389/shop?name=<enter a name here>` to see the web shop interface.
 * If you didn't add any products the shop should be empty.
-* You can run this script to add 4 cats to the shop. Feel free to modify names, prices, tags and pic_refs as needed.
-  * NOTE: `8080` is the port of the `products` service. So you're directly interacting with the `products` API
-
+* You can run the script below to add 4 kittens to the web shop:
 ```
-curl -X POST -H "Content-Type: application/json" -d '{"name": "Meows", "price": "29.99", "tag": "cool", "pic_ref": "https://placekitten.com/251/250"}' localhost:8080/products/
-curl -X POST -H "Content-Type: application/json" -d '{"name": "Loki", "price": "39.99", "tag": "", "pic_ref": "https://placekitten.com/251/251"}' localhost:8080/products/
-curl -X POST -H "Content-Type: application/json" -d '{"name": "Charlie", "price": "19.50", "tag": "special", "pic_ref": "https://placekitten.com/250/251"}' localhost:8080/products/
-curl -X POST -H "Content-Type: application/json" -d '{"name": "Carla", "price": "25.00", "tag": "special", "pic_ref": "https://placekitten.com/249/250"}' localhost:8080/products/
+# this will load kittens to the web shop
+setup/add_products.sh default
+
+# alternatively load some phones to the web shop
+# setup/add_products.sh phones
 ```
 
   * If you refresh the web shop. You should be able to see the 4 new products in the shop now.
