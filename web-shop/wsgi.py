@@ -46,7 +46,7 @@ def init_tracing():
     FlaskInstrumentor().instrument_app(app)
     app.wsgi_app = OpenTelemetryMiddleware(app.wsgi_app)
     RequestsInstrumentor().instrument()
-    log_format = "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] trace_id=%(otelTraceID)s span_id=%(otelSpanID)s resource.service.name=%(otelServiceName)s - %(message)s"
+    log_format = "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] traceID=%(otelTraceID)s span_id=%(otelSpanID)s resource.service.name=%(otelServiceName)s - %(message)s"
     LoggingInstrumentor().instrument(set_logging_format=True, logging_format=log_format, log_level=logging.INFO, tracer_provider=tracer)
 
 
