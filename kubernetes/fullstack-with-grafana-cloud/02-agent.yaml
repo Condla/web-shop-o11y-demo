@@ -1,0 +1,224 @@
+#####################################
+############# grafana agent #########
+#####################################
+kind: Secret
+apiVersion: v1
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: grafana-agent
+  name: grafana-agent-config
+type: Opaque
+stringData: 
+  agent.yml: |
+    server:
+      log_level: info
+
+    integrations:
+
+      app_agent_receiver_configs:
+        - autoscrape:
+            enable: true
+            metrics_instance: 'mimir'
+          instance: 'frontend'
+          logs_instance: 'loki'
+          traces_instance: 'tempo'
+          server:
+            host: 0.0.0.0
+            port: 12347
+            cors_allowed_origins:
+              - http://*
+            api_key: 'secret' # optional, if set, client will be required to provide it via x-api-key header
+          logs_labels: # labels to add to loki log record
+            app: 'web-shop-frontend' # static value
+            service: 'web-shop-frontend'
+            kind: # value will be taken from log items. exception, log, measurement, etc
+          logs_send_timeout: 5000
+          sourcemaps:
+            download: true # will download source file, extract source map location,
+
+    metrics:
+      wal_directory: /data/metrics/wal
+      global:
+        scrape_interval: 15s
+        remote_write:
+        - url: "${MIMIR_URL}"
+          basic_auth:
+            username: ${MIMIR_USR}
+            password: ${MIMIR_KEY}
+      configs:
+        - name: mimir
+          scrape_configs:
+            - job_name: 'web-shop'
+              static_configs:
+                - targets: ['web-shop:6666']
+                  labels:
+                    group: 'shop'
+                    service: 'web-shop'
+                    compose_service: web-shop
+                    compose_project: web-shop-o11y-demo
+
+            - job_name: 'shopping-cart'
+              static_configs:
+                - targets: ['shopping-cart:5555']
+                  labels:
+                    group: 'shop'
+                    service: 'shopping-cart'
+                    compose_service: shopping-cart
+                    compose_project: web-shop-o11y-demo
+
+            - job_name: 'products'
+              metrics_path: /actuator/prometheus
+              static_configs:
+                - targets: ['products:8080']
+                  labels:
+                    group: 'shop'
+                    service: 'products'
+                    compose_service: products
+                    compose_project: web-shop-o11y-demo
+
+            - job_name: 'span-metrics'
+              static_configs:
+                - targets: ['grafana-agent:1234']
+                  labels:
+                    group: 'shop'
+                    compose_project: web-shop-o11y-demo
+
+    logs:
+      configs:
+      - name: loki
+        clients:
+          - url: ${LOKI_URL}
+            external_labels:
+              job: agent
+      positions_directory: /data/logs/positions
+
+    traces:
+      configs:
+      - name: tempo
+        receivers:
+          otlp:
+            protocols:
+              grpc:
+              http:
+        remote_write:
+          - endpoint: ${TEMPO_URL}
+            basic_auth:
+              username: ${TEMPO_USR}
+              password: ${TEMPO_KEY}
+        #service_graphs:
+        #    enabled: true
+        #spanmetrics:
+        #  dimensions:
+        #    - name: http.method
+        #    - name: http.target
+        #    - name: team.name
+        #  handler_endpoint: 0.0.0.0:1234
+        automatic_logging:
+          backend: logs_instance
+          logs_instance_name: loki
+          roots: true
+          processes: true
+          spans: true
+          span_attributes:
+            - http.method
+            - http.target
+            - http.status_code
+          overrides:
+            trace_id_key: "traceID"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: grafana-agent
+  name: grafana-agent
+spec:
+  ports:
+    - name: "http"
+      port: 80
+      targetPort: 80
+    - name: "otel"
+      port: 4317
+      targetPort: 4317
+  selector:
+    app: grafana-agent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: grafana-agent
+  name: grafana-agent-external
+spec:
+  ports:
+    - name: "front-end-receiver"
+      port: 12347
+      targetPort: 12347
+  type: LoadBalancer
+  selector:
+    app: grafana-agent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: grafana-agent
+  name: grafana-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana-agent
+  template:
+    metadata:
+      labels:
+        app: grafana-agent
+    spec:
+      containers:
+        - name: grafana-agent
+          image: grafana/agent:v0.29.0
+          env:
+          command: 
+            - /bin/agent
+            - -config.file=/etc/agent/agent.yml
+            - -server.http.address=0.0.0.0:80
+            - -enable-features=integrations-next
+            - -config.enable-read-api
+          ports:
+            - containerPort: 80
+            - containerPort: 4317
+            - containerPort: 12347
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - mountPath: /etc/agent/
+              name: grafana-agent-config
+          livenessProbe:
+            httpGet:
+              path: /-/ready
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: grafana-agent-config
+          secret:
+            secretName: grafana-agent-config

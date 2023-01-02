@@ -6,3 +6,4 @@ opentelemetry-javaagent.jar
 .vscode
 kubernetes/set_env.sh
 setup/*.log
+node_modules

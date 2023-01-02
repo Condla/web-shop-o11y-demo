@@ -1,0 +1,766 @@
+# Things to change before deployment
+# Grafana cloudn remote urls and key
+# Front end url grafana-agent-front-end-receiver
+
+---
+#####################################
+############# Zookeeper #############
+#####################################
+kind: Secret
+apiVersion: v1
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: zookeeper
+  name: zookeeper-config
+type: Opaque
+stringData: 
+  zookeeper.properties: |
+    dataDir=/tmp/zookeeper
+    clientPort=2181
+    maxClientCnxns=0
+    admin.enableServer=false
+    4lw.commands.whitelist=ruok,dump
+  zookeeper-metrics-config.yml: |
+    # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
+    lowercaseOutputName: true
+    rules:
+    # replicated Zookeeper
+    - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+)><>(\\w+)"
+      name: "zookeeper_$2"
+      type: GAUGE
+    - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+)><>(\\w+)"
+      name: "zookeeper_$3"
+      type: GAUGE
+      labels:
+        replicaId: "$2"
+    - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+)><>(Packets\\w+)"
+      name: "zookeeper_$4"
+      type: COUNTER
+      labels:
+        replicaId: "$2"
+        memberType: "$3"
+    - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+)><>(\\w+)"
+      name: "zookeeper_$4"
+      type: GAUGE
+      labels:
+        replicaId: "$2"
+        memberType: "$3"
+    - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+), name3=(\\w+)><>(\\w+)"
+      name: "zookeeper_$4_$5"
+      type: GAUGE
+      labels:
+        replicaId: "$2"
+        memberType: "$3"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: zookeeper
+  name: zookeeper
+spec:
+  ports:
+    - name: "core"
+      port: 2181
+      targetPort: 2181
+    - name: "metrics"
+      port: 9779
+      targetPort: 9779
+  selector:
+    app: zookeeper
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: zookeeper
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: quay.io/strimzi/kafka:0.32.0-kafka-3.2.1
+          env:
+            - name: LOG_DIR
+              value: /tmp/logs
+            - name: KAFKA_OPTS
+              value: -javaagent:/opt/kafka/libs/jmx_prometheus_javaagent-0.17.2.jar=9779:/config/zookeeper-metrics-config.yml
+          command: 
+            - bin/zookeeper-server-start.sh 
+            - /config/zookeeper.properties
+          ports:
+            - containerPort: 2181
+            - containerPort: 9779
+          volumeMounts:
+            - mountPath: /tmp/zookeeper
+              name: data
+            - mountPath: /config
+              name: zookeeper-config
+          livenessProbe:
+            exec:
+              command: ['/bin/bash', '-c', 'echo "ruok" | nc -w 2 localhost 2181 | grep imok']
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            exec:
+              command: ['/bin/bash', '-c', 'echo "ruok" | nc -w 2 localhost 2181 | grep imok']
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: zookeeper-config
+          secret:
+            secretName: zookeeper-config
+---
+#####################################
+############# Broker ################
+#####################################
+kind: Secret
+apiVersion: v1
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: broker
+  name: broker-config
+type: Opaque
+stringData: 
+  kafka-metrics-config.yml: |
+    # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
+    lowercaseOutputName: true
+    rules:
+    # Special cases and very specific rules
+    - pattern: kafka.server<type=(.+), name=(.+), clientId=(.+), topic=(.+), partition=(.*)><>Value
+      name: kafka_server_$1_$2
+      type: GAUGE
+      labels:
+       clientId: "$3"
+       topic: "$4"
+       partition: "$5"
+    - pattern: kafka.server<type=(.+), name=(.+), clientId=(.+), brokerHost=(.+), brokerPort=(.+)><>Value
+      name: kafka_server_$1_$2
+      type: GAUGE
+      labels:
+       clientId: "$3"
+       broker: "$4:$5"
+    - pattern: kafka.server<type=(.+), cipher=(.+), protocol=(.+), listener=(.+), networkProcessor=(.+)><>connections
+      name: kafka_server_$1_connections_tls_info
+      type: GAUGE
+      labels:
+        cipher: "$2"
+        protocol: "$3"
+        listener: "$4"
+        networkProcessor: "$5"
+    - pattern: kafka.server<type=(.+), clientSoftwareName=(.+), clientSoftwareVersion=(.+), listener=(.+), networkProcessor=(.+)><>connections
+      name: kafka_server_$1_connections_software
+      type: GAUGE
+      labels:
+        clientSoftwareName: "$2"
+        clientSoftwareVersion: "$3"
+        listener: "$4"
+        networkProcessor: "$5"
+    - pattern: "kafka.server<type=(.+), listener=(.+), networkProcessor=(.+)><>(.+):"
+      name: kafka_server_$1_$4
+      type: GAUGE
+      labels:
+       listener: "$2"
+       networkProcessor: "$3"
+    - pattern: kafka.server<type=(.+), listener=(.+), networkProcessor=(.+)><>(.+)
+      name: kafka_server_$1_$4
+      type: GAUGE
+      labels:
+       listener: "$2"
+       networkProcessor: "$3"
+    # Some percent metrics use MeanRate attribute
+    # Ex) kafka.server<type=(KafkaRequestHandlerPool), name=(RequestHandlerAvgIdlePercent)><>MeanRate
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)Percent\w*><>MeanRate
+      name: kafka_$1_$2_$3_percent
+      type: GAUGE
+    # Generic gauges for percents
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)Percent\w*><>Value
+      name: kafka_$1_$2_$3_percent
+      type: GAUGE
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)Percent\w*, (.+)=(.+)><>Value
+      name: kafka_$1_$2_$3_percent
+      type: GAUGE
+      labels:
+        "$4": "$5"
+    # Generic per-second counters with 0-2 key/value pairs
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*, (.+)=(.+), (.+)=(.+)><>Count
+      name: kafka_$1_$2_$3_total
+      type: COUNTER
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*, (.+)=(.+)><>Count
+      name: kafka_$1_$2_$3_total
+      type: COUNTER
+      labels:
+        "$4": "$5"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*><>Count
+      name: kafka_$1_$2_$3_total
+      type: COUNTER
+    # Generic gauges with 0-2 key/value pairs
+    - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>Value
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+)><>Value
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)><>Value
+      name: kafka_$1_$2_$3
+      type: GAUGE
+    # Emulate Prometheus 'Summary' metrics for the exported 'Histogram's.
+    # Note that these are missing the '_sum' metric!
+    - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>Count
+      name: kafka_$1_$2_$3_count
+      type: COUNTER
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.*), (.+)=(.+)><>(\d+)thPercentile
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+        quantile: "0.$8"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+)><>Count
+      name: kafka_$1_$2_$3_count
+      type: COUNTER
+      labels:
+        "$4": "$5"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.*)><>(\d+)thPercentile
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+        quantile: "0.$6"
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)><>Count
+      name: kafka_$1_$2_$3_count
+      type: COUNTER
+    - pattern: kafka.(\w+)<type=(.+), name=(.+)><>(\d+)thPercentile
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        quantile: "0.$4"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: broker
+  name: broker
+spec:
+  clusterIP: None 
+  ports:
+    - name: "core"
+      port: 9092
+      targetPort: 9092
+    - name: "metrics"
+      port: 9779
+      targetPort: 9779
+  selector:
+    app: broker
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: broker
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  serviceName: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+        - name: broker
+          image: quay.io/strimzi/kafka:0.32.0-kafka-3.2.1
+          env:
+            - name: LOG_DIR
+              value: /tmp/logs
+            - name: KAFKA_OPTS
+              value: -javaagent:/opt/kafka/libs/jmx_prometheus_javaagent-0.17.2.jar=9779:/config/kafka-metrics-config.yml
+          command: 
+            - /opt/kafka/bin/kafka-server-start.sh 
+            - /opt/kafka/config/server.properties
+            - --override 
+            - zookeeper.connect=zookeeper:2181
+            - --override
+            - log.dirs=/tmp/data"
+          ports:
+            - containerPort: 9092
+            - containerPort: 9779
+          volumeMounts:
+            - mountPath: /tmp/data
+              name: kafka-data
+            - mountPath: /config
+              name: broker-config
+          livenessProbe:
+            exec:
+              command: ['/bin/bash', '-c', 'echo "dump" | nc zookeeper 2181 | grep -i broker | xargs | grep "/brokers/ids/0"']
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            exec:
+              command: ['/bin/bash', '-c', 'echo "dump" | nc zookeeper 2181 | grep -i broker | xargs | grep "/brokers/ids/0"']
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+        - name: kafka-data
+          emptyDir: {}
+        - name: broker-config
+          secret:
+            secretName: broker-config
+---
+#####################################
+############# Kafdrop ###############
+#####################################
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: kafdrop
+  name: kafdrop
+spec:
+  ports:
+    - name: "core"
+      port: 9000
+      targetPort: 9000
+  type: LoadBalancer
+  selector:
+    app: kafdrop
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: kafdrop
+  name: kafdrop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafdrop
+  template:
+    metadata:
+      labels:
+        app: kafdrop
+    spec:
+      containers:
+        - name: kafdrop
+          image: obsidiandynamics/kafdrop:3.30.0
+          env:
+            - name: KAFKA_BROKERCONNECT
+              value: broker:9092
+            - name: JVM_OPTS
+              value: -Xms32M -Xmx128M
+            - name: SERVER_SERVLET_CONTEXTPATH
+              value: "/"
+          command: 
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+---
+#####################################
+############# mariadb ###############
+#####################################
+kind: Secret
+apiVersion: v1
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: mariadb
+  name: mariadb-config
+type: Opaque
+stringData: 
+  init.sql: |
+    CREATE TABLE `customer` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `name` varchar(50) NOT NULL,
+      PRIMARY KEY (`id`)
+    );
+    CREATE TABLE `product` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `name` varchar(10) NOT NULL,
+      `price` float NOT NULL,
+      `tag` varchar(500) NOT NULL,
+      `pic_ref` varchar(500) NOT NULL,
+      PRIMARY KEY (`id`)
+    );
+    CREATE TABLE `cart` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `customer_id` int(11) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `customer_id` (`customer_id`),
+      CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
+    );
+    CREATE TABLE `cart_item` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `product_id` int(11) DEFAULT NULL,
+      `cart_id` int(11) DEFAULT NULL,
+      `quantity` int(11) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `product_id` (`product_id`),
+      KEY `cart_id` (`cart_id`),
+      CONSTRAINT `cart_item_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
+      CONSTRAINT `cart_item_ibfk_2` FOREIGN KEY (`cart_id`) REFERENCES `cart` (`id`)
+    );
+
+    delete from cart_item;
+    delete from cart;
+    delete from customer;
+    delete from product;
+
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Meows", 29.99,"","/static/img/cats/Meows.jpeg"); 
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Loki", 39.99,"","/static/img/cats/Loki.jpeg");
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Charlie", 19.50,"","/static//img/cats/Charlie.jpeg");
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Carla", 25.00,"","/static/img/cats/Carla.jpeg");
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: mariadb
+  name: mariadb
+spec:
+  ports:
+    - name: "core"
+      port: 3306
+      targetPort: 3306
+  selector:
+    app: mariadb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: mariadb
+  name: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: docker.io/mariadb:10.9.4
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              value: myrootpassword
+            - name: MARIADB_DATABASE
+              value: webshop
+          command: 
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: data
+            - mountPath: /docker-entrypoint-initdb.d
+              name: mariadb-config
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: mariadb-config
+          secret:
+            secretName: mariadb-config
+
+---
+#####################################
+############# shopping-cart #########
+#####################################
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: shopping-cart
+  name: shopping-cart
+spec:
+  ports:
+    - name: "core"
+      port: 5555
+      targetPort: 5555
+  selector:
+    app: shopping-cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: shopping-cart
+  name: shopping-cart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopping-cart
+  template:
+    metadata:
+      labels:
+        app: shopping-cart
+    spec:
+      containers:
+        - name: shopping-cart
+          image: alainpham/shopping-cart:1.3
+          env:
+            - name: SQLALCHEMY_DATABASE_URI
+              value: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://grafana-agent:4317
+          command: 
+          ports:
+            - containerPort: 5555
+          volumeMounts:
+          livenessProbe:
+            httpGet:
+              path: /cart/test
+              port: 5555
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /cart/test
+              port: 5555
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+---
+#####################################
+############# products ##############
+#####################################
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: products
+  name: products
+spec:
+  ports:
+    - name: "core"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: products
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: products
+  name: products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products
+  template:
+    metadata:
+      labels:
+        app: products
+    spec:
+      containers:
+        - name: products
+          image: condla/products:otel-1.2
+          env:
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+            - name: OTEL_EXPORTER
+              value: otlp_span
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://grafana-agent:4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=products,team.name=backend,environment=production
+            - name: JAVA_OPTS
+              value: -javaagent:/opentelemetry-javaagent.jar
+            - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
+              value: broker:9092
+            - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+              value: broker:9092
+          command: 
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+
+---
+#####################################
+############# web-shop  #############
+#####################################
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: web-shop
+  name: web-shop
+spec:
+  ports:
+    - name: "core"
+      port: 3389
+      targetPort: 3389
+  type: LoadBalancer
+  selector:
+    app: web-shop
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: web-shop
+  name: web-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-shop
+  template:
+    metadata:
+      labels:
+        app: web-shop
+    spec:
+      containers:
+        - name: web-shop
+          image: alainpham/web-shop:1.8
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://grafana-agent:4317
+            - name: APP_AGENT_RECEIVER_ENDPOINT
+              value: http://${APP_RECEIVER}:12347
+          command: 
+          ports:
+            - containerPort: 3389
+          volumeMounts:
+          livenessProbe:
+            httpGet:
+              path: /shop
+              port: 3389
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /shop
+              port: 3389
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+---
