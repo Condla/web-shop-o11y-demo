@@ -285,6 +285,9 @@ spec:
     - name: "metrics"
       port: 9779
       targetPort: 9779
+    - name: "admin"
+      port: 29092
+      targetPort: 9092
   selector:
     app: broker
 
@@ -655,7 +658,7 @@ spec:
     spec:
       containers:
         - name: products
-          image: condla/products:otel-1.2
+          image: alainpham/products:otel-1.3
           env:
             - name: OTEL_METRICS_EXPORTER
               value: none
@@ -670,6 +673,10 @@ spec:
             - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
               value: broker:9092
             - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+              value: broker:9092
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: broker:9092
+            - name: KAFKA_BOOTSTRAP
               value: broker:9092
           command: 
           ports:

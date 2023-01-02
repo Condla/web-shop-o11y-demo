@@ -2,7 +2,7 @@ package com.datahovel.webshop;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
@@ -19,6 +19,10 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 @SpringBootApplication
 public class Application {
+
+
+	@Value("${kafka.bootstrap}")
+	String bootstrapServer;
 
 	Logger logger = LoggerFactory.getLogger(Application.class);
 	public static void main(String[] args) {
@@ -48,7 +52,7 @@ public class Application {
 	public KafkaAdmin admin() {
 		Map<String, Object> configs = new HashMap<>();
 		//configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "broker:29092");
+		configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
 		return new KafkaAdmin(configs);
 	}
 
