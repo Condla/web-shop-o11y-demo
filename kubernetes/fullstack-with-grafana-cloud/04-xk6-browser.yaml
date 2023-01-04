@@ -333,7 +333,7 @@ metadata:
     app: xk6-browser
   name: xk6-browser-config
 spec:
-  schedule: "*/10 * * * *"
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       template:
