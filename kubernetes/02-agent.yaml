@@ -77,7 +77,7 @@ stringData:
 
             - job_name: 'span-metrics'
               static_configs:
-                - targets: ['grafana-agent:1234']
+                - targets: ['localhost:1234']
                   labels:
                     group: 'shop'
                     compose_project: web-shop-o11y-demo
@@ -116,14 +116,14 @@ stringData:
             basic_auth:
               username: ${TEMPO_USR}
               password: ${TEMPO_KEY}
-        #service_graphs:
-        #    enabled: true
-        #spanmetrics:
-        #  dimensions:
-        #    - name: http.method
-        #    - name: http.target
-        #    - name: team.name
-        #  handler_endpoint: 0.0.0.0:1234
+        service_graphs:
+           enabled: true
+        spanmetrics:
+          dimensions:
+            - name: http.method
+            - name: http.target
+            - name: team.name
+          handler_endpoint: 0.0.0.0:1234
         automatic_logging:
           backend: logs_instance
           logs_instance_name: loki
