@@ -53,6 +53,7 @@ stringData:
                   labels:
                     group: 'shop'
                     service: 'web-shop'
+                    app: web-shop
                     compose_service: web-shop
                     compose_project: web-shop-o11y-demo
 
@@ -62,6 +63,7 @@ stringData:
                   labels:
                     group: 'shop'
                     service: 'shopping-cart'
+                    app: shopping-cart
                     compose_service: shopping-cart
                     compose_project: web-shop-o11y-demo
 
@@ -72,6 +74,7 @@ stringData:
                   labels:
                     group: 'shop'
                     service: 'products'
+                    app: products
                     compose_service: products
                     compose_project: web-shop-o11y-demo
 
@@ -81,26 +84,46 @@ stringData:
                   labels:
                     group: 'shop'
                     compose_project: web-shop-o11y-demo
+              metric_relabel_configs:
+              - source_labels: 
+                  - service_name
+                target_label: app
 
-            - job_name: 'mysql-exporter'
+            - job_name: 'mysql'
               static_configs:
                 - targets: ['mysql-exporter:9104']
                   labels:
                     group: 'shop'
+                    service: 'mariadb'
+                    compose_service: mariadb
                     compose_project: web-shop-o11y-demo
-              relabel_configs:
-                - replacement: integrations/mysql
-                  source_labels:
-                  - __address__
-                  target_label: job
+
+            - job_name: 'broker'
+              static_configs:
+                - targets: ['broker:9779']
+                  labels:
+                    group: 'shop'
+                    service: 'broker'
+                    compose_service: broker
+                    compose_project: web-shop-o11y-demo
+
+            - job_name: 'zookeeper'
+              static_configs:
+                - targets: ['zookeeper:9779']
+                  labels:
+                    group: 'shop'
+                    service: 'zookeeper'
+                    compose_service: zookeeper
+                    compose_project: web-shop-o11y-demo
 
     logs:
       configs:
       - name: loki
         clients:
           - url: ${LOKI_URL}
-            external_labels:
-              job: agent
+            basic_auth:
+              username: ${LOKI_USR}
+              password: ${LOKI_KEY}
       positions_directory: /data/logs/positions
 
     traces:
@@ -153,6 +176,9 @@ spec:
     - name: "otel"
       port: 4317
       targetPort: 4317
+    - name: "spanmetrics"
+      port: 1234
+      targetPort: 1234
   selector:
     app: grafana-agent
 ---
@@ -202,6 +228,7 @@ spec:
           ports:
             - containerPort: 80
             - containerPort: 4317
+            - containerPort: 1234
             - containerPort: 12347
           volumeMounts:
             - mountPath: /data
