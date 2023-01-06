@@ -49,7 +49,7 @@ stringData:
           scrape_configs:
             - job_name: 'web-shop'
               static_configs:
-                - targets: ['web-shop:6666']
+                - targets: ['web-shop:3389']
                   labels:
                     group: 'shop'
                     service: 'web-shop'
