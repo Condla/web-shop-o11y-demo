@@ -95,6 +95,7 @@ stringData:
                   labels:
                     group: 'shop'
                     service: 'mariadb'
+                    app: mariadb
                     compose_service: mariadb
                     compose_project: web-shop-o11y-demo
 
@@ -104,6 +105,7 @@ stringData:
                   labels:
                     group: 'shop'
                     service: 'broker'
+                    app: broker
                     compose_service: broker
                     compose_project: web-shop-o11y-demo
 
@@ -113,6 +115,7 @@ stringData:
                   labels:
                     group: 'shop'
                     service: 'zookeeper'
+                    app: zookeeper
                     compose_service: zookeeper
                     compose_project: web-shop-o11y-demo
 
@@ -217,7 +220,7 @@ spec:
     spec:
       containers:
         - name: grafana-agent
-          image: grafana/agent:v0.30.1
+          image: grafana/agent:v0.28.1
           env:
           command: 
             - /bin/agent
