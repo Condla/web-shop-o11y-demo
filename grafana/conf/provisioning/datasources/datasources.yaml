@@ -38,6 +38,8 @@ datasources:
         queries:
           - name: 'Requests Rate'
             query: 'sum(rate(traces_spanmetrics_calls_total{$__tags}[1m]))'
+          - name: 'p90 latency'
+            query: 'histogram_quantile(0.9, sum(rate(traces_spanmetrics_calls_total{$__tags}[1m]))'
 
   - name: Mimir
     type: prometheus
@@ -54,19 +56,7 @@ datasources:
   - name: MySQL
     type: mysql
     url: mariadb:3306
-    database: webshop
-    user: root
-    jsonData:
-      maxOpenConns: 0
-      maxIdleConns: 2
-      connMaxLifetime: 14400
-    secureJsonData:
-      password: myrootpassword
-  
-  - name: MySQL
-    type: mysql
-    url: mariadb:3306
-    database: webshop
+    database: webshopdb
     user: root
     jsonData:
       maxOpenConns: 0
