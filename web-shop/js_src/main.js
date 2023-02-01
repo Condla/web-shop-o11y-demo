@@ -13,15 +13,15 @@ const faro = initializeFaro({
     new TracingInstrumentation({
       // Optional, if you want to add custom attributes to the resource
       resourceAttributes: {
-        "service.name": "web-shop-frontend",
-        "team.name": "front-end"
+        "service.name": "web-shop-browser",
+        "team.name": "browser"
       },
     })
 
   ],
   app: {
     name: 'web-shop-frontend',
-    version: '1.4.0',
+    version: '1.5.0',
   },
 });
 
