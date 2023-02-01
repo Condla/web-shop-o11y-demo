@@ -48,7 +48,7 @@ metrics:
     remote_write:
     - url: http://mimir:9009/api/v1/push
     scrape_configs:
-    - job_name: 'mimir'
+    - job_name: 'backends'
 
       # Override the global default and scrape targets from this job every 5 seconds.
       scrape_interval: 5s
