@@ -30,20 +30,13 @@ compactor:
 storage:
   trace:
     backend: local
-    block:
-      bloom_filter_false_positive: .05
-      index_downsample_bytes: 1000
-      encoding: zstd
     wal:
       path: /tmp/tempo/wal
-      encoding: none
     local:
       path: /tmp/tempo/blocks
     pool:
       max_workers: 100
       queue_depth: 10000
-search_enabled: true
-metrics_generator_enabled: true
 
 metrics_generator:
   ring:
