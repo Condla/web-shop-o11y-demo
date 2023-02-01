@@ -7,20 +7,27 @@ networks:
 services:
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:9.3.2
     volumes:
       - "./grafana/dashboards:/var/lib/grafana/dashboards"
       - "./grafana/conf:/etc/grafana/"
     ports:
       - "3000:3000"
     environment:
-      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards ngalert accesscontrol panelTitleSearch tempoSearch tempoApmTable traceToMetrics recordedQueries"
+      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards ngalert accesscontrol panelTitleSearch tempoSearch tempoApmTable traceToMetrics recordedQueries traceqlEditor"
       GF_INSTALL_PLUGINS: "grafana-k6-app,grafana-polystat-panel"
     networks:
       - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   mimir:
-    image: grafana/mimir:latest
+    image: grafana/mimir:2.5.0
     ports:
      - "9009:9009"
     volumes:
@@ -29,16 +36,30 @@ services:
       - '--config.file=/etc/mimir/demo.yaml'
     networks:
      - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:2.7.2
     ports:
       - "3100:3100"
     networks:
       - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   tempo:
-    image: grafana/tempo:latest
+    image: grafana/tempo:2.0.0
     ports:
       - "3200"
       - "4317"
@@ -50,9 +71,16 @@ services:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
     networks:
       - web-shop    
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   agent:
-    image: grafana/agent:latest
+    image: grafana/agent:v0.31.0
     entrypoint:
       - /bin/agent
       - -config.file=/etc/agent/agent.yaml
@@ -81,7 +109,8 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.5"
+    image: "condla/web-shop:1.6"
+    build: "./web-shop"
     ports:
       - "3389:3389"
     environment:
@@ -105,7 +134,7 @@ services:
     ports:
       - "5555:5555"
     environment:
-      SQLALCHEMY_DATABASE_URI: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
+      SQLALCHEMY_DATABASE_URI: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshopdb
       OTEL_EXPORTER_OTLP_ENDPOINT: http://agent:4317
     depends_on:
       mariadb:
@@ -121,7 +150,8 @@ services:
             regex: compose_(service)
  
   products:
-    image: "condla/products:otel-1.2"
+    image: "condla/products:otel-1.4"
+    build: "./products"
     ports:
       - "8080:8080"
     environment:
@@ -149,7 +179,7 @@ services:
       - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: myrootpassword
-      MARIADB_DATABASE: webshop
+      MARIADB_DATABASE: webshopdb
     networks:
       - web-shop
     logging:
@@ -198,6 +228,13 @@ services:
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
     networks:
       - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
@@ -210,6 +247,13 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     networks:
       - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
 
   squid:
     image: ubuntu/squid
@@ -247,14 +291,6 @@ services:
     networks:
       - web-shop
     
-#  shop-simulator:
-#    image: "condla/shop-simulator:1.0"
-#    depends_on:
-#      - "web-shop"
-#    networks:
-#      - web-shop
-#    restart: on-failure
-
 #  blackbox_exporter:
 #    image: prom/blackbox-exporter:master
 #    volumes:
