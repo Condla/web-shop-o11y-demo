@@ -1,10 +1,14 @@
-<html>
-  <head>
-    <title>Flask Intro - login page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
-  </head>
-  <body>
+{% extends "layout.html" %}
+
+{% block title %}
+      <h1 class="w3-jumbo w3-hide-small">Welcome!</h1>
+      <h1 class="w3-hide-large w3-hide-medium">Welcome!</h1>
+      <h1 class="w3-hide-small"></h1>
+{% endblock %}
+
+{% block content %}
+
+
     <div class="container">
       <h1>Please login</h1>
       <br>
@@ -27,5 +31,4 @@
         <p class="error"><strong>Error:</strong> {{ error }}
       {% endif %}
     </div>
-  </body>
-</html>
+{% endblock %}
