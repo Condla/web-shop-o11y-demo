@@ -154,12 +154,13 @@ services:
     build: "./products"
     ports:
       - "8080:8080"
+      - "8081:8081"
     environment:
       OTEL_METRICS_EXPORTER: "none"
       OTEL_EXPORTER: "otlp_span"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
       OTEL_RESOURCE_ATTRIBUTES: "service.name=products,team.name=backend,environment=production"
-      JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar"
+      JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar -javaagent:/jmx_prometheus_javaagent.jar=8081:/httpserver.yml"
     networks:
       - web-shop
     depends_on:
