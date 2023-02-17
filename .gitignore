@@ -3,6 +3,7 @@ __pycache__
 target
 .mvn
 opentelemetry-javaagent.jar
+jmx_prometheus_javaagent-0.17.2.jar
 .vscode
 kubernetes/set_env.sh
 setup/*.log
