@@ -46,7 +46,7 @@ There are two options to deploy this demo. One option is to run it in a K8s clus
 ### Prerequisites
   * I've tested this on a Ubuntu machine, but it should run on any Linux based system using `systemctl`.
   * It gets stuck on a M1 MacBook, so I recommend a VM with 2+ cores and 4GB RAM.
-  * `git`, `docker` and `docker-compose` commands should be installed and accessible without `sudo`
+  * `git`, `wget`, `docker` and `docker-compose` commands should be installed and accessible without `sudo`
   * Also `docker-compose` shouldn't be any older than `1.29.2`
 
 ### Installation

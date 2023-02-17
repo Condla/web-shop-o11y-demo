@@ -109,7 +109,7 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.6"
+    image: "condla/web-shop:1.7"
     build: "./web-shop"
     ports:
       - "3389:3389"
@@ -150,7 +150,7 @@ services:
             regex: compose_(service)
  
   products:
-    image: "condla/products:otel-1.4"
+    image: "condla/products:otel-1.5"
     build: "./products"
     ports:
       - "8080:8080"
