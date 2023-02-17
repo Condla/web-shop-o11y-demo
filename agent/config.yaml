@@ -60,6 +60,10 @@ metrics:
       static_configs:
       - targets: ["node-exporter:9100"]
 
+    - job_name: "jmx"
+      static_configs:
+      - targets: ["products:8081"]
+
     - job_name: 'web-shop'
       scrape_interval: 5s
 
