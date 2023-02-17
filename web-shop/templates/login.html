@@ -10,21 +10,17 @@
 
 
     <div class="container">
-      <h1>Please login</h1>
+      <h1>Please Choose Name</h1>
       <br>
-      This is a user experience demo for a web shop application and it should only take a few seconds.
-      <br><br>
-      Please login and then try to buy one or more products in the web shop.
-      <br><br>
-      Choose your first name as username.
-      <br><br>
-      Please use admin as password.
+      Choose a name and try to:<br>
+      <ul>
+	<li>Put a product into the shopping cart.</li>
+	<li>Then check out the product.</li>
+	<li>There might be issues and errors along the way, but try as long as needed to successfully check out your item.</li>
       <br><br>
       <form action="" method="post">
         <input type="text" placeholder="Username" name="username" value="{{
           request.form.username }}">
-         <input type="password" placeholder="Password" name="password" value="{{
-          request.form.password }}">
         <input class="btn btn-default" type="submit" value="Login">
       </form>
       {% if error %}

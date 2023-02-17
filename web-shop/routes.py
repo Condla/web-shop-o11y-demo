@@ -106,10 +106,7 @@ def get_items_from_shopping_cart(request_string):
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-        else:
-            return redirect(url_for('view_shop', name=request.form['username']))
+        return redirect(url_for('view_shop', name=request.form['username']))
     return render_template('login.html', error=error)
 
 
