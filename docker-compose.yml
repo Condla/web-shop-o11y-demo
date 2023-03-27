@@ -14,7 +14,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards ngalert accesscontrol panelTitleSearch tempoSearch tempoApmTable traceToMetrics recordedQueries traceqlEditor"
+      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards ngalert accesscontrol panelTitleSearch tempoSearch tempoApmTable traceToMetrics recordedQueries traceqlEditor flameGraph"
       GF_INSTALL_PLUGINS: "grafana-k6-app,grafana-polystat-panel"
     networks:
       - web-shop
@@ -79,6 +79,23 @@ services:
           - action: labelmap
             regex: compose_(service)
 
+  phlare:
+    image: grafana/phlare:0.1.2
+    ports:
+      - "4100:4100"
+    command: [ "-config.file=/etc/phlare.yaml" ]
+    volumes:
+      - ./phlare/phlare.yaml:/etc/phlare.yaml
+    networks:
+      - web-shop
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
+        loki-relabel-config: |
+          - action: labelmap
+            regex: compose_(service)
+
   agent:
     image: grafana/agent:v0.31.0
     entrypoint:
@@ -109,8 +126,8 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.7"
-    build: "./web-shop"
+    image: "condla/web-shop:1.8"
+      #build: "./web-shop"
     ports:
       - "3389:3389"
     environment:
@@ -130,7 +147,8 @@ services:
             regex: compose_(service)
 
   shopping-cart:
-    image: "condla/shopping-cart:1.2"
+    image: "condla/shopping-cart:1.3"
+    #build: "./shopping-cart"
     ports:
       - "5555:5555"
     environment:
@@ -150,7 +168,7 @@ services:
             regex: compose_(service)
  
   products:
-    image: "condla/products:otel-1.5"
+    image: "condla/products:otel-1.6"
     build: "./products"
     ports:
       - "8080:8080"
@@ -166,6 +184,8 @@ services:
     depends_on:
       - "shopping-cart"
       - "broker"
+    security_opt:
+      - seccomp:phlare/seccomp.json
     logging:
       driver: loki
       options:

@@ -52,6 +52,11 @@ datasources:
           name: traceId
       httpMethod: POST
 
+  - name: Phlare
+    type: phlare
+    access: proxy
+    uid: phlare
+    url: http://phlare:4100
 
   - name: MySQL
     type: mysql
