@@ -1,6 +1,8 @@
 from flask import request, render_template, redirect, url_for
+import json
 import requests
 from flask import current_app as app
+import uuid
 
 shopping_cart_url = "http://shopping-cart:5555"
 products_url = "http://products:8080"
@@ -18,13 +20,13 @@ def view_cart():
     headers = {'Content-type': 'application/json'}
     request_string = "{}/cart/{}".format(shopping_cart_url, person)
 
-    items = get_items_from_shopping_cart(request_string)
+
 
     if request.method == "POST" and discount:
         apply_discount(person, headers, request_string)
 
     if request.method == "POST" and not discount:
-        check_out_cart(checkout, headers, request_string, items)
+        check_out_cart(checkout, headers, request_string, person)
     
     items = get_items_from_shopping_cart(request_string) 
     app.logger.info(app.app_agent_receiver_endpoint)
@@ -64,7 +66,8 @@ def get_products(request_string):
         app.logger.info("Successfully obtained items from shopping cart")
     return products
 
-def check_out_cart(checkout, headers, request_string, items):
+def check_out_cart(checkout, headers, request_string, person):
+    items = get_items_from_shopping_cart(request_string)
     response = requests.delete(request_string, headers=headers, proxies=proxies)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
         app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
@@ -74,6 +77,19 @@ def check_out_cart(checkout, headers, request_string, items):
             if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
                app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
             else:
+# create unique id for each order
+# call the method "{}/create_order".format(shopping_cart_url
+#payload ="        request_string = "{}/cart/{}".format(shopping_cart_url, person)
+                order_uuid = uuid.uuid4()
+                order_request_string = "{}/order/{}".format(shopping_cart_url, order_uuid)
+                payload = json.loads('{"name": "' + person + '"}')
+                app.logger.debug("Trying to create order {}".format(order_uuid))
+                response = requests.post(order_request_string, json=payload, headers=headers, proxies=proxies)
+                if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
+                    app.logger.exception("Could not create order {} ".format(order_uuid))
+                else:
+                    app.logger.info("Created order {}.".format(order_uuid))
+
                 for item in items:
                     request_string = "{}/products/checkout".format(products_url)
                     payload = item

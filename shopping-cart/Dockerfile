@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 LABEL Stefan Dunkler
 WORKDIR /app
 RUN apt-get update -y
