@@ -49,12 +49,10 @@ metrics_generator:
       workers: 10
       dimensions:
         - http.method
-        - http.target
         - team.name
     span_metrics:
       dimensions:
         - http.method
-        - http.target
         - team.name
   registry:
     stale_duration: 5m
