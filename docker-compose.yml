@@ -169,7 +169,7 @@ services:
  
   products:
     image: "condla/products:otel-1.6"
-    build: "./products"
+      #build: "./products"
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -178,6 +178,7 @@ services:
       OTEL_EXPORTER: "otlp_span"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://agent:4317"
       OTEL_RESOURCE_ATTRIBUTES: "service.name=products,team.name=backend,environment=production"
+      OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED: "true"
       JAVA_OPTS: "-javaagent:/opentelemetry-javaagent.jar -javaagent:/jmx_prometheus_javaagent.jar=8081:/httpserver.yml"
     networks:
       - web-shop
