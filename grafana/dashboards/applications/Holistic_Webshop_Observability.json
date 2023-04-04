@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -114,7 +113,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
+        "w": 4,
         "x": 0,
         "y": 2
       },
@@ -184,6 +183,7 @@
           }
         }
       ],
+      "transparent": true,
       "type": "stat"
     },
     {
@@ -220,8 +220,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
-        "x": 6,
+        "w": 4,
+        "x": 4,
         "y": 2
       },
       "id": 60,
@@ -290,6 +290,7 @@
           }
         }
       ],
+      "transparent": true,
       "type": "stat"
     },
     {
@@ -300,33 +301,144 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyEUR"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sum(cart_item.quantity * product.price)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 8,
+        "y": 2
+      },
+      "id": 72,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^name$/",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT product.name, sum(cart_item.quantity) as amount FROM cart_item \n  JOIN product\n  ON cart_item.product_id = product.id\n  JOIN cart ON cart_item.cart_id = cart.id\n  JOIN customer ON cart.customer_id = customer.id\n  WHERE $__timeFilter(cart_item.created_date) \n  GROUP BY product.name ORDER BY amount DESC LIMIT 1;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Most popular item",
+      "transformations": [],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
           },
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "scheme",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 5,
+            "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -345,52 +457,80 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "currencyEUR"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sum(cart_item.quantity * product.price)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 9,
+        "h": 6,
         "w": 12,
         "x": 12,
         "y": 2
       },
-      "id": 52,
+      "id": 71,
       "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
         "tooltip": {
           "mode": "single",
           "sort": "none"
-        }
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
-      "pluginVersion": "9.3.2",
       "targets": [
         {
-          "dataset": "webshopdb",
           "datasource": {
             "type": "mysql",
             "uid": "P211906C1C32DB77E"
           },
           "editorMode": "code",
           "format": "table",
-          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "group": [],
+          "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, count(*) AS amount FROM webshopdb.order_table AS orders\nWHERE  $__timeFilter(created_date)\nGROUP BY TIME ORDER BY time ASC",
+          "rawSql": "SELECT customer.name, sum(cart_item.quantity * product.price)\n  FROM cart_item \n  JOIN product\n  ON cart_item.product_id = product.id\n  JOIN cart ON cart_item.cart_id = cart.id\n  JOIN customer ON cart.customer_id = customer.id\n  WHERE cart.is_deleted is false AND  $__timeFilter(cart_item.created_date) \n  GROUP BY customer.name ORDER BY sum(cart_item.quantity * product.price) DESC LIMIT 5;",
           "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
           "sql": {
             "columns": [
               {
-                "parameters": [
-                  {
-                    "name": "*",
-                    "type": "functionParameter"
-                  }
-                ],
+                "parameters": [],
                 "type": "function"
               }
             ],
@@ -404,11 +544,20 @@
             ],
             "limit": 50
           },
-          "table": "order"
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Amount of Orders per Minute",
-      "type": "timeseries"
+      "title": "Top 5 Current Biggest Shopping Carts (Before Checkout)",
+      "transformations": [],
+      "transparent": true,
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -561,6 +710,7 @@
           }
         }
       ],
+      "transparent": true,
       "type": "table"
     },
     {
@@ -616,18 +766,17 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "currencyEUR"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 12,
         "x": 12,
-        "y": 11
+        "y": 8
       },
-      "id": 53,
+      "id": 52,
       "options": {
         "legend": {
           "calcs": [],
@@ -652,7 +801,7 @@
           "format": "table",
           "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
           "rawQuery": true,
-          "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, sum(quantity*price) AS amount FROM webshopdb.order_table AS orders\nJOIN cart AS cart ON cart.id = orders.cart_id\nJOIN cart_item AS item ON item.cart_id = cart.id \nJOIN product ON item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY time ORDER BY time ASC\n",
+          "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, count(*) AS amount FROM webshopdb.order_table AS orders\nWHERE  $__timeFilter(created_date)\nGROUP BY TIME ORDER BY time ASC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -679,7 +828,8 @@
           "table": "order"
         }
       ],
-      "title": "Revenue per Minute",
+      "title": "Amount of Orders per Minute",
+      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -802,6 +952,7 @@
           }
         }
       ],
+      "transparent": true,
       "type": "stat"
     },
     {
@@ -839,7 +990,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 4,
         "w": 2,
         "x": 2,
         "y": 13
@@ -923,6 +1074,7 @@
           }
         }
       ],
+      "transparent": true,
       "type": "stat"
     },
     {
@@ -1070,7 +1222,128 @@
           }
         }
       ],
+      "transparent": true,
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyEUR"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "dataset": "webshopdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, sum(quantity*price) AS amount FROM webshopdb.order_table AS orders\nJOIN cart AS cart ON cart.id = orders.cart_id\nJOIN cart_item AS item ON item.cart_id = cart.id \nJOIN product ON item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY time ORDER BY time ASC\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Revenue per Minute",
+      "transparent": true,
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1176,6 +1449,100 @@
           }
         }
       ],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "To Trace",
+              "url": "/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22query%22:%22${__field.name}%22,%22queryType%22:%22traceId%22,%22refId%22:%22A%22%7D%5D,%22range%22:%7B%22from%22:%22now-30m%22,%22to%22:%22now%22%7D%7D"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 2,
+        "x": 2,
+        "y": 17
+      },
+      "id": 69,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "name"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum by(trace_id) (count_over_time({compose_service=\"shopping-cart\"} |= `$order_id` | logfmt | __error__=`` [$__range]))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "rowsToFields",
+          "options": {
+            "mappings": []
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "4975001ad2dd2cf82916e262c8335016 1680157491902": "",
+              "trace_id": "trace"
+            }
+          }
+        }
+      ],
+      "transparent": true,
       "type": "stat"
     },
     {
@@ -1232,7 +1599,7 @@
             "h": 3,
             "w": 4,
             "x": 0,
-            "y": 4
+            "y": 21
           },
           "id": 39,
           "links": [
@@ -1268,6 +1635,7 @@
             }
           ],
           "title": "Total Exceptions",
+          "transparent": true,
           "type": "stat"
         },
         {
@@ -1301,7 +1669,7 @@
             "h": 3,
             "w": 4,
             "x": 4,
-            "y": 4
+            "y": 21
           },
           "id": 29,
           "options": {
@@ -1333,6 +1701,7 @@
             }
           ],
           "title": "TTFB",
+          "transparent": true,
           "type": "stat"
         },
         {
@@ -1370,7 +1739,7 @@
             "h": 3,
             "w": 4,
             "x": 8,
-            "y": 4
+            "y": 21
           },
           "id": 31,
           "options": {
@@ -1402,6 +1771,7 @@
             }
           ],
           "title": "FCP",
+          "transparent": true,
           "type": "stat"
         },
         {
@@ -1441,7 +1811,7 @@
             "h": 3,
             "w": 4,
             "x": 12,
-            "y": 4
+            "y": 21
           },
           "id": 33,
           "options": {
@@ -1473,6 +1843,7 @@
             }
           ],
           "title": "CLS",
+          "transparent": true,
           "type": "stat"
         },
         {
@@ -1510,7 +1881,7 @@
             "h": 3,
             "w": 4,
             "x": 16,
-            "y": 4
+            "y": 21
           },
           "id": 35,
           "options": {
@@ -1542,6 +1913,7 @@
             }
           ],
           "title": "LCP",
+          "transparent": true,
           "type": "stat"
         },
         {
@@ -1579,7 +1951,7 @@
             "h": 3,
             "w": 4,
             "x": 20,
-            "y": 4
+            "y": 21
           },
           "id": 37,
           "options": {
@@ -1611,6 +1983,7 @@
             }
           ],
           "title": "FID",
+          "transparent": true,
           "type": "stat"
         }
       ],
@@ -1618,7 +1991,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1626,1407 +1999,1399 @@
         "y": 21
       },
       "id": 43,
-      "panels": [],
-      "title": "Endpoint Heath + 4 Golden Signals",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "",
-              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces=~\\\"process|root|span\\\"} != \\\"/order/\\\" |= \\\"http.status_code\\\" |= \\\"http.target\\\" | logfmt | http_status_code=~\\\"5..\\\" | http_target=\\\"${__field.name}\\\" | line_format\\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]} "
-            }
-          ],
-          "mappings": [],
-          "noValue": "0%",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 0.04
-              },
-              {
-                "color": "red",
-                "value": 0.08
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 22
-      },
-      "id": 24,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "value"
-      },
-      "pluginVersion": "9.3.2",
-      "targets": [
+      "panels": [
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "editorMode": "code",
-          "expr": "sum by (http_target)(count_over_time({traces=~\"process|root|span\"} != \"/order/\" |= \"http.status_code\" |= \"http.target\" | logfmt | http_status_code=~\"5..\" [5m])) / sum by (http_target)(count_over_time({traces=~\"process|root|span\"} != \"/order/\" |= \"http.status_code\" |= \"http.target\" | logfmt [5m]))",
-          "queryType": "instant",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Error Percentage of Failing Endpoints",
-      "transformations": [
-        {
-          "id": "rowsToFields",
+          "fieldConfig": {
+            "defaults": {
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces=~\\\"process|root|span\\\"} != \\\"/order/\\\" |= \\\"http.status_code\\\" |= \\\"http.target\\\" | logfmt | http_status_code=~\\\"5..\\\" | http_target=\\\"${__field.name}\\\" | line_format\\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]} "
+                }
+              ],
+              "mappings": [],
+              "noValue": "0%",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 0.04
+                  },
+                  {
+                    "color": "red",
+                    "value": 0.08
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 22
+          },
+          "id": 24,
           "options": {
-            "mappings": [
-              {
-                "fieldName": "Value #A",
-                "handlerKey": "field.value"
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "value"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
               },
-              {
-                "fieldName": "http_target",
-                "handlerKey": "field.name"
-              },
-              {
-                "fieldName": "Time",
-                "handlerKey": "__ignore"
+              "editorMode": "code",
+              "expr": "sum by (http_target)(count_over_time({traces=~\"process|root|span\"} != \"/order/\" |= \"http.status_code\" |= \"http.target\" | logfmt | http_status_code=~\"5..\" [5m])) / sum by (http_target)(count_over_time({traces=~\"process|root|span\"} != \"/order/\" |= \"http.status_code\" |= \"http.target\" | logfmt [5m]))",
+              "queryType": "instant",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Error Percentage of Failing Endpoints",
+          "transformations": [
+            {
+              "id": "rowsToFields",
+              "options": {
+                "mappings": [
+                  {
+                    "fieldName": "Value #A",
+                    "handlerKey": "field.value"
+                  },
+                  {
+                    "fieldName": "http_target",
+                    "handlerKey": "field.name"
+                  },
+                  {
+                    "fieldName": "Time",
+                    "handlerKey": "__ignore"
+                  }
+                ]
               }
-            ]
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "tempo",
-        "uid": "tempo"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 25
-      },
-      "id": 27,
-      "options": {
-        "nodes": {
-          "arcs": [],
-          "mainStatUnit": "string"
-        }
-      },
-      "targets": [
+            }
+          ],
+          "transparent": true,
+          "type": "stat"
+        },
         {
           "datasource": {
             "type": "tempo",
             "uid": "tempo"
           },
-          "key": "Q-94da5f55-7445-4da5-8197-a48a4a61727f-0",
-          "queryType": "serviceMap",
-          "refId": "A"
-        }
-      ],
-      "title": "Service Map",
-      "type": "nodeGraph"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 25
           },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 50,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+          "id": 27,
+          "options": {
+            "nodes": {
+              "arcs": [],
+              "mainStatUnit": "string"
             }
           },
-          "links": [
+          "targets": [
             {
-              "targetBlank": true,
-              "title": "",
-              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code%3D\\\"${__field.labels.status}\\\" | line_format \\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]}  "
+              "datasource": {
+                "type": "tempo",
+                "uid": "tempo"
+              },
+              "key": "Q-94da5f55-7445-4da5-8197-a48a4a61727f-0",
+              "queryType": "serviceMap",
+              "refId": "A"
             }
           ],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+          "title": "Service Map",
+          "transparent": true,
+          "type": "nodeGraph"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 50,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code%3D\\\"${__field.labels.status}\\\" | line_format \\\"Service: {{.svc}}, Endpoint: {{.http_target}}, HTTP status code: {{.http_status_code}}, Latency: {{.dur}}, traceId={{.traceId}}\\\"\"}]}  "
+                }
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
               {
-                "color": "green",
-                "value": null
+                "matcher": {
+                  "id": "byName",
+                  "options": "Return Status 500"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
               },
               {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Return Status 500"
-            },
-            "properties": [
+                "matcher": {
+                  "id": "byName",
+                  "options": "Return Status 200"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "super-light-green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Return Status 200"
-            },
-            "properties": [
+                "matcher": {
+                  "id": "byName",
+                  "options": "Return Status 201"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "light-green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "super-light-green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Return Status 201"
-            },
-            "properties": [
+                "matcher": {
+                  "id": "byName",
+                  "options": "Return Status 202"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "semi-dark-green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Return Status 202"
-            },
-            "properties": [
+                "matcher": {
+                  "id": "byName",
+                  "options": "Return Status 404"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "semi-dark-green",
-                  "mode": "fixed"
-                }
+                "matcher": {
+                  "id": "byName",
+                  "options": "Return Status 502"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Return Status 404"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 25
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Return Status 502"
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
             },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 25
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[1m]))",
-          "interval": "",
-          "legendFormat": "Return Status {{status}}",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum by (status) (rate(http_server_requests_seconds_count{service=~\"$service\"}[1m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Return Status {{status}}",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum by (code) (rate(gin_requests_total{}[1m]))",
-          "hide": false,
-          "legendFormat": "Return Status {{code}}",
-          "range": true,
-          "refId": "C"
-        }
-      ],
-      "title": "Request Rate and Error Count of $service",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 41,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
             }
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 34
-      },
-      "id": 4,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum(rate(process_cpu_seconds_total{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{service}}",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum(rate(process_cpu_usage{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{service}}",
-          "refId": "B"
-        }
-      ],
-      "title": "CPU Usage of $service",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [
+          "targets": [
             {
-              "targetBlank": true,
-              "title": "",
-              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
-            }
-          ],
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
               },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 8,
-        "x": 12,
-        "y": 34
-      },
-      "id": 21,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "9.3.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum by (service_name) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service=~\"$service\"}[1m]))/sum by (service_name) (rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
-          "interval": "",
-          "legendFormat": "{{ service_name }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Error Percentage Per Service",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 4,
-        "x": 20,
-        "y": 34
-      },
-      "id": 19,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "9.3.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum (rate(traces_spanmetrics_latency_count{}[1m]))",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Total Spans Error Percentage",
-      "transparent": true,
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "links": [
+              "exemplar": true,
+              "expr": "sum by (status) (rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[1m]))",
+              "interval": "",
+              "legendFormat": "Return Status {{status}}",
+              "refId": "A"
+            },
             {
-              "targetBlank": true,
-              "title": "",
-              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum by (status) (rate(http_server_requests_seconds_count{service=~\"$service\"}[1m]))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Return Status {{status}}",
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum by (code) (rate(gin_requests_total{}[1m]))",
+              "hide": false,
+              "legendFormat": "Return Status {{code}}",
+              "range": true,
+              "refId": "C"
             }
           ],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
+          "title": "Request Rate and Error Count of $service",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
               },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 41,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
               {
-                "color": "red",
-                "value": 80
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
               }
             ]
           },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 12,
-        "y": 38
-      },
-      "id": 26,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 34
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum(rate(process_cpu_seconds_total{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{service}}",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum(rate(process_cpu_usage{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{service}}",
+              "refId": "B"
+            }
           ],
-          "fields": "",
-          "values": false
+          "title": "CPU Usage of $service",
+          "transparent": true,
+          "type": "timeseries"
         },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "9.3.2",
-      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
+                }
+              ],
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 12,
+            "y": 34
+          },
+          "id": 21,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "sum by (service_name) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service=~\"$service\"}[1m]))/sum by (service_name) (rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+              "interval": "",
+              "legendFormat": "{{ service_name }}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Error Percentage Per Service",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "orange",
+                    "value": 70
+                  },
+                  {
+                    "color": "red",
+                    "value": 85
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 4,
+            "x": 20,
+            "y": 34
+          },
+          "id": 19,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum (rate(traces_spanmetrics_latency_count{}[1m]))",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Spans Error Percentage",
+          "transparent": true,
+          "type": "gauge"
+        },
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "editorMode": "code",
-          "expr": "sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code =~ \"...\" | http_status_code!~\"2..\" [1m])) / sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code=~\"...\" [1m]))",
-          "legendFormat": "{{ svc }}",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Status Code non-2xx Percentage",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 49,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Average [10m]"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "purple",
-                  "mode": "fixed"
+          "fieldConfig": {
+            "defaults": {
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
                 }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 43
-      },
-      "id": 6,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
           },
-          "exemplar": true,
-          "expr": "sum(rate(flask_http_request_duration_seconds_sum{service=~\"$service\"}[10m])) * 1 / sum(rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[10m]))",
-          "interval": "",
-          "legendFormat": "Average [10m]",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 12,
+            "y": 38
           },
-          "exemplar": true,
-          "expr": "sum(rate(http_server_requests_seconds_sum{service=~\"$service\"}[10m])) * 1 / sum(rate(http_server_requests_seconds_count{service=~\"$service\"}[10m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Average [10m]",
-          "refId": "B"
-        }
-      ],
-      "title": "Average Latency of $service",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
+          "id": 26,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
           },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto",
-            "inspect": false
-          },
-          "links": [
+          "pluginVersion": "9.3.2",
+          "targets": [
             {
-              "targetBlank": true,
-              "title": "",
-              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\" | dur >= ${__data.fields.Last}ms\"}]}"
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "code",
+              "expr": "sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code =~ \"...\" | http_status_code!~\"2..\" [1m])) / sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code=~\"...\" [1m]))",
+              "legendFormat": "{{ svc }}",
+              "queryType": "range",
+              "refId": "A"
             }
           ],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
+          "title": "Status Code non-2xx Percentage",
+          "transparent": true,
+          "type": "stat"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Max"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "continuous-BlPu"
-                }
-              },
-              {
-                "id": "displayName",
-                "value": "Maximum"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Last *"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "gradient-gauge"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "continuous-BlPu"
-                }
-              },
-              {
-                "id": "displayName",
-                "value": "Current Value"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Field"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 126
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Last"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              },
-              {
-                "id": "unit",
-                "value": "none"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 43
-      },
-      "id": 15,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Current Value"
-          }
-        ]
-      },
-      "pluginVersion": "9.3.2",
-      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "topk(10,sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m])))",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{ operation }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Endpoints of $service with Highest Latency",
-      "transformations": [
-        {
-          "id": "reduce",
-          "options": {
-            "labelsToFields": false,
-            "reducers": [
-              "max",
-              "lastNotNull",
-              "last"
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 49,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Average [10m]"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
             ]
-          }
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 43
+          },
+          "id": 6,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum(rate(flask_http_request_duration_seconds_sum{service=~\"$service\"}[10m])) * 1 / sum(rate(flask_http_request_duration_seconds_count{service=~\"$service\"}[10m]))",
+              "interval": "",
+              "legendFormat": "Average [10m]",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum(rate(http_server_requests_seconds_sum{service=~\"$service\"}[10m])) * 1 / sum(rate(http_server_requests_seconds_count{service=~\"$service\"}[10m]))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Average [10m]",
+              "refId": "B"
+            }
+          ],
+          "title": "Average Latency of $service",
+          "transparent": true,
+          "type": "timeseries"
         },
         {
-          "id": "sortBy",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "inspect": false
+              },
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\" | dur >= ${__data.fields.Last}ms\"}]}"
+                }
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-BlPu"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Maximum"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Last *"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-BlPu"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Current Value"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Field"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 126
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Last"
+                },
+                "properties": [
+                  {
+                    "id": "custom.hidden",
+                    "value": true
+                  },
+                  {
+                    "id": "unit",
+                    "value": "none"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 43
+          },
+          "id": 15,
           "options": {
-            "fields": {},
-            "sort": [
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
               {
                 "desc": true,
-                "field": "Last *"
+                "displayName": "Current Value"
               }
             ]
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
           },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [
+          "pluginVersion": "9.3.2",
+          "targets": [
             {
-              "targetBlank": true,
-              "title": "Show relevant logs",
-              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span = \\\"${__field.labels.span_name}\\\" | dur >= ${__value.numeric}﻿ms\"}]}"
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "topk(10,sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m])))",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{ operation }}",
+              "refId": "A"
             }
           ],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
+          "title": "Endpoints of $service with Highest Latency",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "labelsToFields": false,
+                "reducers": [
+                  "max",
+                  "lastNotNull",
+                  "last"
+                ]
               }
-            ]
-          },
-          "unit": "ms"
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "desc": true,
+                    "field": "Last *"
+                  }
+                ]
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "table"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 52
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
-          "interval": "",
-          "legendFormat": "{{service_name}} {{ operation }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Latency of $service by Endpoint",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "Show relevant logs",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span = \\\"${__field.labels.span_name}\\\" | dur >= ${__value.numeric}﻿ms\"}]}"
+                }
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 11,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 52
+          },
+          "id": 13,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
             }
           },
-          "links": [
+          "targets": [
             {
-              "targetBlank": true,
-              "title": "Go to Logs",
-              "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{compose_service%3D~\\\"${__field.labels.compose_service}\\\"}\"}]}"
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+              "interval": "",
+              "legendFormat": "{{service_name}} {{ operation }}",
+              "range": true,
+              "refId": "A"
             }
           ],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          "title": "Latency of $service by Endpoint",
+          "transparent": true,
+          "type": "timeseries"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "shopping-cart"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "web-shop"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 52
-      },
-      "id": 11,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "editorMode": "code",
-          "expr": "sum by (compose_service) (count_over_time({compose_project=\"web-shop-o11y-demo\"} |= \"ERROR\" [5m]))",
-          "legendFormat": "{{compose_service}}",
-          "queryType": "range",
-          "refId": "A"
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 11,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "Go to Logs",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{compose_service%3D~\\\"${__field.labels.compose_service}\\\"}\"}]}"
+                }
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "shopping-cart"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "web-shop"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 52
+          },
+          "id": 11,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "code",
+              "expr": "sum by (compose_service) (count_over_time({compose_project=\"web-shop-o11y-demo\"} |= \"ERROR\" [5m]))",
+              "legendFormat": "{{compose_service}}",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Number of Log Errors",
+          "transparent": true,
+          "type": "timeseries"
         }
       ],
-      "title": "Number of Log Errors",
-      "transparent": true,
-      "type": "timeseries"
+      "title": "Endpoint Heath + 4 Golden Signals",
+      "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 22
       },
       "id": 45,
-      "panels": [],
-      "title": "Logs",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 62
-      },
-      "id": 10,
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": false,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      },
-      "targets": [
+      "panels": [
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "editorMode": "code",
-          "expr": "{compose_service=~\"products|shopping-cart|squid|web-shop\"} |= \"$order_id\"",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Web Shop Logs",
-      "transparent": true,
-      "type": "logs"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 62
           },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMin": 0,
-            "barAlignment": 0,
-            "drawStyle": "bars",
-            "fillOpacity": 54,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "percent"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+          "id": 10,
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": false,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
               },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "cps"
+              "editorMode": "code",
+              "expr": "{compose_service=~\"products|shopping-cart|squid|web-shop\"} |= \"$order_id\"",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Web Shop Logs",
+          "transparent": true,
+          "type": "logs"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "backend team"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "frontend team"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 74
-      },
-      "id": 17,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "exemplar": true,
-          "expr": "sum by (team_name) (sum_over_time(traces_spanmetrics_latency_count{}[5m]))",
-          "interval": "",
-          "legendFormat": "{{ team_name }} team",
-          "refId": "A"
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "axisSoftMin": 0,
+                "barAlignment": 0,
+                "drawStyle": "bars",
+                "fillOpacity": 54,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "percent"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "cps"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "backend team"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "frontend team"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 74
+          },
+          "id": 17,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum by (team_name) (sum_over_time(traces_spanmetrics_latency_count{}[5m]))",
+              "interval": "",
+              "legendFormat": "{{ team_name }} team",
+              "refId": "A"
+            }
+          ],
+          "title": "Span Count per 5 Minutes per Team",
+          "transparent": true,
+          "type": "timeseries"
         }
       ],
-      "title": "Span Count per 5 Minutes per Team",
-      "transparent": true,
-      "type": "timeseries"
+      "title": "Logs",
+      "type": "row"
     }
   ],
   "refresh": false,
@@ -3087,33 +3452,33 @@
       {
         "current": {
           "selected": false,
-          "text": "82825635-ad95-4dee-9cac-b315c72598ad",
-          "value": "82825635-ad95-4dee-9cac-b315c72598ad"
+          "text": "1bc2ca3d-f3c9-4c7e-8a0f-86cd90934ff6",
+          "value": "1bc2ca3d-f3c9-4c7e-8a0f-86cd90934ff6"
         },
         "hide": 0,
         "label": "Order ID",
         "name": "order_id",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "",
             "value": ""
           }
         ],
-        "query": "82825635-ad95-4dee-9cac-b315c72598ad",
+        "query": "1bc2ca3d-f3c9-4c7e-8a0f-86cd90934ff6",
         "skipUrlSync": false,
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Holistic Webshop Observability",
   "uid": "U7qtLZB7b",
-  "version": 47,
+  "version": 3,
   "weekStart": ""
 }
