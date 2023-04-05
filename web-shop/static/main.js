@@ -1,33 +1,33 @@
-import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
-import { TracingInstrumentation } from "@grafana/faro-web-tracing";
 
 // Raw JavaScript
 var appAgentReceiverEndpoint = document.getElementById("variables").dataset.appAgentReceiverEndpoint;
 console.log(appAgentReceiverEndpoint);
 
-const faro = initializeFaro({
-  url: appAgentReceiverEndpoint + '/collect',
-  apiKey: 'secret',
-  instrumentations: [
-    ...getWebInstrumentations(),
-    new TracingInstrumentation({
-      // Optional, if you want to add custom attributes to the resource
-      resourceAttributes: {
-        "service.name": "web-shop-browser",
-        "team.name": "browser"
-      },
-    })
 
-  ],
-  app: {
-    name: 'web-shop-frontend',
-    version: '1.5.0',
-  },
-});
+const webSdkScript = document.createElement('script');
 
-faro.api.pushLog(['Hello, Faro!']);
+webSdkScript.src = 'https://unpkg.com/@grafana/faro-web-sdk@^1.0.0/dist/bundle/faro-web-sdk.iife.js';
 
-//export const {trace, context} = faro.api.getOTEL();
+webSdkScript.onload = () => {
+  window.GrafanaFaroWebSdk.initializeFaro({
+    url: 'https://faro-collector-prod-us-central-0.grafana.net/collect/fd7d8aadd5870ecae33bbfc1ee28e3e7',
+    app: {
+      name: 'web-shop',
+      version: '1.0.0',
+      environment: 'production'
+    },
+  });
+  //faro.api.pushLog(["hello Faro"]);
+
+  const webTracingScript = document.createElement('script');
+  webTracingScript.src = 'https://unpkg.com/@grafana/faro-web-tracing@^1.0.0/dist/bundle/faro-web-tracing.iife.js';
+  webTracingScript.onload = () => {
+    window.GrafanaFaroWebSdk.faro.instrumentations.add(new window.GrafanaFaroWebTracing.TracingInstrumentation());
+  };
+  document.head.appendChild(webTracingScript);
+};
+
+document.head.appendChild(webSdkScript);
 
 //Accordion 
 function myAccFunc() {

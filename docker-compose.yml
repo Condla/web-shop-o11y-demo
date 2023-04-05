@@ -126,8 +126,8 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.9"
-    #build: "./web-shop"
+    #image: "condla/web-shop:1.9"
+    build: "./web-shop"
     ports:
       - "3389:3389"
     environment:
