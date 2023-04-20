@@ -1,0 +1,417 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 40,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 9,
+        "panels": [],
+        "title": "High Level KPI",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": null
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 15,
+          "x": 0,
+          "y": 1
+        },
+        "id": 2,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {
+            "valueSize": 25
+          },
+          "textMode": "name"
+        },
+        "pluginVersion": "9.3.2-67a213dc85",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "grafanacloud-prom"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "up{app=~\"${app}\"}",
+            "format": "time_series",
+            "instant": true,
+            "legendFormat": "{{job}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Current Availablity of all Services",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "fillOpacity": 70,
+              "lineWidth": 0,
+              "spanNulls": false
+            },
+            "mappings": [],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": null
+                },
+                {
+                  "color": "green",
+                  "value": 1
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 9,
+          "x": 15,
+          "y": 1
+        },
+        "id": 4,
+        "options": {
+          "alignValue": "left",
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "mergeValues": true,
+          "rowHeight": 0.9,
+          "showValue": "never",
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "grafanacloud-prom"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "up{app=~\"${app}\"}",
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{app}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "State timeline of Services Availability",
+        "type": "state-timeline"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 40,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "max": 3.5,
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 50
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "reqps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 7,
+          "x": 0,
+          "y": 4
+        },
+        "id": 7,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "9.3.2-67a213dc85",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "grafanacloud-prom"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum by  (app)  (rate(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\",app=~\"${app}\"}[$__rate_interval]))",
+            "format": "time_series",
+            "instant": false,
+            "legendFormat": "{{app}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Microservices Request Rates",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "grafanacloud-prom"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "max": 4,
+            "min": 0,
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 60
+                },
+                {
+                  "color": "red",
+                  "value": 90
+                }
+              ]
+            },
+            "unit": "reqps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 7,
+          "y": 4
+        },
+        "id": 6,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "text": {}
+        },
+        "pluginVersion": "9.3.2-67a213dc85",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "grafanacloud-prom"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum by  (app)  (rate(traces_spanmetrics_calls_total{span_kind=\"SPAN_KIND_SERVER\",app=~\"${app}\"}[$__rate_interval]))",
+            "format": "time_series",
+            "instant": true,
+            "legendFormat": "{{app}}",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Microservices Request Rates",
+        "type": "gauge"
+      }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "grafanacloud-prom"
+          },
+          "definition": "label_values(up{app!=\"\"},app)",
+          "hide": 0,
+          "includeAll": true,
+          "multi": true,
+          "name": "app",
+          "options": [],
+          "query": {
+            "query": "label_values(up{app!=\"\"},app)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "web-shop-overview",
+    "uid": "web-shop-overview",
+    "version": 1,
+    "weekStart": ""
+  }

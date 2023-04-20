@@ -8,3 +8,4 @@ jmx_prometheus_javaagent-0.17.2.jar
 kubernetes/set_env.sh
 setup/*.log
 *.log
+node_modules
