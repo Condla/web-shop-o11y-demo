@@ -1,35 +1,23 @@
-source set_env.sh
-export NAMESPACE=grafana
-export METRICS_USER=$METRICS_USER
-export METRICS_PASSWORD=$METRICS_PASSWORD
-export LOGS_USER=$LOGS_USER
-export LOGS_PASSWORD=$LOGS_PASSWORD
-export TRACES_USER=$TRACES_USER
-export TRACES_PASSWORD=$TRACES_PASSWORD
-#deploy application
-kubectl apply -f web-shop-app.yaml
+export MIMIR_URL=YOURURL
+export MIMIR_USR=YOURUSER
+export MIMIR_KEY=YOURKEY
 
-#deploy agent configs
-cat << EOF | envsubst | kubectl apply -n $NAMESPACE -f-
-`cat agent-config-map.yaml`
-EOF
+export LOKI_URL=YOURURL
+export LOKI_USR=YOURUSR
+export LOKI_KEY=YOURKEY
 
-cat << EOF | envsubst | kubectl apply -n $NAMESPACE -f-
-`cat agent-config-map-logs.yaml`
-EOF
+export TEMPO_URL=YOURURL
+export TEMPO_USR=YOURUSER
+export TEMPO_KEY=YOURKEY
 
-cat << EOF | envsubst | kubectl apply -n $NAMESPACE -f-
-`cat agent-config-map-traces.yaml`
-EOF
+kubectl apply -f kubernetes/01-namespace.yaml
 
-#deploy ksm
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm install ksm prometheus-community/kube-state-metrics --set image.tag=v2.4.2 -n $NAMESPACE
+envsubst < kubernetes/02-agent.yaml | kubectl apply -f -
 
-#deploy agents
-MANIFEST_URL=https://raw.githubusercontent.com/grafana/agent/v0.27.1/production/kubernetes/agent-bare.yaml NAMESPACE=$NAMESPACE /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/grafana/agent/v0.27.1/production/kubernetes/install-bare.sh)" | kubectl apply -f -
+export APP_RECEIVER=$(kubectl get service -n web-shop-app grafana-agent-external  -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-MANIFEST_URL=https://raw.githubusercontent.com/grafana/agent/v0.27.1/production/kubernetes/agent-loki.yaml NAMESPACE=$NAMESPACE /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/grafana/agent/v0.27.1/production/kubernetes/install-bare.sh)" | kubectl apply -f -
+echo $APP_RECEIVER
 
-MANIFEST_URL=https://raw.githubusercontent.com/grafana/agent/v0.27.0/production/kubernetes/agent-traces.yaml NAMESPACE=$NAMESPACE /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/grafana/agent/v0.27.0/production/kubernetes/install-bare.sh)" | kubectl apply -f -
+envsubst < kubernetes/03-web-shop.yaml | kubectl apply -f -
 
-
+envsubst < kubernetes/04-xk6-browser.yaml | kubectl apply -f -
