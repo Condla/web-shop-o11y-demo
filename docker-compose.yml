@@ -79,23 +79,6 @@ services:
           - action: labelmap
             regex: compose_(service)
 
-  phlare:
-    image: grafana/phlare:0.1.2
-    ports:
-      - "4100:4100"
-    command: [ "-config.file=/etc/phlare.yaml" ]
-    volumes:
-      - ./phlare/phlare.yaml:/etc/phlare.yaml
-    networks:
-      - web-shop
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
-        loki-relabel-config: |
-          - action: labelmap
-            regex: compose_(service)
-
   agent:
     image: grafana/agent:v0.31.0
     entrypoint:
