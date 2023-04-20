@@ -7,14 +7,14 @@ networks:
 services:
 
   grafana:
-    image: grafana/grafana:9.3.2
+    image: grafana/grafana:9.4.7
     volumes:
       - "./grafana/dashboards:/var/lib/grafana/dashboards"
       - "./grafana/conf:/etc/grafana/"
     ports:
       - "3000:3000"
     environment:
-      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards ngalert accesscontrol panelTitleSearch tempoSearch tempoApmTable traceToMetrics recordedQueries traceqlEditor flameGraph"
+      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards ngalert accesscontrol panelTitleSearch tempoSearch tempoApmTable traceToMetrics recordedQueries traceqlEditor flameGraph topnav"
       GF_INSTALL_PLUGINS: "grafana-k6-app,grafana-polystat-panel"
     networks:
       - web-shop
