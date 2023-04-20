@@ -126,7 +126,7 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:1.9"
+    image: "condla/web-shop:2.0"
     #build: "./web-shop"
     ports:
       - "3389:3389"
@@ -147,7 +147,7 @@ services:
             regex: compose_(service)
 
   shopping-cart:
-    image: "condla/shopping-cart:1.3"
+    image: "condla/shopping-cart:1.4"
     #build: "./shopping-cart"
     ports:
       - "5555:5555"
