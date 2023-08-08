@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, session, flash
 import json
 import requests
 from flask import current_app as app
@@ -35,6 +35,7 @@ def view_cart():
 @app.route('/shop', methods=["GET", "POST"])
 def view_shop():
     person = request.args.get("name")
+    #person = session['username']
     product_name = request.args.get("product")
     headers = {'Content-type': 'application/json'}
     request_string = "{}/products/".format(products_url)
@@ -43,6 +44,8 @@ def view_shop():
 
     if request.method == "POST" and product_name:
         add_to_shopping_cart(person, product_name, headers)
+    
+    #flash("session id" + session.get("id"))
         
     app.logger.info("Showing web interface.") 
     return render_template('index.html', products=products, person=person, app_agent_receiver_endpoint=app.app_agent_receiver_endpoint)
@@ -116,6 +119,7 @@ def get_items_from_shopping_cart(request_string):
 def login():
     error = None
     if request.method == 'POST':
+        session['username'] = request.form['username']
         return redirect(url_for('view_shop', name=request.form['username']))
     return render_template('login.html', error=error)
 

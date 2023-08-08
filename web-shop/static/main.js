@@ -41,10 +41,19 @@ function myAccFunc() {
     var x = document.getElementById("demoAcc");
     if (x.className.indexOf("w3-show") == -1) {
       x.className += " w3-show";
-      console.log("accordeon pressed")
-      faro.api.pushLog(['accordeon pressed faro']);
+      console.log("accordeon opened")
+      var rand = Math.random();
+      faro.api.pushMeasurement({
+        type: "accordeon measurments",
+        values: {
+          accordeon_pressure: rand,
+        },
+      });
+      faro.api.pushLog(['accordeon opened, faro']);
     } else {
       x.className = x.className.replace(" w3-show", "");
+      console.log("accordeon closed")
+      faro.api.pushLog(['accordeon closed, faro']);
     }
   }
   
@@ -121,6 +130,8 @@ function apply_discount(person_name){
   window.alert("You're too cheap to be eligible for a discount! Please go to amazon to buy your stuff.");
   location.reload();
 }
+
+
 
   window.myAccFunc = myAccFunc;
   window.w3_open = w3_open;

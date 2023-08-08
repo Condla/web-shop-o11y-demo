@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-      <h1 class="w3-jumbo w3-hide-small">Welcome {{person}}</h1>
+      <h1 class="w3-jumbo w3-hide-small"><font color=black>Welcome {{person}}</font></h1>
       <h1 class="w3-hide-large w3-hide-medium">Welcome {{person}}</h1>
       <h1 class="w3-hide-small"></h1>
 {% endblock %}
@@ -22,7 +22,7 @@
     <div class="w3-col l3 s6">
       <div class="w3-container">
         <div class="w3-display-container">
-          <img src="{{product.pic_ref}}" style="width:100%">
+          <img src="{{product.pic_ref}}" style="width:99%">
           <span class="w3-tag w3-display-topleft">{{product["tag"]}}</span>
           <div class="w3-display-middle w3-display-hover">
             <button onclick='buy_now("{{ product.name}}", "{{ person }}")' type="submit" name="product" value="{{product.name}}" class="w3-button w3-black">Buy now <i class="fa fa-shopping-cart"></i></button>
