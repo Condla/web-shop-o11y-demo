@@ -46,7 +46,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 1
+            "y": 25
           },
           "id": 65,
           "options": {
@@ -67,7 +67,7 @@
       "type": "row"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -75,1489 +75,1513 @@
         "y": 1
       },
       "id": 57,
-      "panels": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P211906C1C32DB77E"
+      "panels": [],
+      "title": "Business Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "percentage",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  },
-                  {
-                    "color": "orange",
-                    "value": 70
-                  },
-                  {
-                    "color": "red",
-                    "value": 85
-                  }
-                ]
-              },
-              "unit": "currencyEUR"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 0,
-            "y": 2
-          },
-          "id": 55,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [],
-              "fields": "",
-              "values": true
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT uuid, avg(amount) FROM\n(SELECT orders.cart_id, orders.order_uuid as uuid, orders.created_date, SUM(price*quantity) AS amount from order_table AS orders\nJOIN cart ON cart.id = orders.cart_id\nJOIN cart_item ON cart.id = cart_item.cart_id\nJOIN product ON cart_item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY (orders.order_uuid)) AS t",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "Average Order Size",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "cart_id": true,
-                  "uuid": true
-                },
-                "indexByName": {},
-                "renameByName": {}
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P211906C1C32DB77E"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "percentage",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  },
-                  {
-                    "color": "orange",
-                    "value": 70
-                  },
-                  {
-                    "color": "red",
-                    "value": 85
-                  }
-                ]
-              },
-              "unit": "currencyEUR"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 4,
-            "y": 2
-          },
-          "id": 60,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [],
-              "fields": "",
-              "values": true
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT avg(amount) FROM\n  (\n    SELECT orders.cart_id, cart.customer_id as cust_id, orders.created_date, SUM(price*quantity) AS amount from order_table AS orders\n      JOIN cart ON cart.id = orders.cart_id\n      JOIN cart_item ON cart.id = cart_item.cart_id\n      JOIN product ON cart_item.product_id = product.id\n      WHERE  $__timeFilter(orders.created_date)\n      GROUP BY (cart.customer_id)\n  ) AS t",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "Average Spend by Customer",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "cart_id": true,
-                  "uuid": true
-                },
-                "indexByName": {},
-                "renameByName": {}
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P211906C1C32DB77E"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "currencyEUR"
-            },
-            "overrides": [
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(cart_item.quantity * product.price)"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "continuous-BlPu"
-                    }
-                  }
-                ]
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
               }
             ]
           },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 8,
-            "y": 2
-          },
-          "id": 72,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "/^name$/",
-              "values": false
-            },
-            "textMode": "value"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "group": [],
-              "metricColumn": "none",
-              "rawQuery": true,
-              "rawSql": "SELECT product.name, sum(cart_item.quantity) as amount FROM cart_item \n  JOIN product\n  ON cart_item.product_id = product.id\n  JOIN cart ON cart_item.cart_id = cart.id\n  JOIN customer ON cart.customer_id = customer.id\n  WHERE $__timeFilter(cart_item.created_date) \n  GROUP BY product.name ORDER BY amount DESC LIMIT 1;",
-              "refId": "A",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "column"
-                  }
-                ]
-              ],
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "timeColumn": "time",
-              "where": [
-                {
-                  "name": "$__timeFilter",
-                  "params": [],
-                  "type": "macro"
-                }
-              ]
-            }
-          ],
-          "title": "Most popular item",
-          "transformations": [],
-          "transparent": true,
-          "type": "stat"
+          "unit": "currencyEUR"
         },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 2
+      },
+      "id": 55,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
         {
+          "dataset": "webshopdb",
           "datasource": {
             "type": "mysql",
             "uid": "P211906C1C32DB77E"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "axisSoftMin": 0,
-                "fillOpacity": 80,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineWidth": 1,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "currencyEUR"
-            },
-            "overrides": [
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT uuid, avg(amount) FROM\n(SELECT orders.cart_id, orders.order_uuid as uuid, orders.created_date, SUM(price*quantity) AS amount from webshopdb.order_table AS orders\nJOIN webshopdb.cart ON cart.id = orders.cart_id\nJOIN webshopdb.cart_item ON cart.id = cart_item.cart_id\nJOIN webshopdb.product ON cart_item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY (orders.order_uuid)) AS t",
+          "refId": "A",
+          "sql": {
+            "columns": [
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(cart_item.quantity * product.price)"
-                },
-                "properties": [
+                "parameters": [
                   {
-                    "id": "color",
-                    "value": {
-                      "mode": "continuous-BlPu"
-                    }
+                    "name": "*",
+                    "type": "functionParameter"
                   }
-                ]
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Average Order Size",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "cart_id": true,
+              "uuid": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
               }
             ]
           },
-          "gridPos": {
-            "h": 6,
-            "w": 12,
-            "x": 12,
-            "y": 2
-          },
-          "id": 71,
-          "options": {
-            "barRadius": 0,
-            "barWidth": 0.97,
-            "fullHighlight": false,
-            "groupWidth": 0.7,
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": false
-            },
-            "orientation": "auto",
-            "showValue": "auto",
-            "stacking": "none",
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            },
-            "xTickLabelRotation": 0,
-            "xTickLabelSpacing": 0
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "group": [],
-              "metricColumn": "none",
-              "rawQuery": true,
-              "rawSql": "SELECT customer.name, sum(cart_item.quantity * product.price)\n  FROM cart_item \n  JOIN product\n  ON cart_item.product_id = product.id\n  JOIN cart ON cart_item.cart_id = cart.id\n  JOIN customer ON cart.customer_id = customer.id\n  WHERE cart.is_deleted is false AND  $__timeFilter(cart_item.created_date) \n  GROUP BY customer.name ORDER BY sum(cart_item.quantity * product.price) DESC LIMIT 5;",
-              "refId": "A",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "column"
-                  }
-                ]
-              ],
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "timeColumn": "time",
-              "where": [
-                {
-                  "name": "$__timeFilter",
-                  "params": [],
-                  "type": "macro"
-                }
-              ]
-            }
-          ],
-          "title": "Top 5 Current Biggest Shopping Carts (Before Checkout)",
-          "transformations": [],
-          "transparent": true,
-          "type": "barchart"
+          "unit": "currencyEUR"
         },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 4,
+        "y": 2
+      },
+      "id": 60,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
         {
+          "dataset": "webshopdb",
           "datasource": {
             "type": "mysql",
             "uid": "P211906C1C32DB77E"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "continuous-BlPu"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "links": [
-                {
-                  "title": "",
-                  "url": "http://grafana.datahovel.com:3000/d/U7qtLZB7b/holistic-webshop-observability?orgId=1&var-service=All&var-app=web-shop-frontend&var-order_id=${__data.fields.order_uuid}"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT avg(amount) FROM\n  (\n    SELECT orders.cart_id, cart.customer_id as cust_id, orders.created_date, SUM(price*quantity) AS amount from webshopdb.order_table AS orders\n      JOIN webshopdb.cart ON cart.id = orders.cart_id\n      JOIN webshopdb.cart_item ON cart.id = cart_item.cart_id\n      JOIN webshopdb.product ON cart_item.product_id = product.id\n      WHERE  $__timeFilter(orders.created_date)\n      GROUP BY (cart.customer_id)\n  ) AS t",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
                   {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
+                    "name": "*",
+                    "type": "functionParameter"
                   }
-                ]
-              },
-              "unit": "currencyEUR"
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Average Spend by Customer",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "cart_id": true,
+              "uuid": true
             },
-            "overrides": [
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "amount"
-                },
-                "properties": [
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
-                  }
-                ]
+                "color": "blue",
+                "value": null
               },
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "order_uuid"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 336
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "created_date"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 210
-                  }
-                ]
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 5
-          },
-          "id": 51,
-          "options": {
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
+          "unit": "currencyEUR"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sum(cart_item.quantity * product.price)"
             },
-            "showHeader": true,
-            "sortBy": [
+            "properties": [
               {
-                "desc": true,
-                "displayName": "amount"
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 8,
+        "y": 2
+      },
+      "id": 72,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^name$/",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT product.name, sum(cart_item.quantity) as amount FROM webshopdb.cart_item \n  JOIN webshopdb.product\n  ON cart_item.product_id = product.id\n  JOIN webshopdb.cart ON cart_item.cart_id = cart.id\n  JOIN webshopdb.customer ON cart.customer_id = customer.id\n  WHERE $__timeFilter(cart_item.created_date) \n  GROUP BY product.name ORDER BY amount DESC LIMIT 1;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Most popular item",
+      "transformations": [],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 2
+      },
+      "id": 52,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "dataset": "webshopdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, count(*) AS amount FROM webshopdb.order_table AS orders\nWHERE  $__timeFilter(created_date)\nGROUP BY TIME ORDER BY time ASC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Amount of Orders per Minute",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT orders.cart_id, orders.order_uuid, orders.created_date, SUM(price*quantity) AS amount from order_table AS orders\nJOIN cart ON cart.id = orders.cart_id\nJOIN cart_item ON cart.id = cart_item.cart_id\nJOIN product ON cart_item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY (orders.order_uuid)\nORDER BY amount DESC\nLIMIT 10",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "10 Biggest Orders",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "cart_id": true
-                },
-                "indexByName": {},
-                "renameByName": {}
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "table"
+          "unit": "currencyEUR"
         },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P211906C1C32DB77E"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "continuous-GrYlRd"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 20,
-                "gradientMode": "scheme",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "smooth",
-                "lineWidth": 3,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sum(cart_item.quantity * product.price)"
             },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 12,
-            "x": 12,
-            "y": 8
-          },
-          "id": 52,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "9.3.2",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, count(*) AS amount FROM webshopdb.order_table AS orders\nWHERE  $__timeFilter(created_date)\nGROUP BY TIME ORDER BY time ASC",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "Amount of Orders per Minute",
-          "transparent": true,
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P211906C1C32DB77E"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "purple",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 2,
-            "x": 0,
-            "y": 13
-          },
-          "id": 59,
-          "options": {
-            "colorMode": "none",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [],
-              "fields": "/.*/",
-              "values": true
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT cart_item.id, quantity, price, product.name, customer.name AS customer_name from cart_item\nJOIN cart ON cart.id = cart_item.cart_id\nJOIN order_table as orders ON cart.id = orders.cart_id\nJOIN product ON product.id = cart_item.product_id\nJOIN customer ON cart.customer_id = customer.id\nWHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "Customer Name",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "id": true,
-                  "name": true,
-                  "price": true,
-                  "quantity": true
-                },
-                "indexByName": {
-                  "customer_name": 0,
-                  "id": 1,
-                  "name": 4,
-                  "price": 3,
-                  "quantity": 2
-                },
-                "renameByName": {
-                  "customer_name": "Customer Name",
-                  "name": "Product",
-                  "price": "Price",
-                  "quantity": "Quantity"
-                }
-              }
-            },
-            {
-              "id": "reduce",
-              "options": {
-                "includeTimeField": false,
-                "mode": "reduceFields",
-                "reducers": [
-                  "firstNotNull"
-                ]
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P211906C1C32DB77E"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "continuous-BlPu"
-              },
-              "links": [
-                {
-                  "title": "",
-                  "url": "http://grafana.datahovel.com:3000/d/U7qtLZB7b/holistic-webshop-observability?orgId=1&var-service=All&var-app=web-shop-frontend&var-order_id=${__data.fields.order_id}"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "currencyEUR"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 2,
-            "x": 2,
-            "y": 13
-          },
-          "id": 61,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT SUM(quantity*price) from cart_item\nJOIN cart ON cart.id = cart_item.cart_id\nJOIN order_table as orders ON cart.id = orders.cart_id\nJOIN product ON product.id = cart_item.product_id\nJOIN customer ON cart.customer_id = customer.id\nWHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "Order Sum",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "customer_name": true,
-                  "id": true
-                },
-                "indexByName": {
-                  "customer_name": 3,
-                  "id": 4,
-                  "name": 0,
-                  "price": 2,
-                  "quantity": 1
-                },
-                "renameByName": {
-                  "customer_name": "Customer Name",
-                  "name": "Product",
-                  "price": "Price",
-                  "quantity": "Quantity"
-                }
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "P211906C1C32DB77E"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "continuous-BlPu"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "links": [
-                {
-                  "title": "",
-                  "url": "http://grafana.datahovel.com:3000/d/U7qtLZB7b/holistic-webshop-observability?orgId=1&var-service=All&var-app=web-shop-frontend&var-order_id=${__data.fields.order_id}"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
+            "properties": [
               {
-                "matcher": {
-                  "id": "byType",
-                  "options": "number"
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
+      "id": 71,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT customer.name, sum(cart_item.quantity * product.price)\n  FROM webshopdb.cart_item \n  JOIN webshopdb.product\n  ON cart_item.product_id = product.id\n  JOIN webshopdb.cart ON cart_item.cart_id = cart.id\n  JOIN webshopdb.customer ON cart.customer_id = customer.id\n  WHERE cart.is_deleted is false AND  $__timeFilter(cart_item.created_date) \n  GROUP BY customer.name ORDER BY sum(cart_item.quantity * product.price) DESC LIMIT 5;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
                 },
-                "properties": [
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
-                  }
-                ]
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Top 5 Current Biggest Shopping Carts (Before Checkout)",
+      "transformations": [],
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               },
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Product"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 133
-                  }
-                ]
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "gridPos": {
-            "h": 6,
-            "w": 8,
-            "x": 4,
-            "y": 13
-          },
-          "id": 54,
-          "options": {
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": []
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT cart_item.id, quantity, price, product.name, customer.name AS customer_name from cart_item\nJOIN cart ON cart.id = cart_item.cart_id\nJOIN order_table as orders ON cart.id = orders.cart_id\nJOIN product ON product.id = cart_item.product_id\nJOIN customer ON cart.customer_id = customer.id\nWHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "Order Details $order_id",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "customer_name": true,
-                  "id": true
-                },
-                "indexByName": {
-                  "customer_name": 3,
-                  "id": 4,
-                  "name": 0,
-                  "price": 2,
-                  "quantity": 1
-                },
-                "renameByName": {
-                  "customer_name": "Customer Name",
-                  "name": "Product",
-                  "price": "Price",
-                  "quantity": "Quantity"
-                }
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "table"
+          "unit": "currencyEUR"
         },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
         {
+          "dataset": "webshopdb",
           "datasource": {
             "type": "mysql",
             "uid": "P211906C1C32DB77E"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "continuous-GrYlRd"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 20,
-                "gradientMode": "scheme",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "smooth",
-                "lineWidth": 3,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, sum(quantity*price) AS amount FROM webshopdb.order_table AS orders\nJOIN webshopdb.cart AS cart ON cart.id = orders.cart_id\nJOIN webshopdb.cart_item AS item ON item.cart_id = cart.id \nJOIN webshopdb.product ON item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY time ORDER BY time ASC\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
                   {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
+                    "name": "*",
+                    "type": "functionParameter"
                   }
-                ]
-              },
-              "unit": "currencyEUR"
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Revenue per Minute",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "overrides": []
+            "inspect": false
           },
-          "gridPos": {
-            "h": 5,
-            "w": 12,
-            "x": 12,
-            "y": 14
-          },
-          "id": 53,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "9.3.2",
-          "targets": [
+          "links": [
             {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT $__timeGroup(orders.created_date, '1m') AS time, sum(quantity*price) AS amount FROM webshopdb.order_table AS orders\nJOIN cart AS cart ON cart.id = orders.cart_id\nJOIN cart_item AS item ON item.cart_id = cart.id \nJOIN product ON item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY time ORDER BY time ASC\n",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
+              "title": "",
+              "url": "http://grafana.datahovel.com:3000/d/U7qtLZB7b/holistic-webshop-observability?orgId=1&var-service=All&var-app=web-shop-frontend&var-order_id=${__data.fields.order_uuid}﻿&${__url_time_range}"
             }
           ],
-          "title": "Revenue per Minute",
-          "transparent": true,
-          "type": "timeseries"
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyEUR"
         },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "amount"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "order_uuid"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 336
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "created_date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 210
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 51,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "amount"
+          }
+        ]
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
         {
+          "dataset": "webshopdb",
           "datasource": {
             "type": "mysql",
             "uid": "P211906C1C32DB77E"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "percentage",
-                "steps": [
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT orders.cart_id, orders.order_uuid, orders.created_date, SUM(price*quantity) AS amount from webshopdb.order_table AS orders\nJOIN webshopdb.cart ON cart.id = orders.cart_id\nJOIN webshopdb.cart_item ON cart.id = cart_item.cart_id\nJOIN webshopdb.product ON cart_item.product_id = product.id\nWHERE  $__timeFilter(orders.created_date)\nGROUP BY (orders.order_uuid)\nORDER BY amount DESC\nLIMIT 10",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
                   {
-                    "color": "purple",
-                    "value": null
-                  },
-                  {
-                    "color": "orange",
-                    "value": 70
-                  },
-                  {
-                    "color": "red",
-                    "value": 85
-                  }
-                ]
-              },
-              "unit": "currencyEUR"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 2,
-            "x": 0,
-            "y": 16
-          },
-          "id": 58,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [],
-              "fields": "",
-              "values": true
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "dataset": "webshopdb",
-              "datasource": {
-                "type": "mysql",
-                "uid": "P211906C1C32DB77E"
-              },
-              "editorMode": "code",
-              "format": "table",
-              "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
-              "rawQuery": true,
-              "rawSql": "SELECT amount FROM\n  (\n    SELECT orders.cart_id, cart.customer_id as cust_id, orders.created_date, SUM(price*quantity) AS amount from order_table AS orders\n      JOIN cart ON cart.id = orders.cart_id\n      JOIN cart_item ON cart.id = cart_item.cart_id\n      JOIN product ON cart_item.product_id = product.id\n      WHERE  $__timeFilter(orders.created_date) AND cart.customer_id = (\n\n        SELECT MAX(cart.customer_id) AS cust_id from cart_item\n          JOIN cart ON cart.id = cart_item.cart_id\n          JOIN order_table as orders ON cart.id = orders.cart_id\n          JOIN product ON product.id = cart_item.product_id\n          WHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n\n      )\n      GROUP BY (cart.customer_id)\n  ) AS t\n",
-              "refId": "A",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [
-                      {
-                        "name": "*",
-                        "type": "functionParameter"
-                      }
-                    ],
-                    "type": "function"
+                    "name": "*",
+                    "type": "functionParameter"
                   }
                 ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              },
-              "table": "order"
-            }
-          ],
-          "title": "Total Spend",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "cart_id": true,
-                  "uuid": true
-                },
-                "indexByName": {},
-                "renameByName": {}
+                "type": "function"
               }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "10 Biggest Orders",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "cart_id": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 78,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 21
+      },
+      "id": 59,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/.*/",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "dataset": "webshopdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT cart_item.id, quantity, price, product.name, customer.name AS customer_name from webshopdb.cart_item\nJOIN webshopdb.cart ON cart.id = cart_item.cart_id\nJOIN webshopdb.order_table as orders ON cart.id = orders.cart_id\nJOIN webshopdb.product ON product.id = cart_item.product_id\nJOIN webshopdb.customer ON cart.customer_id = customer.id\nWHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Customer Name",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "id": true,
+              "name": true,
+              "price": true,
+              "quantity": true
+            },
+            "indexByName": {
+              "customer_name": 0,
+              "id": 1,
+              "name": 4,
+              "price": 3,
+              "quantity": 2
+            },
+            "renameByName": {
+              "customer_name": "Customer Name",
+              "name": "Product",
+              "price": "Price",
+              "quantity": "Quantity"
+            }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "firstNotNull"
+            ]
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "http://grafana.datahovel.com:3000/d/U7qtLZB7b/holistic-webshop-observability?orgId=1&var-service=All&var-app=web-shop-frontend&var-order_id=${__data.fields.order_id}"
             }
           ],
-          "transparent": true,
-          "type": "stat"
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyEUR"
         },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 3,
+        "y": 21
+      },
+      "id": 61,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "dataset": "webshopdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT SUM(quantity*price) from webshopdb.cart_item\nJOIN webshopdb.cart ON cart.id = cart_item.cart_id\nJOIN webshopdb.order_table as orders ON cart.id = orders.cart_id\nJOIN webshopdb.product ON product.id = cart_item.product_id\nJOIN webshopdb.customer ON cart.customer_id = customer.id\nWHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Order Sum",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "customer_name": true,
+              "id": true
+            },
+            "indexByName": {
+              "customer_name": 3,
+              "id": 4,
+              "name": 0,
+              "price": 2,
+              "quantity": 1
+            },
+            "renameByName": {
+              "customer_name": "Customer Name",
+              "name": "Product",
+              "price": "Price",
+              "quantity": "Quantity"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "currencyEUR"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 6,
+        "y": 21
+      },
+      "id": 58,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "dataset": "webshopdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT amount FROM\n  (\n    SELECT orders.cart_id, cart.customer_id as cust_id, orders.created_date, SUM(price*quantity) AS amount from webshopdb.order_table AS orders\n      JOIN webshopdb.cart ON cart.id = orders.cart_id\n      JOIN webshopdb.cart_item ON cart.id = cart_item.cart_id\n      JOIN webshopdb.product ON cart_item.product_id = product.id\n      WHERE  $__timeFilter(orders.created_date) AND cart.customer_id = (\n\n        SELECT MAX(cart.customer_id) AS cust_id from webshopdb.cart_item\n          JOIN webshopdb.cart ON cart.id = cart_item.cart_id\n          JOIN webshopdb.order_table as orders ON cart.id = orders.cart_id\n          JOIN webshopdb.product ON product.id = cart_item.product_id\n          WHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n\n      )\n      GROUP BY (cart.customer_id)\n  ) AS t\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Total Spend",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "cart_id": true,
+              "uuid": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "To Trace",
+              "url": "http://grafana.datahovel.com:3000/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22query%22:%22${__field.name}%22,%22queryType%22:%22traceql%22,%22refId%22:%22A%22,%22limit%22:20%7D%5D,%22range%22:%7B%22from%22:%22now-30m%22,%22to%22:%22now%22%7D%7D"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 9,
+        "y": 21
+      },
+      "id": 69,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "name"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "links": [
-                {
-                  "targetBlank": true,
-                  "title": "To Trace",
-                  "url": "http://grafana.datahovel.com:3000/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22query%22:%22${__field.name}%22,%22queryType%22:%22traceql%22,%22refId%22:%22A%22,%22limit%22:20%7D%5D,%22range%22:%7B%22from%22:%22now-30m%22,%22to%22:%22now%22%7D%7D"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 2,
-            "x": 2,
-            "y": 17
-          },
-          "id": 69,
-          "options": {
-            "colorMode": "none",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "name"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "loki"
-              },
-              "editorMode": "code",
-              "expr": "sum by(trace_id) (count_over_time({compose_service=\"shopping-cart\"} |= `$order_id` | logfmt | __error__=`` [$__range]))",
-              "queryType": "instant",
-              "refId": "A"
-            }
-          ],
-          "transformations": [
-            {
-              "id": "rowsToFields",
-              "options": {
-                "mappings": []
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true,
-                  "Value #A": true
-                },
-                "indexByName": {},
-                "renameByName": {
-                  "4975001ad2dd2cf82916e262c8335016 1680157491902": "",
-                  "trace_id": "trace"
-                }
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "stat"
+          "editorMode": "code",
+          "expr": "sum by(traceID) (count_over_time({compose_service=\"shopping-cart\"} |= `$order_id` | logfmt | __error__=`` [$__range]))",
+          "queryType": "instant",
+          "refId": "A"
         }
       ],
-      "title": "Business Overview",
-      "type": "row"
+      "transformations": [
+        {
+          "id": "rowsToFields",
+          "options": {
+            "mappings": []
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #A": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "4975001ad2dd2cf82916e262c8335016 1680157491902": "",
+              "trace_id": "trace"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "http://grafana.datahovel.com:3000/d/U7qtLZB7b/holistic-webshop-observability?orgId=1&var-service=All&var-app=web-shop-frontend&var-order_id=${__data.fields.order_id}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Product"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 133
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 21
+      },
+      "id": 54,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "dataset": "webshopdb",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "key": "Q-aecac301-0f6a-4007-bbd1-2b1385272bcb-0",
+          "rawQuery": true,
+          "rawSql": "SELECT cart_item.id, quantity, price, product.name, customer.name AS customer_name from webshopdb.cart_item\nJOIN webshopdb.cart ON cart.id = cart_item.cart_id\nJOIN webshopdb.order_table as orders ON cart.id = orders.cart_id\nJOIN webshopdb.product ON product.id = cart_item.product_id\nJOIN webshopdb.customer ON cart.customer_id = customer.id\nWHERE orders.order_uuid = \"$order_id\" AND $__timeFilter(orders.created_date)\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "order"
+        }
+      ],
+      "title": "Order Details $order_id",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "customer_name": true,
+              "id": true
+            },
+            "indexByName": {
+              "customer_name": 3,
+              "id": 4,
+              "name": 0,
+              "price": 2,
+              "quantity": 1
+            },
+            "renameByName": {
+              "customer_name": "Customer Name",
+              "name": "Product",
+              "price": "Price",
+              "quantity": "Quantity"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
     },
     {
       "collapsed": true,
@@ -1565,7 +1589,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 27
       },
       "id": 63,
       "panels": [],
@@ -1578,7 +1602,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 28
       },
       "id": 41,
       "panels": [
@@ -1613,18 +1637,18 @@
             "h": 3,
             "w": 4,
             "x": 0,
-            "y": 4
+            "y": 12
           },
           "id": 39,
           "links": [
             {
               "targetBlank": true,
               "title": "Front End Details",
-              "url": "/d/BWuxchvVz/frontend?orgId=1&from=now-30m&to=now"
+              "url": "/d/Nkmp0rQVz/user-and-exception-tracking?orgId=1"
             }
           ],
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -1683,11 +1707,11 @@
             "h": 3,
             "w": 4,
             "x": 4,
-            "y": 4
+            "y": 12
           },
           "id": 29,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -1753,11 +1777,11 @@
             "h": 3,
             "w": 4,
             "x": 8,
-            "y": 4
+            "y": 12
           },
           "id": 31,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -1825,11 +1849,11 @@
             "h": 3,
             "w": 4,
             "x": 12,
-            "y": 4
+            "y": 12
           },
           "id": 33,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -1895,11 +1919,11 @@
             "h": 3,
             "w": 4,
             "x": 16,
-            "y": 4
+            "y": 12
           },
           "id": 35,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -1965,11 +1989,11 @@
             "h": 3,
             "w": 4,
             "x": 20,
-            "y": 4
+            "y": 12
           },
           "id": 37,
           "options": {
-            "colorMode": "value",
+            "colorMode": "background",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "auto",
@@ -2010,7 +2034,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 29
       },
       "id": 43,
       "panels": [
@@ -2054,7 +2078,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 5
+            "y": 13
           },
           "id": 24,
           "options": {
@@ -2120,7 +2144,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 8
+            "y": 16
           },
           "id": 27,
           "options": {
@@ -2143,6 +2167,641 @@
           "title": "Service Map",
           "transparent": true,
           "type": "nodeGraph"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
+                }
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 12,
+            "y": 16
+          },
+          "id": 26,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "editorMode": "code",
+              "expr": "sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code =~ \"...\" | http_status_code!~\"2..\" [1m])) / sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code=~\"...\" [1m]))",
+              "legendFormat": "{{ svc }}",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Status Code non-2xx Percentage",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "orange",
+                    "value": 70
+                  },
+                  {
+                    "color": "red",
+                    "value": 85
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 4,
+            "x": 20,
+            "y": 16
+          },
+          "id": 19,
+          "options": {
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum (rate(traces_spanmetrics_latency_count{}[1m]))",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Spans Error Percentage",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
+                }
+              ],
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 12,
+            "y": 21
+          },
+          "id": 21,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "sum by (service_name) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service=~\"$service\"}[1m]))/sum by (service_name) (rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+              "interval": "",
+              "legendFormat": "{{ service_name }}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Error Percentage Per Service",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\" | dur >= ${__data.fields.Last}ms\"}]}"
+                }
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-BlPu"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Maximum"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Last *"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-BlPu"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Current Value"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Field"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 126
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Last"
+                },
+                "properties": [
+                  {
+                    "id": "custom.hidden",
+                    "value": true
+                  },
+                  {
+                    "id": "unit",
+                    "value": "none"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "id": 15,
+          "options": {
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Current Value"
+              }
+            ]
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "topk(10,sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m])))",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{ operation }}",
+              "refId": "A"
+            }
+          ],
+          "title": "Endpoints of $service with Highest Latency",
+          "transformations": [
+            {
+              "id": "reduce",
+              "options": {
+                "labelsToFields": false,
+                "reducers": [
+                  "max",
+                  "lastNotNull",
+                  "last"
+                ]
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "desc": true,
+                    "field": "Last *"
+                  }
+                ]
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [
+                {
+                  "targetBlank": true,
+                  "title": "Show Logs",
+                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span = \\\"${__field.labels.span_name}\\\"\"}]}"
+                }
+              ],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 25
+          },
+          "id": 76,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Latency of $service by Endpoint",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Apps (Endpoint Heath + 4 Golden Signals)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 74,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 41,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 14
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum(rate(process_cpu_seconds_total{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{service}}",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "exemplar": true,
+              "expr": "sum(rate(process_cpu_usage{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{service}}",
+              "refId": "B"
+            }
+          ],
+          "title": "CPU Usage of $service",
+          "transparent": true,
+          "type": "timeseries"
         },
         {
           "datasource": {
@@ -2302,7 +2961,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 8
+            "y": 14
           },
           "id": 2,
           "options": {
@@ -2357,340 +3016,6 @@
           "title": "Request Rate and Error Count of $service",
           "transparent": true,
           "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 41,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "normal"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "purple",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 17
-          },
-          "id": 4,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "sum(rate(process_cpu_seconds_total{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{service}}",
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "sum(rate(process_cpu_usage{service=~\"$service\"}[1m]))/sum(rate(node_cpu_seconds_total{job=\"node\"}[1m]))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{service}}",
-              "refId": "B"
-            }
-          ],
-          "title": "CPU Usage of $service",
-          "transparent": true,
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "links": [
-                {
-                  "targetBlank": true,
-                  "title": "",
-                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.service_name}\\\"\"}]}"
-                }
-              ],
-              "mappings": [],
-              "max": 1,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 8,
-            "x": 12,
-            "y": 17
-          },
-          "id": 21,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum by (service_name) (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\", service=~\"$service\"}[1m]))/sum by (service_name) (rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
-              "interval": "",
-              "legendFormat": "{{ service_name }}",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Error Percentage Per Service",
-          "transparent": true,
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "mappings": [],
-              "max": 1,
-              "min": 0,
-              "thresholds": {
-                "mode": "percentage",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "orange",
-                    "value": 70
-                  },
-                  {
-                    "color": "red",
-                    "value": 85
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 4,
-            "x": 20,
-            "y": 17
-          },
-          "id": 19,
-          "options": {
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "exemplar": true,
-              "expr": "sum (rate(traces_spanmetrics_latency_count{status_code != \"STATUS_CODE_UNSET\"}[1m]))/sum (rate(traces_spanmetrics_latency_count{}[1m]))",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Total Spans Error Percentage",
-          "transparent": true,
-          "type": "gauge"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "links": [
-                {
-                  "targetBlank": true,
-                  "title": "",
-                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | http_status_code =~ \\\"...\\\" | http_status_code!~\\\"2..\\\" | svc%3D\\\"${__field.labels.svc}\\\"\"}]}"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 8,
-            "x": 12,
-            "y": 21
-          },
-          "id": 26,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "center",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "loki"
-              },
-              "editorMode": "code",
-              "expr": "sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code =~ \"...\" | http_status_code!~\"2..\" [1m])) / sum by (svc) (count_over_time({traces=\"span\"} | logfmt | svc=~\"$service\" | http_status_code=~\"...\" [1m]))",
-              "legendFormat": "{{ svc }}",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Status Code non-2xx Percentage",
-          "transparent": true,
-          "type": "stat"
         },
         {
           "datasource": {
@@ -2769,7 +3094,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 26
+            "y": 23
           },
           "id": 6,
           "options": {
@@ -2810,296 +3135,6 @@
             }
           ],
           "title": "Average Latency of $service",
-          "transparent": true,
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "links": [
-                {
-                  "targetBlank": true,
-                  "title": "",
-                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span%3D\\\"${__data.fields.Field}\\\" | dur >= ${__data.fields.Last}ms\"}]}"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Max"
-                },
-                "properties": [
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "continuous-BlPu"
-                    }
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Maximum"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Last *"
-                },
-                "properties": [
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "continuous-BlPu"
-                    }
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Current Value"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Field"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 126
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Last"
-                },
-                "properties": [
-                  {
-                    "id": "custom.hidden",
-                    "value": true
-                  },
-                  {
-                    "id": "unit",
-                    "value": "none"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 12,
-            "y": 26
-          },
-          "id": 15,
-          "options": {
-            "footer": {
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "Current Value"
-              }
-            ]
-          },
-          "pluginVersion": "9.3.2",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "topk(10,sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m])))",
-              "instant": false,
-              "interval": "",
-              "legendFormat": "{{ operation }}",
-              "refId": "A"
-            }
-          ],
-          "title": "Endpoints of $service with Highest Latency",
-          "transformations": [
-            {
-              "id": "reduce",
-              "options": {
-                "labelsToFields": false,
-                "reducers": [
-                  "max",
-                  "lastNotNull",
-                  "last"
-                ]
-              }
-            },
-            {
-              "id": "sortBy",
-              "options": {
-                "fields": {},
-                "sort": [
-                  {
-                    "desc": true,
-                    "field": "Last *"
-                  }
-                ]
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "table"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "links": [
-                {
-                  "targetBlank": true,
-                  "title": "Show relevant logs",
-                  "url": "/explore?orgId=1&left={\"datasource\":\"Loki\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{traces%3D~\\\"process|root|span\\\"} | logfmt | span = \\\"${__field.labels.span_name}\\\" | dur >= ${__value.numeric}﻿ms\"}]}"
-                }
-              ],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 35
-          },
-          "id": 13,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum by (span_name) (rate(traces_spanmetrics_latency_sum{service=~\"$service\"}[1m]))/sum by (span_name)(rate(traces_spanmetrics_latency_count{service=~\"$service\"}[1m]))",
-              "interval": "",
-              "legendFormat": "{{service_name}} {{ operation }}",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Latency of $service by Endpoint",
           "transparent": true,
           "type": "timeseries"
         },
@@ -3202,7 +3237,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 23
           },
           "id": 11,
           "options": {
@@ -3235,7 +3270,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Endpoint Heath + 4 Golden Signals",
+      "title": "Infrastructure",
       "type": "row"
     },
     {
@@ -3244,7 +3279,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 31
       },
       "id": 45,
       "panels": [
@@ -3257,7 +3292,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 6
+            "y": 15
           },
           "id": 10,
           "options": {
@@ -3379,7 +3414,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 27
           },
           "id": 17,
           "options": {
@@ -3416,7 +3451,7 @@
       "type": "row"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "revision": 1,
   "schemaVersion": 38,
   "style": "dark",
@@ -3475,33 +3510,33 @@
       {
         "current": {
           "selected": false,
-          "text": "ab247231-b8c0-40e6-ad54-85ec4d078e26",
-          "value": "ab247231-b8c0-40e6-ad54-85ec4d078e26"
+          "text": "",
+          "value": ""
         },
         "hide": 0,
         "label": "Order ID",
         "name": "order_id",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "",
             "value": ""
           }
         ],
-        "query": "ab247231-b8c0-40e6-ad54-85ec4d078e26",
+        "query": "",
         "skipUrlSync": false,
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Holistic Webshop Observability",
   "uid": "U7qtLZB7b",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }
