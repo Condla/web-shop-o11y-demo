@@ -48,11 +48,9 @@ metrics_generator:
       max_items: 10000
       workers: 10
       dimensions:
-        - http.method
         - team.name
     span_metrics:
       dimensions:
-        - http.method
         - team.name
   registry:
     stale_duration: 5m
