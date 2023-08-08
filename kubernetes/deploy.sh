@@ -20,4 +20,4 @@ echo $APP_RECEIVER
 
 envsubst < kubernetes/03-web-shop.yaml | kubectl apply -f -
 
-envsubst < kubernetes/04-xk6-browser.yaml | kubectl apply -f -
+#envsubst < kubernetes/04-xk6-browser.yaml | kubectl apply -f -
