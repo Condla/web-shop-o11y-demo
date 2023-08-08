@@ -109,7 +109,7 @@ services:
             regex: compose_(service)
 
   web-shop:
-    image: "condla/web-shop:2.0"
+    image: "condla/web-shop:2.1"
     #build: "./web-shop"
     ports:
       - "3389:3389"
