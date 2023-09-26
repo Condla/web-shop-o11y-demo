@@ -1,9 +1,13 @@
 // Scenario: Scenario_1 (executor: ramping-vus)
 
-import { sleep, group } from 'k6'
+import { sleep, group, check } from 'k6'
 import http from 'k6/http'
 import { SharedArray } from 'k6/data';
-import { vu } from 'k6/execution';
+import { vu, exec } from 'k6/execution';
+import { chromium } from 'k6/experimental/browser';
+
+let browser_users= ["Alexander", "Alejandro", "Aleksander", "Allesandro"];
+let random = Math.floor(Math.random() * browser_users.length);
 
 const users = new SharedArray('shop users', function() {
   return	[
@@ -51,15 +55,21 @@ export const options = {
   },
   thresholds: {},
   scenarios: {
-    Scenario_1: {
+     BrowserUsage: {
+       executor: 'constant-vus',
+       exec: 'browser',
+       vus: 1,
+       duration: '10m',
+     },
+    CheckoutProcess: {
       executor: 'per-vu-iterations',
       gracefulStop: '30s',
       iterations: 1000,
       maxDuration: '2h30m',
       vus: 5,
-      exec: 'scenario_1',
+      exec: 'check_out',
     },
-    Scenario_2: {
+    ShopBrowsing: {
       executor: 'ramping-vus',
       startVUs: 1,
       stages: [
@@ -72,16 +82,87 @@ export const options = {
         { duration: '10m', target: 5},
       ],
       gracefulRampDown: '0s',
-      exec: 'scenario_2',
+      exec: 'browsing',
     },
   },
 }
 
-export function scenario_1() {
+
+
+
+export async function browser() {
+  const browser = chromium.launch({
+    headless: true,
+    slowMo: '500ms',
+  });
+
+  const context = browser.newContext({
+        screen: {width: 1024, height: 768},
+        viewport: { width: 1024, height: 768}
+  });
+  const page = context.newPage();
+  try {
+    random = Math.floor(Math.random() * browser_users.length);
+    let user = browser_users[random];
+    await page.goto('http://grafana.datahovel.com:3389/shop?name='+user);
+
+
+    let selector, elem;
+
+    page.mouse.click(344, 402);
+    sleep(1);
+    page.mouse.click(530, 410);
+    sleep(1);
+
+    selector='[href="/cart?name='+user+'"]';
+    elem = page.$(selector);
+    elem.click();
+    sleep(1);
+
+    selector='.w3-main';
+    elem = page.$(selector);
+
+    let re= /Loki\s*(.*)\s*(.*)\s*(.*)\s*Meows\s*(.*)\s*(.*)\s*(.*)\s*/;
+    let match = elem.textContent().match(re);
+    if(match== null) {
+      re= /Meows\s*(.*)\s*(.*)\s*(.*)\s*Loki\s*(.*)\s*(.*)\s*(.*)\s*/;
+      match = elem.textContent().match(re);
+    }
+
+    let total= Number(match[3])+Number(match[6]);
+    //console.log("Total: "+total);
+
+    check(page, { in: "69.98"== total});
+
+    sleep(1);
+
+//    page.screenshot({ path:"kitties.png" });
+
+    selector="[id='myBtn']";
+    elem = page.$(selector);
+    elem.click();
+    sleep(1);
+    elem.click();
+    sleep(1);
+
+    selector='[name="checkout_cart"]';
+    elem = page.$(selector);
+    elem.click();
+
+    selector="[onclick='do_something_cool()']";
+    elem = page.$(selector);
+    elem.click();
+    sleep(1);}
+  finally {
+    page.close();
+    browser.close();
+  }
+}
+
+
+export function check_out() {
   let response
-  let user = users[Math.floor(Math.random() * users.length)];
-  user = users[1];
-  console.log(`http://${__ENV.HOSTNAME}:3389/shop?name=${user.username}`)
+  const user = users[Math.floor(Math.random() * users.length)];
   group(`page_1 - http://${__ENV.HOSTNAME}:3389/shop?name=${user.username}`, function () {
     response = http.get(`http://${__ENV.HOSTNAME}:3389/shop?name=${user.username}`, {
       headers: {
@@ -270,7 +351,7 @@ export function scenario_1() {
   })
 }
 
-export function scenario_2() {
+export function browsing() {
   let response
   const randomUser = usersScenario2[Math.floor(Math.random() * usersScenario2.length)];
   group(`page_1 - http://${__ENV.HOSTNAME}:3389/shop?name=${randomUser}#cats`, function () {
