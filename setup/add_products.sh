@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #   desc: Load kittens into the product catalog
 #   params:
 #   return (status code/stdout):
