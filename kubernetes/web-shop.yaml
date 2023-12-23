@@ -1,0 +1,69 @@
+---
+#####################################
+############# web-shop  #############
+#####################################
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: web-shop
+  name: web-shop
+spec:
+  ports:
+    - name: "core"
+      port: 3389
+      targetPort: 3389
+  type: LoadBalancer
+  selector:
+    app: web-shop
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: web-shop
+  name: web-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-shop
+  template:
+    metadata:
+      labels:
+        app: web-shop
+    spec:
+      containers:
+        - name: web-shop
+          image: condla/web-shop:2.3
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: grafana-k8s-monitoring-grafana-agent.agent.svc.cluster.local:4317
+            - name: APP_AGENT_RECEIVER_ENDPOINT
+              value: $BROWSER_ENDPOINT
+          command: 
+          ports:
+            - containerPort: 3389
+          volumeMounts:
+          livenessProbe:
+            httpGet:
+              path: /shop
+              port: 3389
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /shop
+              port: 3389
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+---

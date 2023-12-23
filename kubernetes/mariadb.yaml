@@ -1,0 +1,150 @@
+---
+#####################################
+############# mariadb ###############
+#####################################
+kind: Secret
+apiVersion: v1
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: mariadb
+  name: mariadb-config
+type: Opaque
+stringData: 
+  init.sql: |
+    CREATE TABLE `customer` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `name` varchar(50) NOT NULL,
+      `created_date` datetime NOT NULL DEFAULT current_timestamp(),
+      PRIMARY KEY (`id`)
+    );
+
+    CREATE TABLE `product` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `name` varchar(50) NOT NULL,
+      `price` float NOT NULL,
+      `tag` varchar(5000) NOT NULL,
+      `pic_ref` varchar(5000) NOT NULL,
+      PRIMARY KEY (`id`)
+    );
+
+    CREATE TABLE `cart` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `customer_id` int(11) NOT NULL,
+      `is_deleted` tinyint(1) NOT NULL,
+      `created_date` datetime NOT NULL DEFAULT current_timestamp(),
+      `updated_date` datetime DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `customer_id` (`customer_id`),
+      CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
+    );
+
+    CREATE TABLE `cart_item` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `cart_id` int(11) DEFAULT NULL,
+      `product_id` int(11) DEFAULT NULL,
+      `quantity` int(11) NOT NULL,
+      `is_deleted` tinyint(1) NOT NULL,
+      `created_date` datetime NOT NULL DEFAULT current_timestamp(),
+      `updated_date` datetime DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `cart_id` (`cart_id`),
+      KEY `product_id` (`product_id`),
+      CONSTRAINT `cart_item_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `cart` (`id`),
+      CONSTRAINT `cart_item_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+    ); 
+ 
+    CREATE TABLE `order_table` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `cart_id` int(11) DEFAULT NULL,
+      `order_uuid` varchar(200) NOT NULL,
+      `created_date` datetime NOT NULL DEFAULT current_timestamp(),
+      `updated_date` datetime DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `cart_id` (`cart_id`),
+      CONSTRAINT `order_table_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `cart` (`id`)
+    );
+
+    delete from cart_item;
+    delete from cart;
+    delete from customer;
+    delete from product;
+    delete from order_table;
+
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Meows", 29.99,"","/static/img/cats/Meows.jpeg"); 
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Loki", 39.99,"","/static/img/cats/Loki.jpeg");
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Charlie", 19.50,"","/static//img/cats/Charlie.jpeg");
+    INSERT INTO product (name, price, tag, pic_ref) VALUES ("Carla", 25.00,"","/static/img/cats/Carla.jpeg");
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: mariadb
+  name: mariadb
+spec:
+  ports:
+    - name: "core"
+      port: 3306
+      targetPort: 3306
+  selector:
+    app: mariadb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: mariadb
+  name: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: docker.io/mariadb:10.9.4
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              value: myrootpassword
+            - name: MARIADB_DATABASE
+              value: webshop
+          command: 
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: data
+            - mountPath: /docker-entrypoint-initdb.d
+              name: mariadb-config
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: mariadb-config
+          secret:
+            secretName: mariadb-config
+

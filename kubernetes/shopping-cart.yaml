@@ -1,0 +1,67 @@
+---
+#####################################
+############# shopping-cart #########
+#####################################
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: shopping-cart
+  name: shopping-cart
+spec:
+  ports:
+    - name: "core"
+      port: 5555
+      targetPort: 5555
+  selector:
+    app: shopping-cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: shopping-cart
+  name: shopping-cart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopping-cart
+  template:
+    metadata:
+      labels:
+        app: shopping-cart
+    spec:
+      containers:
+        - name: shopping-cart
+          image: condla/shopping-cart:1.5
+          env:
+            - name: SQLALCHEMY_DATABASE_URI
+              value: mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshop
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: grafana-k8s-monitoring-grafana-agent.agent.svc.cluster.local:4317
+          command: 
+          ports:
+            - containerPort: 5555
+          volumeMounts:
+          livenessProbe:
+            httpGet:
+              path: /cart/test
+              port: 5555
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /cart/test
+              port: 5555
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:

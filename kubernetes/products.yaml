@@ -1,0 +1,82 @@
+---
+#####################################
+############# products ##############
+#####################################
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: products
+  name: products
+spec:
+  ports:
+    - name: "core"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: products
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-shop-app
+  labels:
+    app: products
+  name: products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products
+  template:
+    metadata:
+      labels:
+        app: products
+    spec:
+      containers:
+        - name: products
+          image: condla/products:otel-1.7
+          env:
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+            - name: OTEL_EXPORTER
+              value: otlp_span
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: grafana-k8s-monitoring-grafana-agent.agent.svc.cluster.local:4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=products,team.name=backend,environment=production
+            - name: JAVA_OPTS
+              value: -javaagent:/opentelemetry-javaagent.jar
+            - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
+              value: broker:9092
+            - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+              value: broker:9092
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: broker:9092
+            - name: KAFKA_BOOTSTRAP
+              value: broker:9092
+          command: 
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+            successThreshold: 1
+      volumes:
+
