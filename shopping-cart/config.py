@@ -11,6 +11,6 @@ class Config:
     FLASK_ENV = environ.get('FLASK_ENV')
 
     # Database
-    SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI", 'mariadb+mariadbconnector://root:myrootpassword@127.0.0.1:3306/webshopdb')
+    SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI", 'mariadb+mariadbconnector://root:myrootpassword@mariadb:3306/webshopdb')
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False

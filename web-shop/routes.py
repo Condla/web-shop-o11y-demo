@@ -6,10 +6,6 @@ import uuid
 
 shopping_cart_url = "http://shopping-cart:5555"
 products_url = "http://products:8080"
-proxies = {
-    "http": "http://squid:3128",
-    "https": "https://squid:3128"
-}
 
 
 @app.route('/cart', methods=["GET", "POST"])
@@ -53,14 +49,14 @@ def view_shop():
 def add_to_shopping_cart(person, product_name, headers):
     request_string = "{}/cart/{}".format(shopping_cart_url, person)
     payload = {"product": product_name}
-    response = requests.post(request_string, json=payload,headers=headers, proxies=proxies)
+    response = requests.post(request_string, json=payload,headers=headers)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
       app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
     else:
       app.logger.info("Successfully added item to shopping cart.")
 
 def get_products(request_string):
-    response = requests.get(request_string, proxies=proxies)
+    response = requests.get(request_string)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
         app.logger.exception("Got a real bad response from products service. Something is wrong.")
     else:
@@ -76,7 +72,7 @@ def check_out_cart(checkout, headers, request_string, person):
         order_request_string = "{}/order/{}".format(shopping_cart_url, order_uuid)
         payload = json.loads('{"name": "' + person + '"}')
         app.logger.debug("Trying to create order {}".format(order_uuid))
-        response = requests.post(order_request_string, json=payload, headers=headers, proxies=proxies)
+        response = requests.post(order_request_string, json=payload, headers=headers)
         if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
             app.logger.exception("Could not create order {} ".format(order_uuid))
         else:
@@ -85,12 +81,12 @@ def check_out_cart(checkout, headers, request_string, person):
         for item in items:
             product_request_string = "{}/products/checkout".format(products_url)
             payload = item
-            response = requests.post(product_request_string, json=payload, headers=headers, proxies=proxies)
+            response = requests.post(product_request_string, json=payload, headers=headers )
             if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
               app.logger.exception("Could not check out item.")
             else:
               app.logger.info("Checked out item.")
-    response = requests.delete(request_string, headers=headers, proxies=proxies)
+    response = requests.delete(request_string, headers=headers)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
         app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")
     else:
@@ -98,14 +94,14 @@ def check_out_cart(checkout, headers, request_string, person):
 
 def apply_discount(person, headers, request_string):
     request_string_discount = request_string + "/discount"
-    response = requests.post(request_string_discount,json={"name": person}, headers=headers, proxies=proxies)
+    response = requests.post(request_string_discount,json={"name": person}, headers=headers)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
         app.logger.exception("Bad response from discount service. HTTP Status Code: {}".format(response.status_code))
     else:
         app.logger.info("discount applied successfully.")
 
 def get_items_from_shopping_cart(request_string):
-    response = requests.get(request_string, proxies=proxies)
+    response = requests.get(request_string)
     if not (response.status_code == 200 or response.status_code == 201 or response.status_code == 202):
         items = []
         app.logger.exception("Got a real bad response from shopping cart. Something is wrong.")

@@ -8,7 +8,7 @@ webSdkScript.src = 'https://unpkg.com/@grafana/faro-web-sdk@^1.0.0/dist/bundle/f
 
 webSdkScript.onload = () => {
   window.GrafanaFaroWebSdk.initializeFaro({
-    url: 'https://faro-collector-prod-us-central-0.grafana.net/collect/fd7d8aadd5870ecae33bbfc1ee28e3e7',
+    url: appAgentReceiverEndpoint,
     app: {
       name: 'web-shop-browser',
       version: '1.6.0',
