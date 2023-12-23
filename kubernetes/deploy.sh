@@ -1,6 +1,6 @@
 export MIMIR_URL=https://prometheus-prod-10-prod-us-central-0.grafana.net
 export MIMIR_USR=364318
-export MIMIR_KEY=glc_eyJvIjoiNDkzMTkwIiwibiI6ImNvbmRsYS1taW5pa3ViZSIsImsiOiIzdDY3bUdaOTFRd1k0WDE0dnBobzA1d2ciLCJtIjp7InIiOiJ1cyJ9fQ==
+export MIMIR_KEY=YOURKEY
 
 export LOKI_URL=https://logs-prod3.grafana.net 
 export LOKI_USR=181129
