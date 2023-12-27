@@ -36,14 +36,14 @@ spec:
     spec:
       containers:
         - name: products
-          image: condla/products:otel-1.7
+          image: condla/products:otel-1.9
           env:
             - name: OTEL_METRICS_EXPORTER
-              value: none
-            - name: OTEL_EXPORTER
-              value: otlp_span
+              value: logging
+            - name: OTEL_LOGS_EXPORTER
+              value: logging
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: grafana-k8s-monitoring-grafana-agent.agent.svc.cluster.local:4317
+              value: http://grafana-k8s-monitoring-grafana-agent.agent.svc.cluster.local:4317
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=products,team.name=backend,environment=production
             - name: JAVA_OPTS
