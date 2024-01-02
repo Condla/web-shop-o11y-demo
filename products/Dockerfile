@@ -10,6 +10,7 @@ RUN mvn -f /home/app/pom.xml clean package
 #
 FROM openjdk:11-jre-slim
 COPY --from=build /home/app/target/*.jar app.jar
+# last tested working build: opentelemetry-javaagent-1.32.0.jar
 COPY opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
 COPY jmx_prometheus_javaagent-0.17.2.jar /jmx_prometheus_javaagent.jar
 COPY httpserver.yml /httpserver.yml
