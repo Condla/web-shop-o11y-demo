@@ -70,7 +70,7 @@ services:
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
     networks:
-      - web-shop    
+      - web-shop
     logging:
       driver: loki
       options:
@@ -124,7 +124,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
         loki-relabel-config: |
           - action: labelmap
             regex: compose_(service)
@@ -149,7 +149,7 @@ services:
         loki-relabel-config: |
           - action: labelmap
             regex: compose_(service)
- 
+
   products:
     image: "condla/products:otel-1.6"
       #build: "./products"
@@ -173,7 +173,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
         loki-relabel-config: |
           - action: labelmap
             regex: compose_(service)
@@ -190,13 +190,12 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
         loki-relabel-config: |
           - action: labelmap
             regex: compose_(service)
     healthcheck:
-#      test: ["mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pmyrootpassword"]
-      test: mysqladmin ping -h 127.0.0.1 -uroot -pmyrootpassword
+      test: mariadb-admin ping -h 127.0.01 -uroot -pmyrootpassword
       interval: 10s
       timeout: 10s
       retries: 5
@@ -274,7 +273,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://172.17.0.1:3100/loki/api/v1/push" 
+        loki-url: "http://172.17.0.1:3100/loki/api/v1/push"
         loki-relabel-config: |
           - action: labelmap
             regex: compose_(service)
@@ -295,7 +294,7 @@ services:
       - 9100
     networks:
       - web-shop
-    
+
 #  blackbox_exporter:
 #    image: prom/blackbox-exporter:master
 #    volumes:
